@@ -25,13 +25,8 @@ class RecordingActivity : AppCompatActivity() {
     lateinit var sensorPositionSpinner: Spinner
     lateinit var sensorSideSpinner: Spinner
     lateinit var activityTypeSpinner: Spinner
-    lateinit var socialSignalTypeSpinner: Spinner
-    lateinit var sourceProjectSpinner: Spinner
-
     lateinit var startRecordingButton: Button
     lateinit var stopRecordingButton: Button
-
-    lateinit var projectSubjectIdInput: EditText
     lateinit var univSubjectIdInput: EditText
 
     lateinit var timer: TextView
@@ -48,13 +43,10 @@ class RecordingActivity : AppCompatActivity() {
 
     val filterTest = IntentFilter(Constants.ACTION_INNER_RESPECK_BROADCAST)
 
-    var projectSubjectId = "XXT"
     var sensorPosition = ""
     var sensorSide = ""
     var universalSubjectId = "XXTU"
     var activityType = ""
-    var ssType = ""
-    var sourceProject = ""
     var recordingId = "123"
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -111,7 +103,6 @@ class RecordingActivity : AppCompatActivity() {
     }
 
     private fun setupInputs() {
-        projectSubjectIdInput = findViewById(R.id.project_subject_id_input)
         univSubjectIdInput = findViewById(R.id.universal_subject_id_input)
     }
 
@@ -183,50 +174,7 @@ class RecordingActivity : AppCompatActivity() {
             }
         }
 
-        socialSignalTypeSpinner = findViewById(R.id.ss_type_spinner)
-        ArrayAdapter.createFromResource(
-            this,
-            R.array.social_signal_type_array,
-            android.R.layout.simple_spinner_item
-        ).also {
-                adapter ->
-            adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
-            socialSignalTypeSpinner.adapter = adapter
-        }
 
-        socialSignalTypeSpinner.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
-            override fun onItemSelected(parent: AdapterView<*>, viwq: View, position: Int, id: Long) {
-                val selectedItem = parent.getItemAtPosition(position).toString()
-                ssType = Constants.SS_NAME_TO_CODE_MAPPING[selectedItem].toString()
-            }
-
-            override fun onNothingSelected(p0: AdapterView<*>?) {
-                ssType = Constants.ACTIVITY_NAME_TO_CODE_MAPPING["Breathing"].toString()
-            }
-        }
-
-        sourceProjectSpinner = findViewById(R.id.source_project_spinner)
-        ArrayAdapter.createFromResource(
-            this,
-            R.array.source_project_array,
-            android.R.layout.simple_spinner_item
-        ).also {
-                adapter ->
-            adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
-            sourceProjectSpinner.adapter = adapter
-        }
-
-        sourceProjectSpinner.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
-            override fun onItemSelected(parent: AdapterView<*>, viwq: View, position: Int, id: Long) {
-                val selectedItem = parent.getItemAtPosition(position).toString()
-                sourceProject = selectedItem
-                Log.i("selection", "i selected the iteem = " + sourceProject)
-            }
-
-            override fun onNothingSelected(p0: AdapterView<*>?) {
-                sourceProject = "pdiot"
-            }
-        }
 
     }
 
@@ -287,15 +235,13 @@ class RecordingActivity : AppCompatActivity() {
     }
 
     private fun getInputs() {
-        projectSubjectId = projectSubjectIdInput.text.toString()
         universalSubjectId = univSubjectIdInput.text.toString()
     }
 
     private fun createFile() {
 
         val activityTypeName = Constants.ACTIVITY_CODE_TO_NAME_MAPPING[activityType.toInt()]
-        val ssTypeName = Constants.SS_CODE_TO_NAME_MAPPING[ssType.toInt()]
-        val fileName = projectSubjectId + "_" + activityTypeName + "_" + ssTypeName + "_" + System.currentTimeMillis().toString() + ".csv"
+        val fileName = universalSubjectId + "_" + activityTypeName + "_" + System.currentTimeMillis().toString() + ".csv"
         val file = File(getExternalFilesDir(null), fileName)
 
         if(file.exists()) {
@@ -321,9 +267,9 @@ class RecordingActivity : AppCompatActivity() {
     private fun appendToFile(x: Float, y: Float, z: Float) {
         val outputString = System.currentTimeMillis().toString() + "," +
                 seq + "," + x.toString() + "," + y.toString() + "," +
-                z.toString() + "," + projectSubjectId + "," + sensorPosition + "," +
+                z.toString() + "," + sensorPosition + "," +
                 sensorSide + "," + universalSubjectId + "," + activityType + "," +
-                ssType + "," + sourceProject + "," + recordingId + "\n"
+                recordingId + "\n"
         outputData.append(outputString)
         seq++
         Log.i("recording", "new data")

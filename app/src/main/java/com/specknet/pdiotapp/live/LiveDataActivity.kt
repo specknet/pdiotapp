@@ -30,9 +30,6 @@ import kotlin.math.sqrt
 
 class LiveDataActivity : AppCompatActivity() {
 
-    private lateinit var prediction: TextView
-    private lateinit var confidence: TextView
-
     // display queue to update the graph smoothly
     private var mDelayRespeckQueue: BlockingQueue<DelayRespeck> = DelayQueue<DelayRespeck>()
 
@@ -60,8 +57,6 @@ class LiveDataActivity : AppCompatActivity() {
         var accel_y = findViewById<TextView>(R.id.breathing_rate_min)
         var accel_z = findViewById<TextView>(R.id.breathing_signal)
 
-        prediction = findViewById(R.id.breath_count)
-        confidence = findViewById(R.id.confidence)
 
         setupChart()
 

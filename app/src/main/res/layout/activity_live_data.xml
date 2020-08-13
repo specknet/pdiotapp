@@ -50,25 +50,5 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/breathing_signal" />
 
-    <TextView
-        android:id="@+id/breath_count"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Prediction: "
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/chart"
-        app:layout_constraintBottom_toTopOf="@+id/confidence"
-        android:layout_marginTop="40px"/>
-
-    <TextView
-        android:id="@+id/confidence"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Confidence: "
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/breath_count"
-        android:layout_marginTop="40px"/>
 
 </androidx.constraintlayout.widget.ConstraintLayout>
