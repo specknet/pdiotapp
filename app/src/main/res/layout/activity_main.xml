@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:id="@+id/coordinatorLayout"
+    tools:context=".MainActivity">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <TextView
+            android:id="@+id/respeck_status_welcome"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Respeck status: Disconnected"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            android:layout_marginTop="20px"
+            android:layout_marginRight="20px"/>
+
+
+        <TextView
+            android:id="@+id/textView2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="100px"
+            android:text="I want to"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/respeck_status_welcome"
+            app:layout_constraintBottom_toTopOf="@+id/record_button"/>
+
+        <Button
+            android:id="@+id/record_button"
+            android:layout_width="550px"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="100px"
+            android:background="#03A9F4"
+            android:text="Record data"
+            android:textColor="#FFFFFF"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/textView2"
+            app:layout_constraintBottom_toTopOf="@+id/live_button"/>
+
+
+        <Button
+            android:id="@+id/live_button"
+            android:layout_width="550px"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="100px"
+            android:background="#03A9F4"
+            android:text="Watch live processing"
+            android:textColor="#FFFFFF"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/record_button"
+            app:layout_constraintBottom_toTopOf="@+id/ble_button"/>
+
+
+        <Button
+            android:id="@+id/ble_button"
+            android:layout_width="550px"
+            android:layout_height="wrap_content"
+            android:text="Connect respeck"
+            android:layout_marginTop="100px"
+            android:layout_marginBottom="100px"
+            android:background="#03A9F4"
+            android:textColor="#FFFFFF"
+            app:layout_constraintTop_toBottomOf="@+id/live_button"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+
+</androidx.coordinatorlayout.widget.CoordinatorLayout>
