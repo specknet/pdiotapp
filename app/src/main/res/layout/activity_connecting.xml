@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".bluetooth.ConnectingActivity">
+
+    <TextView
+        android:id="@+id/respeck_status_connection"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Respeck status: Disconnected"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        android:layout_marginTop="20px"
+        android:layout_marginRight="20px"/>
+
+    <TextView
+        android:id="@+id/textView3"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Input the RESpeck ID or scan it"
+        android:layout_marginTop="100px"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/respeck_status_connection"
+        app:layout_constraintBottom_toTopOf="@+id/scan_respeck"/>
+
+    <Button
+        android:id="@+id/scan_respeck"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Scan Respeck"
+        android:layout_marginTop="100px"
+        app:layout_constraintBottom_toTopOf="@+id/title"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/textView3"/>
+
+    <TextView
+        android:id="@+id/title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Respeck ID"
+        app:layout_constraintStart_toStartOf="@id/respeck_code"
+        app:layout_constraintEnd_toEndOf="@id/respeck_code"
+        app:layout_constraintBottom_toTopOf="@id/respeck_code"/>
+
+    <EditText
+        android:id="@+id/respeck_code"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:ems="10"
+        android:inputType="textPersonName"
+        android:hint="Scan respeck for code"
+        android:layout_marginTop="100px"
+        app:layout_constraintBottom_toTopOf="@id/connect_button"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/scan_respeck" />
+
+    <Button
+        android:id="@+id/connect_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Connect"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toStartOf="@id/disconnect_button"
+        app:layout_constraintTop_toBottomOf="@id/respeck_code"
+        app:layout_constraintBottom_toBottomOf="parent"/>
+
+    <Button
+        android:id="@+id/disconnect_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text = "Disconnect"
+        app:layout_constraintTop_toBottomOf="@+id/respeck_code"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toEndOf="@id/connect_button"
+        app:layout_constraintEnd_toEndOf="parent"/>
+</androidx.constraintlayout.widget.ConstraintLayout>

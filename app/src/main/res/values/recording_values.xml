@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string-array name="sensor_position_array">
+        <item>Chest</item>
+        <item>Abdomen</item>
+        <item>Upper arm</item>
+        <item>Wrist</item>
+        <item>Pocket</item>
+        <item>Upper leg</item>
+        <item>Lower leg</item>
+        <item>Ankle</item>
+        <item>Foot</item>
+    </string-array>
+
+    <string-array name="sensor_side_array">
+        <item>Left</item>
+        <item>Right</item>
+    </string-array>
+
+    <string-array name="activity_type_array">
+        <item>Sitting</item>
+        <item>Sitting bent forward</item>
+        <item>Sitting bent backward</item>
+        <item>Standing</item>
+        <item>Walking at normal speed</item>
+        <item>Lying down on back</item>
+        <item>Lying down left</item>
+        <item>Lying down right</item>
+        <item>Lying down on stomach</item>
+        <item>Movement</item>
+        <item>Walking slow</item>
+        <item>Running</item>
+        <item>Climbing stairs</item>
+        <item>Descending stairs</item>
+        <item>Riding a bike</item>
+        <item>Sit to stand (PR)</item>
+        <item>Knee extension (PR)</item>
+        <item>Squats (PR)</item>
+        <item>Heel raises (PR)</item>
+        <item>Bicep curls (PR)</item>
+        <item>Shoulder press (PR)</item>
+        <item>Wall push offs (PR)</item>
+        <item>Leg slides (PR)</item>
+        <item>Step ups</item>
+        <item>Driving in car or bus</item>
+    </string-array>
+
+    <string-array name="social_signal_type_array">
+        <item>Coughing</item>
+        <item>Talking</item>
+        <item>Eating</item>
+        <item>Singing</item>
+        <item>Laughing</item>
+        <item>Breathing</item>
+    </string-array>
+
+    <string-array name="source_project_array">
+        <item>Stationary Social Signals</item>
+        <item>Human Activity Recognition</item>
+        <item>Pulmonary Rehabilitation</item>
+        <item>Robust Human Activity Recognition</item>
+        <item>Mixed Social Signals</item>
+        <item>Simple Social Signals</item>
+        <item>PDIoT</item>
+        <item>Testing</item>
+    </string-array>
+</resources>

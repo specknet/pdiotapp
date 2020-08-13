@@ -1,6 +1,18 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.specknet.pdiotapp">
+    <uses-permission android:name="android.permission.BLUETOOTH" />
+    <uses-permission android:name="android.permission.BLUETOOTH_ADMIN" />
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" /> <!-- To make app available to BLE-capable devices only -->
+    <uses-permission android:name="android.permission.CAMERA" />
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+
+    <uses-feature
+        android:name="android.hardware.bluetooth_le"
+        android:required="true" />
+    <uses-feature android:name="android.hardware.camera" />
 
     <application
         android:allowBackup="true"
@@ -9,11 +21,55 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
+        <activity android:name=".live.LiveDataActivity">
+            <intent-filter>
+                <action android:name="com.specknet.respeck.RESPECK_LIVE_BROADCAST" />
+            </intent-filter>
+            <intent-filter>
+                <action android:name="com.specknet.respeck.ACTION_RESPECK_LIVE_BROADCAST" />
+            </intent-filter>
+            <intent-filter>
+                <action android:name="com.specknet.respeck.ACTION_RESPECK_REHAB_BROADCAST" />
+            </intent-filter>
+            <intent-filter>
+                <action android:name="com.specknet.respeck.RESPECK_REHAB_BROADCAST" />
+            </intent-filter>
+            <intent-filter>
+                <action android:name="com.specknet.pdiotapp.RESPECK_BROADCAST" />
+            </intent-filter>
+        </activity>
+        <activity android:name=".barcode.BarcodeActivity" />
+        <activity android:name=".bluetooth.ConnectingActivity">
+            <intent-filter>
+                <action android:name="com.specknet.pdiotapp.RESPECK_CONNECTED" />
+            </intent-filter>
+            <intent-filter>
+                <action android:name="com.specknet.pdiotapp.RESPECK_DISCONNECTED" />
+            </intent-filter>
+        </activity>
+
+        <service
+            android:name=".bluetooth.BluetoothService"
+            android:enabled="true"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="com.specknet.respeckmodeltesting.RESPECK_BROADCAST" />
+            </intent-filter>
+        </service>
+
+        <activity android:name=".onboarding.OnBoardingActivity" />
+        <activity android:name=".RecordingActivity" />
         <activity android:name=".MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+            <intent-filter>
+                <action android:name="com.specknet.respeckmodeltesting.RESPECK_CONNECTED" />
+            </intent-filter>
+            <intent-filter>
+                <action android:name="com.specknet.respeckmodeltesting.RESPECK_DISCONNECTED" />
             </intent-filter>
         </activity>
     </application>

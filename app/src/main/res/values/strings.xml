@@ -1,3 +1,45 @@
 <resources>
-    <string name="app_name">PDIoTApp</string>
+    <string name="app_name">RespeckModelTesting</string>
+    <string name="ble_name">Name: %1$s</string>
+    <string name="ble_mac">MAC: %1$s</string>
+    <string name="ble_signal">Signal: %1$d</string>
+    <string name="ble_uuid">UUID: %1$s</string>
+    <string name="title_activity_on_boarding">OnBoardingActivity</string>
+    <string name="tab_text_1">Tab 1</string>
+    <string name="tab_text_2">Tab 2</string>
+
+    <string name="hello_world">Hello world!</string>
+    <string name="action_settings">Settings</string>
+    <string name="title_fab_animations">FAB Animation</string>
+    <string name="title_activity_toolbar_test">ToolbarTestActivity</string>
+    <string name="title_activity_nav_drawer">NavDrawerActivity</string>
+    <string name="title_activity_animate_toolbar">Animate Toolbar</string>
+    <string name="title_activity_tab_animation">Tabs Animation</string>
+    <string name="title_activity_sticky_view">StickyViewActivity</string>
+
+    <string name="section_bluetooth">Welcome to the PDIoT App. Use it to connect to any Respeck device by
+        scanning the QR code on the back of the device.</string>
+    <string name="section_record">You can record data from the sensor in a locally stored csv file.</string>
+    <string name="section_live">You can also view the live data once the sensor is connected and see live predictions of the installed model.</string>
+    <string name="section_bluetooth_title">Connect</string>
+    <string name="section_record_title">Record</string>
+    <string name="section_live_title">View</string>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="title_activity_swipe_refresh">Swipe Refresh</string>
+    <string name="title_activity_mini_drawer">Mini Drawer</string>
+    <string name="title_activity_nested_toolbar">Nested Toolbar</string>
+    <string name="action_search">Search</string>
+    <string name="action_view_module">View</string>
+    <string name="title_quick_return">Quick Return</string>
+    <string name="title_activity_reveal">Reveal Animation</string>
+    <string name="title_activity_reveal_animation">Reveal Animation</string>
+    <string name="title_activity_launch_screen">LaunchScreenActivity</string>
+    <string name="title_activity_gmail_style">Gmail List</string>
+    <string name="title_activity_tabs_header">Header Tabs</string>
+    <string name="title_activity_pager">PagerActivity</string>
+    <string name="section_format">Page %1$d</string>
+    <string name="action_add">Add</string>
+    <string name="android_desserts">Android Desserts</string>
 </resources>
