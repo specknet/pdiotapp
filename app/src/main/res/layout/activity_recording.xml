@@ -136,14 +136,14 @@
                 android:id="@+id/universal_subject_id_label"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Subject ID"
+                android:text="Subject ID (UUN)"
                 android:layout_marginBottom="10dp"
                 android:paddingStart="10dp"/>
 
             <EditText
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:hint="XXT123"
+                android:hint="s123456"
                 android:id="@+id/universal_subject_id_input"
                 />
         </LinearLayout>

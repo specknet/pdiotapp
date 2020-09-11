@@ -45,7 +45,7 @@ class RecordingActivity : AppCompatActivity() {
 
     var sensorPosition = ""
     var sensorSide = ""
-    var universalSubjectId = "XXTU"
+    var universalSubjectId = "s123456"
     var activityType = ""
     var recordingId = "123"
 
@@ -126,7 +126,7 @@ class RecordingActivity : AppCompatActivity() {
             }
 
             override fun onNothingSelected(p0: AdapterView<*>?) {
-                sensorPosition = "Abdomen"
+                sensorPosition = "Chest"
             }
         }
 

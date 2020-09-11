@@ -2,14 +2,8 @@
 <resources>
     <string-array name="sensor_position_array">
         <item>Chest</item>
-        <item>Abdomen</item>
-        <item>Upper arm</item>
+        <item>Front pocket (trouser)</item>
         <item>Wrist</item>
-        <item>Pocket</item>
-        <item>Upper leg</item>
-        <item>Lower leg</item>
-        <item>Ankle</item>
-        <item>Foot</item>
     </string-array>
 
     <string-array name="sensor_side_array">
@@ -22,27 +16,17 @@
         <item>Sitting bent forward</item>
         <item>Sitting bent backward</item>
         <item>Standing</item>
-        <item>Walking at normal speed</item>
         <item>Lying down on back</item>
         <item>Lying down left</item>
         <item>Lying down right</item>
         <item>Lying down on stomach</item>
-        <item>Movement</item>
-        <item>Walking slow</item>
+        <item>Walking at normal speed</item>
         <item>Running</item>
         <item>Climbing stairs</item>
         <item>Descending stairs</item>
-        <item>Riding a bike</item>
-        <item>Sit to stand (PR)</item>
-        <item>Knee extension (PR)</item>
-        <item>Squats (PR)</item>
-        <item>Heel raises (PR)</item>
-        <item>Bicep curls (PR)</item>
-        <item>Shoulder press (PR)</item>
-        <item>Wall push offs (PR)</item>
-        <item>Leg slides (PR)</item>
-        <item>Step ups</item>
-        <item>Driving in car or bus</item>
+        <item>Movement</item>
+        <item>Desk work</item>
+<!--        TODO add more activities here-->
     </string-array>
 
     <string-array name="social_signal_type_array">

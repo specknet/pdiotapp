@@ -26,7 +26,7 @@ public class Constants {
 
     public static final int REQUEST_CODE_PERMISSIONS = 4;
 
-    public static final String RECORDING_CSV_HEADER = "timestamp,seq,accel_x,accel_y,accel_z,sensor_position,sensor_side,universal_subject_id,activity_type,recording_id";
+    public static final String RECORDING_CSV_HEADER = "timestamp,seq,accel_x,accel_y,accel_z,sensor_position,sensor_side,subject_id,activity_type,recording_id";
 
     // activity mappings
     public static final Map<String, Integer> ACTIVITY_NAME_TO_CODE_MAPPING = new HashMap<String, Integer>() {{
@@ -55,6 +55,7 @@ public class Constants {
         put("Leg slides (PR)", 28);
         put("Step ups", 29);
         put("Driving in car or bus", 30);
+        put("Desk work", 31);
     }};
 
     public static final Map<Integer, String> ACTIVITY_CODE_TO_NAME_MAPPING = new HashMap<Integer, String>() {{
@@ -82,6 +83,7 @@ public class Constants {
         put(28, "Leg slides (PR)");
         put(29, "Step ups");
         put(30, "Driving in car or bus");
+        put(31, "Desk work");
     }};
 
     public static final Map<String, Integer> SS_NAME_TO_CODE_MAPPING = new HashMap<String, Integer>() {{
