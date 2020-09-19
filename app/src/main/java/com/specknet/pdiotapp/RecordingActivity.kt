@@ -241,7 +241,7 @@ class RecordingActivity : AppCompatActivity() {
     private fun createFile() {
 
         val activityTypeName = Constants.ACTIVITY_CODE_TO_NAME_MAPPING[activityType.toInt()]
-        val fileName = universalSubjectId + "_" + activityTypeName + "_" + System.currentTimeMillis().toString() + ".csv"
+        val fileName = "${universalSubjectId}_${activityTypeName}_${sensorPosition}_${sensorSide}_${System.currentTimeMillis()}.csv"
         val file = File(getExternalFilesDir(null), fileName)
 
         if(file.exists()) {
@@ -255,7 +255,14 @@ class RecordingActivity : AppCompatActivity() {
         else {
             try {
                 writer = OutputStreamWriter(FileOutputStream(file, true))
+                // the header columns in here
+                writer.append("# Sensor position: $sensorPosition").append("\n")
+                writer.append("# Sensor side: $sensorSide").append("\n")
+                writer.append("# Activity type: $activityTypeName").append("\n")
+                writer.append("# Activity code: $activityType").append("\n")
+                writer.append("# Subject id: $universalSubjectId").append("\n")
                 writer.append(Constants.RECORDING_CSV_HEADER).append("\n")
+                writer.flush()
                 writer.flush()
             } catch (e: IOException){
                 Log.e("recording", "error while writing to the file")
@@ -267,9 +274,7 @@ class RecordingActivity : AppCompatActivity() {
     private fun appendToFile(x: Float, y: Float, z: Float) {
         val outputString = System.currentTimeMillis().toString() + "," +
                 seq + "," + x.toString() + "," + y.toString() + "," +
-                z.toString() + "," + sensorPosition + "," +
-                sensorSide + "," + universalSubjectId + "," + activityType + "," +
-                recordingId + "\n"
+                z.toString() + "\n"
         outputData.append(outputString)
         seq++
         Log.i("recording", "new data")
