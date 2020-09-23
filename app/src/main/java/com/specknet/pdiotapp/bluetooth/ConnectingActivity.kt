@@ -3,6 +3,10 @@ package com.specknet.pdiotapp.bluetooth
 import android.app.Activity
 import android.content.*
 import android.os.Bundle
+import android.text.Editable
+import android.text.InputFilter
+import android.text.InputFilter.AllCaps
+import android.text.TextWatcher
 import android.util.Log
 import android.widget.Button
 import android.widget.EditText
@@ -17,7 +21,6 @@ import com.specknet.pdiotapp.utils.Utils
 import io.reactivex.exceptions.UndeliverableException
 import io.reactivex.plugins.RxJavaPlugins
 import kotlinx.android.synthetic.main.activity_connecting.*
-import java.lang.StringBuilder
 
 class ConnectingActivity : AppCompatActivity() {
 
@@ -56,6 +59,13 @@ class ConnectingActivity : AppCompatActivity() {
 
         connectButton.setOnClickListener {
             // start the bluetooth service
+
+            sharedPreferences.edit().putString(
+                Constants.RESPECK_MAC_ADDRESS_PREF,
+                qrCode.text.toString()
+            ).apply()
+            sharedPreferences.edit().putInt(Constants.RESPECK_VERSION, 6).apply()
+
             Log.i("service", "Starting BLT service")
             val simpleIntent = Intent(this, BluetoothService::class.java)
             this.startService(simpleIntent)
@@ -71,13 +81,41 @@ class ConnectingActivity : AppCompatActivity() {
         sharedPreferences = getSharedPreferences(Constants.PREFERENCES_FILE, Context.MODE_PRIVATE)
         if (sharedPreferences.contains(Constants.RESPECK_MAC_ADDRESS_PREF)) {
             Log.i("sharedpref", "Already saw a respeckID")
-            respeck_code.setText(sharedPreferences.getString(Constants.RESPECK_MAC_ADDRESS_PREF, ""))
+            respeck_code.setText(
+                sharedPreferences.getString(
+                    Constants.RESPECK_MAC_ADDRESS_PREF,
+                    ""
+                )
+            )
         }
         else {
             Log.i("sharedpref", "No respeck seen before")
             connectButton.isEnabled = false
             connectButton.isClickable = false
         }
+
+        qrCode.addTextChangedListener(object : TextWatcher {
+            override fun onTextChanged(cs: CharSequence, start: Int, before: Int, count: Int) {
+                if (cs.toString().trim().length != 17) {
+                    connectButton.isEnabled = false
+                    connectButton.isClickable = false
+                } else {
+                    connectButton.isEnabled = true
+                    connectButton.isClickable = true
+                }
+            }
+
+            override fun beforeTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
+
+            }
+
+            override fun afterTextChanged(p0: Editable?) {
+
+            }
+        })
+
+        qrCode.filters = arrayOf<InputFilter>(AllCaps())
+
 
         // necessary workaround for weird errors
         // https://github.com/Polidea/RxAndroidBle/wiki/FAQ:-UndeliverableException
@@ -102,8 +140,10 @@ class ConnectingActivity : AppCompatActivity() {
                 val action = intent.action
 
                 when(action) {
-                    Constants.ACTION_RESPECK_CONNECTED -> respeckStatus.text = "Respeck status: Connected"
-                    Constants.ACTION_RESPECK_DISCONNECTED -> respeckStatus.text = "Respeck status: Disconnected"
+                    Constants.ACTION_RESPECK_CONNECTED -> respeckStatus.text =
+                        "Respeck status: Connected"
+                    Constants.ACTION_RESPECK_DISCONNECTED -> respeckStatus.text =
+                        "Respeck status: Disconnected"
                     else -> respeckStatus.text = "Error"
                 }
             }
@@ -125,7 +165,10 @@ class ConnectingActivity : AppCompatActivity() {
                 if(scanResult.contains(":")) {
                     // this is a respeck V6 and we should store its MAC address
                     respeck_code.setText(scanResult)
-                    sharedPreferences.edit().putString(Constants.RESPECK_MAC_ADDRESS_PREF, scanResult.toString()).apply()
+                    sharedPreferences.edit().putString(
+                        Constants.RESPECK_MAC_ADDRESS_PREF,
+                        scanResult.toString()
+                    ).apply()
                     sharedPreferences.edit().putInt(Constants.RESPECK_VERSION, 6).apply()
 
                 }
@@ -139,7 +182,10 @@ class ConnectingActivity : AppCompatActivity() {
 
                     Log.i("Debug", "Scan result = " + scanResult)
                     respeck_code.setText(scanResult)
-                    sharedPreferences.edit().putString(Constants.RESPECK_MAC_ADDRESS_PREF, scanResult).apply()
+                    sharedPreferences.edit().putString(
+                        Constants.RESPECK_MAC_ADDRESS_PREF,
+                        scanResult
+                    ).apply()
                     sharedPreferences.edit().putInt(Constants.RESPECK_VERSION, 5).apply()
                 }
 
@@ -161,13 +207,22 @@ class ConnectingActivity : AppCompatActivity() {
     }
 
     fun setupRespeckStatus() {
-        val isServiceRunning = Utils.isServiceRunning(BluetoothService::class.java, applicationContext)
-        Log.i("debug","isServiceRunning = " + isServiceRunning)
+        val isServiceRunning = Utils.isServiceRunning(
+            BluetoothService::class.java,
+            applicationContext
+        )
+        Log.i("debug", "isServiceRunning = " + isServiceRunning)
 
         // check sharedPreferences for an existing Respeck id
-        val sharedPreferences = getSharedPreferences(Constants.PREFERENCES_FILE, Context.MODE_PRIVATE)
+        val sharedPreferences = getSharedPreferences(
+            Constants.PREFERENCES_FILE,
+            Context.MODE_PRIVATE
+        )
         if (sharedPreferences.contains(Constants.RESPECK_MAC_ADDRESS_PREF)) {
-            Log.i("sharedpref", "Already saw a respeckID, starting service and attempting to reconnect")
+            Log.i(
+                "sharedpref",
+                "Already saw a respeckID, starting service and attempting to reconnect"
+            )
             respeckStatus.text = "Respeck status: Connecting..."
 
             // launch service to reconnect
