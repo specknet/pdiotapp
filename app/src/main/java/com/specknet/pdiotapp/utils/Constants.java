@@ -8,6 +8,13 @@ public class Constants {
     public static final String EXTRA_RESPECK_LIVE_X = "respeck_x";
     public static final String EXTRA_RESPECK_LIVE_Y = "respeck_y";
     public static final String EXTRA_RESPECK_LIVE_Z = "respeck_z";
+    public static final String EXTRA_RESPECK_PACKET_SEQ = "respeck_seq";
+    public static final String EXTRA_INTERPOLATED_TS = "interpolated_timestamp";
+    public static final int NUMBER_OF_SAMPLES_PER_BATCH = 32;
+    public static final float SAMPLING_FREQUENCY = 12.7f;
+    public static final int AVERAGE_TIME_DIFFERENCE_BETWEEN_RESPECK_PACKETS = (int) Math.round(
+            NUMBER_OF_SAMPLES_PER_BATCH / SAMPLING_FREQUENCY * 1000.);
+    public static final int MAXIMUM_MILLISECONDS_DEVIATION_ACTUAL_AND_CORRECTED_TIMESTAMP = 400;
 
     public static final String ACTION_INNER_RESPECK_BROADCAST = "com.specknet.pdiotapp.RESPECK_BROADCAST";
     public static final String ACTION_RESPECK_CONNECTED = "com.specknet.pdiotapp.RESPECK_CONNECTED";
