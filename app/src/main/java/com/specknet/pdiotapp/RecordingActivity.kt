@@ -4,7 +4,6 @@ import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.os.Handler
 import android.os.HandlerThread
@@ -12,14 +11,18 @@ import android.os.Looper
 import android.util.Log
 import android.view.View
 import android.widget.*
+import androidx.appcompat.app.AppCompatActivity
 import com.specknet.pdiotapp.utils.Constants
 import com.specknet.pdiotapp.utils.CountUpTimer
+import com.specknet.pdiotapp.utils.Utils
 import java.io.File
 import java.io.FileOutputStream
 import java.io.IOException
 import java.io.OutputStreamWriter
 import java.text.SimpleDateFormat
 import java.util.*
+import java.util.concurrent.TimeUnit
+import kotlin.collections.ArrayList
 
 class RecordingActivity : AppCompatActivity() {
     lateinit var sensorPositionSpinner: Spinner
@@ -57,6 +60,11 @@ class RecordingActivity : AppCompatActivity() {
     var last_y_rec = -100f
     var last_z_rec = -100f
 
+    lateinit var frequencies: ArrayList<Long>
+    lateinit var frequenciesAppend: ArrayList<Long>
+
+    var lastProcessedMinuteAppend = -1L
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_recording)
@@ -66,6 +74,10 @@ class RecordingActivity : AppCompatActivity() {
         setupButtons()
 
         setupInputs()
+
+        frequencies = ArrayList<Long>()
+        frequenciesAppend = ArrayList()
+        var lastProcessedMinute = -1L
 
         // register receiver
         respeckReceiver = object : BroadcastReceiver() {
@@ -78,6 +90,7 @@ class RecordingActivity : AppCompatActivity() {
                     val x = intent.getFloatExtra(Constants.EXTRA_RESPECK_LIVE_X, 0f)
                     val y = intent.getFloatExtra(Constants.EXTRA_RESPECK_LIVE_Y, 0f)
                     val z = intent.getFloatExtra(Constants.EXTRA_RESPECK_LIVE_Z, 0f)
+                    val ts = intent.getLongExtra(Constants.EXTRA_INTERPOLATED_TS, 0L)
 
                     if (x == last_x && y == last_y && z == last_z) {
                         Log.e("Debug", "DUPLICATE VALUES")
@@ -87,9 +100,20 @@ class RecordingActivity : AppCompatActivity() {
                     last_y = y
                     last_z = z
 
+                    var now = System.currentTimeMillis()
+                    frequencies.add(now)
+                    var currentProcessedMinute = TimeUnit.MILLISECONDS.toMinutes(now)
+
+                    if (lastProcessedMinute != currentProcessedMinute && lastProcessedMinute != -1L) {
+                        var freq = calculateRecordingFrequency()
+                        Log.i("Debug", "Recording freq = " + freq)
+                    }
+
+                    lastProcessedMinute = currentProcessedMinute
+
                     if(!fileClosed) {
 
-                        appendToFile(x, y, z)
+                        appendToFile(x, y, z, ts)
                     }
 
                 }
@@ -129,8 +153,7 @@ class RecordingActivity : AppCompatActivity() {
             this,
             R.array.sensor_position_array,
             android.R.layout.simple_spinner_item
-        ).also {
-                adapter ->
+        ).also { adapter ->
             adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
             sensorPositionSpinner.adapter = adapter
         }
@@ -151,8 +174,7 @@ class RecordingActivity : AppCompatActivity() {
             this,
             R.array.sensor_side_array,
             android.R.layout.simple_spinner_item
-        ).also {
-                adapter ->
+        ).also { adapter ->
             adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
             sensorSideSpinner.adapter = adapter
         }
@@ -173,8 +195,7 @@ class RecordingActivity : AppCompatActivity() {
             this,
             R.array.activity_type_array,
             android.R.layout.simple_spinner_item
-        ).also {
-                adapter ->
+        ).also { adapter ->
             adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
             activityTypeSpinner.adapter = adapter
         }
@@ -287,8 +308,20 @@ class RecordingActivity : AppCompatActivity() {
 
     }
 
-    private fun appendToFile(x: Float, y: Float, z: Float) {
-        val outputString = System.currentTimeMillis().toString() + "," +
+    private fun appendToFile(x: Float, y: Float, z: Float, ts: Long) {
+        val now = System.currentTimeMillis()
+
+        frequenciesAppend.add(now)
+        var currentProcessedMinute = TimeUnit.MILLISECONDS.toMinutes(now)
+
+        if (lastProcessedMinuteAppend != currentProcessedMinute && lastProcessedMinuteAppend != -1L) {
+            var freq = calculateRecordingFrequencyInAppend()
+            Log.i("Debug", "Recording freq in append = " + freq)
+        }
+
+        lastProcessedMinuteAppend = currentProcessedMinute
+
+        val outputString = ts.toString() + "," +
                 seq + "," + x.toString() + "," + y.toString() + "," +
                 z.toString() + "\n"
         outputData.append(outputString)
@@ -309,6 +342,38 @@ class RecordingActivity : AppCompatActivity() {
         super.onDestroy()
         unregisterReceiver(respeckReceiver)
         looper.quit()
+    }
+
+    fun calculateRecordingFrequency(): Float {
+        var num_freq = frequencies.size
+
+        if (num_freq <= 1) {
+            return 0f
+        }
+
+        var first_ts = frequencies[0]
+        var last_ts = frequencies[num_freq - 1]
+        var samplingFreq = num_freq * 1f / (last_ts - first_ts) * 1000f
+
+        frequencies.clear()
+
+        return samplingFreq
+    }
+
+    fun calculateRecordingFrequencyInAppend(): Float {
+        var num_freq = frequenciesAppend.size
+
+        if (num_freq <= 1) {
+            return 0f
+        }
+
+        var first_ts = frequenciesAppend[0]
+        var last_ts = frequenciesAppend[num_freq - 1]
+        var samplingFreq = num_freq * 1f / (last_ts - first_ts) * 1000f
+
+        frequenciesAppend.clear()
+
+        return samplingFreq
     }
 
 }
