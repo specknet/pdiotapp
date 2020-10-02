@@ -49,6 +49,14 @@ class RecordingActivity : AppCompatActivity() {
     var activityType = ""
     var recordingId = "123"
 
+    var last_x = -100f
+    var last_y = -100f
+    var last_z = -100f
+
+    var last_x_rec = -100f
+    var last_y_rec = -100f
+    var last_z_rec = -100f
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_recording)
@@ -70,6 +78,14 @@ class RecordingActivity : AppCompatActivity() {
                     val x = intent.getFloatExtra(Constants.EXTRA_RESPECK_LIVE_X, 0f)
                     val y = intent.getFloatExtra(Constants.EXTRA_RESPECK_LIVE_Y, 0f)
                     val z = intent.getFloatExtra(Constants.EXTRA_RESPECK_LIVE_Z, 0f)
+
+                    if (x == last_x && y == last_y && z == last_z) {
+                        Log.e("Debug", "DUPLICATE VALUES")
+                    }
+
+                    last_x = x
+                    last_y = y
+                    last_z = z
 
                     if(!fileClosed) {
 
@@ -277,7 +293,16 @@ class RecordingActivity : AppCompatActivity() {
                 z.toString() + "\n"
         outputData.append(outputString)
         seq++
-        Log.i("recording", "new data")
+
+        if (x == last_x_rec && y == last_y_rec && z == last_z_rec) {
+            Log.e("Debug", "DUPLICATE VALUES in rec")
+        }
+
+        last_x_rec = x
+        last_y_rec = y
+        last_z_rec = z
+
+        Log.i("Debug-rec", "appending " + outputString)
     }
 
     override fun onDestroy() {

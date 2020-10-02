@@ -8,6 +8,7 @@ public class Constants {
     public static final String EXTRA_RESPECK_LIVE_X = "respeck_x";
     public static final String EXTRA_RESPECK_LIVE_Y = "respeck_y";
     public static final String EXTRA_RESPECK_LIVE_Z = "respeck_z";
+    public static final String EXTRA_RESPECK_PACKET_SEQ = "respeck_seq";
 
     public static final String ACTION_INNER_RESPECK_BROADCAST = "com.specknet.pdiotapp.RESPECK_BROADCAST";
     public static final String ACTION_RESPECK_CONNECTED = "com.specknet.pdiotapp.RESPECK_CONNECTED";

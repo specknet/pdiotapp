@@ -63,6 +63,10 @@ public class Utils {
                     Log.w("RESpeckPacketHandler", "Unexpected respeck seq number. Expected: " + Long.toString(last_seq_number + 1) + ", received: " + Long.toString(seqNumber));
                 }
             }
+
+            if (last_seq_number >=0 && last_seq_number == seqNumber) {
+                Log.e("RESpeckPacketHandler", "DUPLICATE SEQ");
+            }
             last_seq_number = seqNumber;
 
             // Read battery level and charging status
@@ -85,6 +89,7 @@ public class Utils {
             liveDataIntent.putExtra(Constants.EXTRA_RESPECK_LIVE_X, x);
             liveDataIntent.putExtra(Constants.EXTRA_RESPECK_LIVE_Y, y);
             liveDataIntent.putExtra(Constants.EXTRA_RESPECK_LIVE_Z, z);
+            liveDataIntent.putExtra(Constants.EXTRA_RESPECK_PACKET_SEQ, last_seq_number);
 
             bltService.sendBroadcast(liveDataIntent);
         }
