@@ -21,7 +21,9 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".live.LiveDataActivity">
+        <activity
+            android:name=".live.LiveDataActivity"
+            android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="com.specknet.respeck.RESPECK_LIVE_BROADCAST" />
             </intent-filter>
@@ -38,8 +40,12 @@
                 <action android:name="com.specknet.pdiotapp.RESPECK_BROADCAST" />
             </intent-filter>
         </activity>
-        <activity android:name=".barcode.BarcodeActivity" />
-        <activity android:name=".bluetooth.ConnectingActivity">
+        <activity
+            android:name=".barcode.BarcodeActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".bluetooth.ConnectingActivity"
+            android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="com.specknet.pdiotapp.RESPECK_CONNECTED" />
             </intent-filter>
@@ -57,9 +63,15 @@
             </intent-filter>
         </service>
 
-        <activity android:name=".onboarding.OnBoardingActivity" />
-        <activity android:name=".RecordingActivity" />
-        <activity android:name=".MainActivity">
+        <activity
+            android:name=".onboarding.OnBoardingActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".RecordingActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".MainActivity"
+            android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
