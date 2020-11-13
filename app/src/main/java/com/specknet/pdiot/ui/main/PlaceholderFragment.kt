@@ -1,4 +1,4 @@
-package com.specknet.pdiotapp.ui.main
+package com.specknet.pdiot.ui.main
 
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -9,8 +9,8 @@ import android.widget.TextView
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
-import com.google.android.gms.location.places.Place
-import com.specknet.pdiotapp.R
+//import com.google.android.gms.location.places.Place
+import com.specknet.pdiot.R
 
 /**
  * A placeholder fragment containing a simple view.

@@ -1,4 +1,4 @@
-package com.specknet.pdiotapp.bluetooth
+package com.specknet.pdiot.bluetooth
 
 import android.app.Activity
 import android.content.*
@@ -14,10 +14,10 @@ import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import com.polidea.rxandroidble2.RxBleClient
 import com.polidea.rxandroidble2.exceptions.BleException
-import com.specknet.pdiotapp.R
-import com.specknet.pdiotapp.barcode.BarcodeActivity
-import com.specknet.pdiotapp.utils.Constants
-import com.specknet.pdiotapp.utils.Utils
+import com.specknet.pdiot.R
+import com.specknet.pdiot.barcode.BarcodeActivity
+import com.specknet.pdiot.utils.Constants
+import com.specknet.pdiot.utils.Utils
 import io.reactivex.exceptions.UndeliverableException
 import io.reactivex.plugins.RxJavaPlugins
 import kotlinx.android.synthetic.main.activity_connecting.*

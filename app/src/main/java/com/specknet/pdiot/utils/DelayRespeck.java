@@ -1,4 +1,4 @@
-package com.specknet.pdiotapp.utils;
+package com.specknet.pdiot.utils;
 
 import androidx.annotation.NonNull;
 

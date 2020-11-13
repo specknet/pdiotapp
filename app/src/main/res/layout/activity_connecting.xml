@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".bluetooth.ConnectingActivity">
+    tools:context="com.specknet.pdiot.bluetooth.ConnectingActivity">
 
     <TextView
         android:id="@+id/respeck_status_connection"

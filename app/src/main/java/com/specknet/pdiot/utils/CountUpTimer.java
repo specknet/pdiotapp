@@ -1,4 +1,4 @@
-package com.specknet.pdiotapp.utils;
+package com.specknet.pdiot.utils;
 
 import android.os.Handler;
 import android.os.Message;

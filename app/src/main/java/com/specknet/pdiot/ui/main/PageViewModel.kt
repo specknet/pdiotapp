@@ -1,4 +1,4 @@
-package com.specknet.pdiotapp.ui.main
+package com.specknet.pdiot.ui.main
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData

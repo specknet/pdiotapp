@@ -1,4 +1,4 @@
-package com.specknet.pdiotapp.bluetooth
+package com.specknet.pdiot.bluetooth
 
 import android.app.Service
 import android.content.Context
@@ -10,9 +10,9 @@ import com.polidea.rxandroidble2.RxBleConnection
 import com.polidea.rxandroidble2.RxBleDevice
 import com.polidea.rxandroidble2.scan.ScanResult
 import com.polidea.rxandroidble2.scan.ScanSettings
-import com.specknet.pdiotapp.utils.Constants
-import com.specknet.pdiotapp.utils.Utils.bytesToHex
-import com.specknet.pdiotapp.utils.Utils.processRESpeckPacket
+import com.specknet.pdiot.utils.Constants
+import com.specknet.pdiot.utils.Utils.bytesToHex
+import com.specknet.pdiot.utils.Utils.processRESpeckPacket
 import io.reactivex.disposables.Disposable
 import java.util.*
 

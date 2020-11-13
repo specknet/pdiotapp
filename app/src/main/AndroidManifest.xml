@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.specknet.pdiotapp">
+    package="com.specknet.pdiot">
     <uses-permission android:name="android.permission.BLUETOOTH" />
     <uses-permission android:name="android.permission.BLUETOOTH_ADMIN" />
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
@@ -22,7 +22,7 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
         <activity
-            android:name=".live.LiveDataActivity"
+            android:name="com.specknet.pdiot.live.LiveDataActivity"
             android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="com.specknet.respeck.RESPECK_LIVE_BROADCAST" />
@@ -41,10 +41,10 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".barcode.BarcodeActivity"
+            android:name="com.specknet.pdiot.barcode.BarcodeActivity"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".bluetooth.ConnectingActivity"
+            android:name="com.specknet.pdiot.bluetooth.ConnectingActivity"
             android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="com.specknet.pdiotapp.RESPECK_CONNECTED" />
@@ -55,7 +55,7 @@
         </activity>
 
         <service
-            android:name=".bluetooth.BluetoothService"
+            android:name="com.specknet.pdiot.bluetooth.BluetoothService"
             android:enabled="true"
             android:exported="true">
             <intent-filter>
@@ -63,14 +63,20 @@
             </intent-filter>
         </service>
 
+        <activity android:name=".SignInRegister">
+
+        </activity>
+        <activity android:name=".SignInLogin">
+
+        </activity>
         <activity
-            android:name=".onboarding.OnBoardingActivity"
+            android:name="com.specknet.pdiot.onboarding.OnBoardingActivity"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".RecordingActivity"
+            android:name="com.specknet.pdiot.RecordingActivity"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".MainActivity"
+            android:name="com.specknet.pdiot.MainActivity"
             android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

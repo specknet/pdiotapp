@@ -1,4 +1,4 @@
-package com.specknet.pdiotapp.onboarding
+package com.specknet.pdiot.onboarding
 
 import android.animation.ArgbEvaluator
 import androidx.appcompat.app.AppCompatActivity
@@ -12,8 +12,8 @@ import android.widget.ImageView
 import androidx.coordinatorlayout.widget.CoordinatorLayout
 import androidx.core.content.ContextCompat
 import androidx.viewpager.widget.ViewPager
-import com.specknet.pdiotapp.R
-import com.specknet.pdiotapp.ui.main.SectionsPagerAdapter
+import com.specknet.pdiot.R
+import com.specknet.pdiot.ui.main.SectionsPagerAdapter
 
 class OnBoardingActivity : AppCompatActivity() {
 
@@ -42,7 +42,10 @@ class OnBoardingActivity : AppCompatActivity() {
 
         // Create the adapter that will return a fragment for each of the three
         // primary sections of the activity.
-        mSectionsPagerAdapter = SectionsPagerAdapter(this, supportFragmentManager)
+        mSectionsPagerAdapter = SectionsPagerAdapter(
+            this,
+            supportFragmentManager
+        )
 
         mNextBtn = findViewById(R.id.intro_btn_next)
         mNextBtn.setImageDrawable(

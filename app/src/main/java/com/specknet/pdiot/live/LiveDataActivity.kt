@@ -1,4 +1,4 @@
-package com.specknet.pdiotapp.live
+package com.specknet.pdiot.live
 
 import android.content.BroadcastReceiver
 import android.content.Context
@@ -17,10 +17,10 @@ import com.github.mikephil.charting.data.Entry
 import com.github.mikephil.charting.data.LineData
 import com.github.mikephil.charting.data.LineDataSet
 import com.github.mikephil.charting.interfaces.datasets.ILineDataSet
-import com.specknet.pdiotapp.utils.DelayRespeck
-import com.specknet.pdiotapp.R
-import com.specknet.pdiotapp.utils.RespeckData
-import com.specknet.pdiotapp.utils.Constants
+import com.specknet.pdiot.utils.DelayRespeck
+import com.specknet.pdiot.R
+import com.specknet.pdiot.utils.RespeckData
+import com.specknet.pdiot.utils.Constants
 import java.util.concurrent.BlockingQueue
 import java.util.concurrent.DelayQueue
 import kotlin.collections.ArrayList

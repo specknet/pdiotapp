@@ -1,4 +1,4 @@
-package com.specknet.pdiotapp
+package com.specknet.pdiot
 
 import android.content.BroadcastReceiver
 import android.content.Context
@@ -12,9 +12,9 @@ import android.util.Log
 import android.view.View
 import android.widget.*
 import androidx.appcompat.app.AppCompatActivity
-import com.specknet.pdiotapp.utils.Constants
-import com.specknet.pdiotapp.utils.CountUpTimer
-import com.specknet.pdiotapp.utils.Utils
+import com.specknet.pdiot.utils.Constants
+import com.specknet.pdiot.utils.CountUpTimer
+import com.specknet.pdiot.R
 import java.io.File
 import java.io.FileOutputStream
 import java.io.IOException

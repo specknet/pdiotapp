@@ -1,4 +1,4 @@
-package com.specknet.pdiotapp.barcode
+package com.specknet.pdiot.barcode
 
 import android.Manifest
 import android.annotation.SuppressLint
@@ -18,7 +18,7 @@ import com.google.android.gms.vision.CameraSource
 import com.google.android.gms.vision.Detector
 import com.google.android.gms.vision.barcode.Barcode
 import com.google.android.gms.vision.barcode.BarcodeDetector
-import com.specknet.pdiotapp.R
+import com.specknet.pdiot.R
 import kotlinx.android.synthetic.main.activity_barcode.*
 import java.lang.Exception
 

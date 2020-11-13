@@ -1,4 +1,4 @@
-package com.specknet.pdiotapp
+package com.specknet.pdiot
 
 import android.Manifest
 import android.content.BroadcastReceiver
@@ -17,12 +17,13 @@ import android.widget.TextView
 import androidx.appcompat.app.AlertDialog
 import androidx.core.app.ActivityCompat
 import com.google.android.material.snackbar.Snackbar
-import com.specknet.pdiotapp.bluetooth.BluetoothService
-import com.specknet.pdiotapp.bluetooth.ConnectingActivity
-import com.specknet.pdiotapp.live.LiveDataActivity
-import com.specknet.pdiotapp.onboarding.OnBoardingActivity
-import com.specknet.pdiotapp.utils.Constants
-import com.specknet.pdiotapp.utils.Utils
+import com.specknet.pdiot.bluetooth.BluetoothService
+import com.specknet.pdiot.bluetooth.ConnectingActivity
+import com.specknet.pdiot.live.LiveDataActivity
+import com.specknet.pdiot.onboarding.OnBoardingActivity
+import com.specknet.pdiot.utils.Constants
+import com.specknet.pdiot.utils.Utils
+import com.specknet.pdiot.R
 import kotlinx.android.synthetic.main.activity_main.*
 
 class MainActivity : AppCompatActivity() {
@@ -52,6 +53,8 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
+        val intent = Intent (this, SignInRegister::class.java)
+        startActivity(intent)
 
         // check whether the onboarding screen should be shown
         val sharedPreferences = getSharedPreferences(Constants.PREFERENCES_FILE, Context.MODE_PRIVATE)
@@ -170,7 +173,8 @@ class MainActivity : AppCompatActivity() {
     }
 
     fun setupRespeckStatus() {
-        val isServiceRunning = Utils.isServiceRunning(BluetoothService::class.java, applicationContext)
+        val isServiceRunning = Utils.isServiceRunning(
+            BluetoothService::class.java, applicationContext)
         Log.i("debug","isServiceRunning = " + isServiceRunning)
 
         // check sharedPreferences for an existing Respeck id
