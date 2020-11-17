@@ -145,7 +145,7 @@ class OnBoardingActivity : AppCompatActivity() {
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         val id = item.itemId
-        if (id == R.id.action_settings) {
+        if (id == R.id.action_setting) {
             return true
         }
 

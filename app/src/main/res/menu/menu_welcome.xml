@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:context="com.specknet.pdiotapp.com.specknet.pdiot.WelcomeActivity">
+    <item
+        android:id="@+id/sign_out"
+        android:orderInCategory="100"
+        android:title="Sign-out"
+        app:showAsAction="never|ifRoom" />
+</menu>

@@ -3,7 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     tools:context="com.specknet.pdiotapp.com.specknet.pdiot.onboarding.OnBoardingActivity">
     <item
-        android:id="@+id/action_settings"
+        android:id="@+id/action_setting"
         android:orderInCategory="100"
         android:title="Settings"
         app:showAsAction="never" />

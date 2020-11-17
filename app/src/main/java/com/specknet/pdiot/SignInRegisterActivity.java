@@ -20,7 +20,7 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
-public class SignInRegister extends AppCompatActivity {
+public class SignInRegisterActivity extends AppCompatActivity {
 
 
     private Button registerButton;
@@ -33,8 +33,8 @@ public class SignInRegister extends AppCompatActivity {
         setContentView(R.layout.activity_sign_in_register);
         registerButton=findViewById(R.id.regButton);
         loginLink=findViewById(R.id.login_link);
-        moveToLogin=new Intent(this, SignInLogin.class);
-        backToMain=new Intent(this,MainActivity.class);
+        moveToLogin=new Intent(this, SignInLoginActivity.class);
+        backToMain=new Intent(this,WelcomeActivity.class);
 
 
         /* Setting register Button to use the registration function on the entered data */
@@ -71,7 +71,7 @@ public class SignInRegister extends AppCompatActivity {
                 if(task.isSuccessful())
                 {
 
-                    Toast.makeText(SignInRegister.this, "Authentication successful!",
+                    Toast.makeText(SignInRegisterActivity.this, "Authentication successful!",
                             Toast.LENGTH_SHORT).show();
                     saveUser(userName,age);
                     startActivity(backToMain);
@@ -84,7 +84,7 @@ public class SignInRegister extends AppCompatActivity {
         }).addOnFailureListener(new OnFailureListener() {
             @Override
             public void onFailure(@NonNull Exception e) {
-                Toast.makeText(SignInRegister.this, "Authentication failed!"+e.getMessage(),
+                Toast.makeText(SignInRegisterActivity.this, "Authentication failed!"+e.getMessage(),
                         Toast.LENGTH_SHORT).show();
                 Log.w("TAG",e.getMessage());
 
