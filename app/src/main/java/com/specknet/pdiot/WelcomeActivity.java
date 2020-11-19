@@ -92,6 +92,13 @@ public class WelcomeActivity extends AppCompatActivity {
         {
             case R.id.sign_out:
                 signOut();
+                break;
+            case R.id.test_service:
+                startService();
+                break;
+            case R.id.test_stop:
+                stopService();
+                break;
             default:
         }
         return super.onOptionsItemSelected(item);
@@ -103,6 +110,21 @@ public class WelcomeActivity extends AppCompatActivity {
         Intent intent = new Intent (this, SignInRegisterActivity.class);
         startActivity(intent);
         finish();
+
+    }
+    private void startService()
+    {
+        String input = welcomeText.getText().toString(); //will change it just testing
+
+        Intent serviceIntent = new Intent(this,TrackService.class);
+        serviceIntent.putExtra("inputExtra",input);
+        startService(serviceIntent);
+    }
+
+    private void stopService()
+    {
+        Intent serviceIntent=new Intent(this,TrackService.class);
+        stopService(serviceIntent);
 
     }
 
