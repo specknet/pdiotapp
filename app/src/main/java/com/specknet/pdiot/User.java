@@ -12,6 +12,9 @@ public class User {
     {
         uid="";
         username="";
+        age=0;
+        activityGoal=0;
+        activityLevel=0;
     }
     User(String uid, String username,int age)
     {
@@ -21,6 +24,11 @@ public class User {
         activityLevel=0;
         activityGoal=20; //default value set, might change it
     }
-
+    public void editUser(String username,int age, float activityGoal)
+    {
+        this.username=username;
+        this.age=age;
+        this.activityGoal=activityGoal;
+    }
 
 }

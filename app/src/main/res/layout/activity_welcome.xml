@@ -27,4 +27,14 @@
         app:layout_constraintHorizontal_bias="0.537"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/welcomeText" />
+
+    <Button
+        android:id="@+id/profile_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="32dp"
+        android:text="Profile"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/connectMenuButton" />
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -22,21 +22,22 @@ import com.google.firebase.database.ValueEventListener;
 public class WelcomeActivity extends AppCompatActivity {
 
     private FirebaseAuth mAuth;
-    private FirebaseUser user;
     private TextView welcomeText;
-    private Button connectButton;
     private Intent toApp;
+    private Intent toProfile;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_welcome);
         welcomeText=findViewById(R.id.welcomeText);
-        connectButton=findViewById(R.id.connectMenuButton);
+        Button connectButton = findViewById(R.id.connectMenuButton);
+        Button profileButton = findViewById(R.id.profile_button);
         toApp=new Intent(this,MainActivity.class);
+        toProfile=new Intent(this,ProfileActivity.class);
         mAuth=FirebaseAuth.getInstance();
-        user=mAuth.getCurrentUser();
-        if(user==null)
+        FirebaseUser user = mAuth.getCurrentUser();
+        if(user ==null)
         {
             Intent intent = new Intent (this, SignInRegisterActivity.class);
             startActivity(intent);
@@ -50,6 +51,12 @@ public class WelcomeActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 startActivity(toApp);
+            }
+        });
+        profileButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startActivity(toProfile);
             }
         });
 

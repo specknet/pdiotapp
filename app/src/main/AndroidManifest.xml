@@ -90,6 +90,7 @@
                 <action android:name="com.specknet.respeckmodeltesting.RESPECK_DISCONNECTED" />
             </intent-filter>
         </activity>
+        <activity android:name=".ProfileActivity" />
     </application>
 
 </manifest>

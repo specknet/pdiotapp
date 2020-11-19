@@ -17,6 +17,8 @@ import com.github.mikephil.charting.data.Entry
 import com.github.mikephil.charting.data.LineData
 import com.github.mikephil.charting.data.LineDataSet
 import com.github.mikephil.charting.interfaces.datasets.ILineDataSet
+import com.specknet.pdiot.MovePoint
+import com.specknet.pdiot.MovementQueue
 import com.specknet.pdiot.utils.DelayRespeck
 import com.specknet.pdiot.R
 import com.specknet.pdiot.utils.RespeckData
@@ -41,6 +43,7 @@ class LiveDataActivity : AppCompatActivity() {
     var time = 0f
     lateinit var allAccelData: LineData
     lateinit var chart: LineChart
+    lateinit var moveQueue:MovementQueue
 
     // global broadcast receiver so we can unregister it
     lateinit var respeckLiveUpdateReceiver: BroadcastReceiver
@@ -49,6 +52,7 @@ class LiveDataActivity : AppCompatActivity() {
     val filterTest = IntentFilter(Constants.ACTION_INNER_RESPECK_BROADCAST)
 
     override fun onCreate(savedInstanceState: Bundle?) {
+        moveQueue=MovementQueue(30)
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_live_data)
 
@@ -74,6 +78,7 @@ class LiveDataActivity : AppCompatActivity() {
                     val x = intent.getFloatExtra(Constants.EXTRA_RESPECK_LIVE_X, 0f)
                     val y = intent.getFloatExtra(Constants.EXTRA_RESPECK_LIVE_Y, 0f)
                     val z = intent.getFloatExtra(Constants.EXTRA_RESPECK_LIVE_Z, 0f)
+                    moveQueue.AddMove(MovePoint(x,y,z))
 
                     val mag = sqrt((x*x + y*y + z*z).toDouble())
 
