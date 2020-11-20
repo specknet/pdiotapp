@@ -1,9 +1,13 @@
 package com.specknet.pdiot;
 
+import android.graphics.Color;
 import android.os.Bundle;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.SeekBar;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -28,6 +32,7 @@ public class ProfileActivity extends AppCompatActivity {
     private User userData;
     private Button restoreData;
     private Button editData;
+    private SeekBar levelBar;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -35,6 +40,8 @@ public class ProfileActivity extends AppCompatActivity {
         editAge=findViewById(R.id.ageEdit);
         editUsername=findViewById(R.id.usernameEdit);
         editLevel=findViewById(R.id.activeEdit);
+        disableEditText(editLevel);
+        levelBar=findViewById(R.id.seekBarLevel);
         restoreData=findViewById(R.id.restore_button);
         editData=findViewById(R.id.edit_Button);
         mAuth=FirebaseAuth.getInstance();
@@ -53,11 +60,27 @@ public class ProfileActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 int newAge=Integer.parseInt(editAge.getText().toString());
-                float newGoal=Float.parseFloat(editLevel.getText().toString());
+                int newGoal=Integer.parseInt(editLevel.getText().toString());
                 String newUsername=editUsername.getText().toString();
                 userData.editUser(newUsername,newAge,newGoal);
                 saveUserData(userData);
                 finish();
+            }
+        });
+        levelBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+            @Override
+            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+                editLevel.setText(String.valueOf(progress));
+            }
+
+            @Override
+            public void onStartTrackingTouch(SeekBar seekBar) {
+
+            }
+
+            @Override
+            public void onStopTrackingTouch(SeekBar seekBar) {
+
             }
         });
 
@@ -82,6 +105,7 @@ public class ProfileActivity extends AppCompatActivity {
         editUsername.setText(profileInfo.username);
         editLevel.setText(String.valueOf(profileInfo.activityGoal));
         editAge.setText(String.valueOf( profileInfo.age));
+        levelBar.setProgress(profileInfo.activityGoal);
 
 
     }
@@ -104,5 +128,13 @@ public class ProfileActivity extends AppCompatActivity {
             }
         });
 
+    }
+
+    private void disableEditText(EditText editText) {
+        editText.setFocusable(false);
+        editText.setEnabled(false);
+        editText.setCursorVisible(false);
+        editText.setKeyListener(null);
+        editText.setBackgroundColor(Color.TRANSPARENT);
     }
 }

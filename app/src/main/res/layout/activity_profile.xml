@@ -11,7 +11,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="32dp"
-        android:text="Profile Data"
+        android:text="@string/profile_data"
         android:textSize="36sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -27,13 +27,14 @@
         android:inputType="textPersonName"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/profileTitle" />
+        app:layout_constraintTop_toBottomOf="@+id/profileTitle"
+        android:autofillHints="" />
 
     <TextView
         android:id="@+id/usernameText"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Username:"
+        android:text="@string/username"
         app:layout_constraintBottom_toBottomOf="@+id/usernameEdit"
         app:layout_constraintEnd_toStartOf="@+id/usernameEdit"
         app:layout_constraintTop_toTopOf="@+id/usernameEdit" />
@@ -42,7 +43,7 @@
         android:id="@+id/ageText"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Age:"
+        android:text="@string/age"
         app:layout_constraintBottom_toBottomOf="@+id/ageEdit"
         app:layout_constraintEnd_toStartOf="@+id/ageEdit"
         app:layout_constraintTop_toTopOf="@+id/ageEdit" />
@@ -57,13 +58,14 @@
         android:inputType="number"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/usernameEdit" />
+        app:layout_constraintTop_toBottomOf="@+id/usernameEdit"
+        android:autofillHints="" />
 
     <TextView
         android:id="@+id/activeText"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="ActivityLevel:"
+        android:text="@string/activitygoal"
         app:layout_constraintBottom_toBottomOf="@+id/activeEdit"
         app:layout_constraintEnd_toStartOf="@+id/activeEdit"
         app:layout_constraintTop_toTopOf="@+id/activeEdit" />
@@ -76,6 +78,7 @@
         android:layout_marginTop="32dp"
         android:ems="10"
         android:inputType="number"
+        android:maxLength="3"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/ageEdit" />
@@ -84,22 +87,34 @@
         android:id="@+id/edit_Button"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="32dp"
+        android:layout_marginTop="24dp"
         android:layout_marginEnd="130dp"
         android:text="Edit Data"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.421"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/activeEdit" />
+        app:layout_constraintTop_toBottomOf="@+id/seekBarLevel" />
 
     <Button
         android:id="@+id/restore_button"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="130dp"
-        android:layout_marginTop="32dp"
+        android:layout_marginTop="24dp"
         android:text="Restore Data"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.498"
+        app:layout_constraintHorizontal_bias="0.61"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/seekBarLevel" />
+
+    <SeekBar
+        android:id="@+id/seekBarLevel"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/activeEdit" />
+
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -6,7 +6,7 @@ public class User {
     public String username;
     public int age;
     public float activityLevel;
-    public float activityGoal;
+    public int activityGoal;
 
     User()
     {
@@ -24,7 +24,7 @@ public class User {
         activityLevel=0;
         activityGoal=20; //default value set, might change it
     }
-    public void editUser(String username,int age, float activityGoal)
+    public void editUser(String username,int age, int activityGoal)
     {
         this.username=username;
         this.age=age;
