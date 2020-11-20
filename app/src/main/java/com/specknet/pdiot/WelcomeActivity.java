@@ -25,6 +25,7 @@ public class WelcomeActivity extends AppCompatActivity {
     private TextView welcomeText;
     private Intent toApp;
     private Intent toProfile;
+    private FirebaseUser user;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -36,7 +37,7 @@ public class WelcomeActivity extends AppCompatActivity {
         toApp=new Intent(this,MainActivity.class);
         toProfile=new Intent(this,ProfileActivity.class);
         mAuth=FirebaseAuth.getInstance();
-        FirebaseUser user = mAuth.getCurrentUser();
+        user = mAuth.getCurrentUser();
         if(user ==null)
         {
             Intent intent = new Intent (this, SignInRegisterActivity.class);
@@ -77,6 +78,12 @@ public class WelcomeActivity extends AppCompatActivity {
 
             }
         });
+    }
+    @Override
+    public void onResume() {
+
+        super.onResume();
+        updateUI(user);
     }
     @Override
     public boolean onCreateOptionsMenu(Menu menu)

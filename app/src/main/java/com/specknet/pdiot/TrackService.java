@@ -11,25 +11,85 @@ import android.os.Handler;
 import android.os.HandlerThread;
 import android.os.IBinder;
 import android.os.Looper;
+import android.util.Log;
 
+import androidx.annotation.NonNull;
 import androidx.core.app.NotificationCompat;
 
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.ml.common.modeldownload.FirebaseModelDownloadConditions;
+import com.google.firebase.ml.common.modeldownload.FirebaseModelManager;
+import com.google.firebase.ml.custom.FirebaseCustomRemoteModel;
 import com.specknet.pdiot.utils.Constants;
+
+import org.tensorflow.lite.Interpreter;
+
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.nio.ByteBuffer;
+import java.nio.ByteOrder;
+import java.nio.FloatBuffer;
+import java.util.Dictionary;
+import java.util.Enumeration;
+import java.util.HashMap;
+import java.util.Map;
 
 import static com.specknet.pdiot.AppNotify.CHANNEL_ID;
 
 public class TrackService extends Service {
     private int counter=0;
-    private Looper looper;
+
     private MovementQueue movementQueue;
+
+    private Looper looper;
     private BroadcastReceiver respeckLiveReceiver;
     private IntentFilter filterTest=new IntentFilter(Constants.ACTION_INNER_RESPECK_BROADCAST);
+    private Interpreter interpreter;
+    private String[] classLabels;
+    private Map<String, Long> movementTimes;
+
+    private String lastActivity="";
+    private long lastTimeStamp;
+
+
     public TrackService() {
     }
 
     @Override
     public void onCreate() {
-        movementQueue=new MovementQueue(30);
+        movementQueue=new MovementQueue(36);
+        classLabels=getClassLabels("model_class.txt",12);
+        movementTimes=new HashMap<String,Long>();
+
+        FirebaseCustomRemoteModel remoteModel =
+                new FirebaseCustomRemoteModel.Builder("Movement_Classifier").build();
+        FirebaseModelDownloadConditions conditions = new FirebaseModelDownloadConditions.Builder()
+                .requireWifi()
+                .build();
+        FirebaseModelManager.getInstance().download(remoteModel, conditions)
+                .addOnSuccessListener(new OnSuccessListener<Void>() {
+                    @Override
+                    public void onSuccess(Void v) {
+                        // Download complete. Depending on your app, you could enable
+                        // the ML feature, or switch from the local model to the remote
+                        // model, etc.
+                    }
+                });
+        FirebaseModelManager.getInstance().getLatestModelFile(remoteModel)
+                .addOnCompleteListener(new OnCompleteListener<File>() {
+                    @Override
+                    public void onComplete(@NonNull Task<File> task) {
+                        File modelFile = task.getResult();
+                        if (modelFile != null) {
+                            interpreter = new Interpreter(modelFile);
+                        }
+                    }
+                });
+
            respeckLiveReceiver=new BroadcastReceiver() {
             @Override
             public void onReceive(Context context, Intent intent) {
@@ -41,6 +101,34 @@ public class TrackService extends Service {
                     float z = intent.getFloatExtra(Constants.EXTRA_RESPECK_LIVE_Z, 0f);
                     MovePoint nextPoint=new MovePoint(x,y,z);
                     movementQueue.AddMove(nextPoint);
+                    if(movementQueue.isFull())
+                    {
+                        ByteBuffer input=movementQueue.ConvertDataToBuffer();
+                        int bufferSize = 12 * java.lang.Float.SIZE / java.lang.Byte.SIZE;
+                        ByteBuffer modelOutput = ByteBuffer.allocateDirect(bufferSize).order(ByteOrder.nativeOrder());
+                        interpreter.run(input, modelOutput);
+                        modelOutput.rewind();
+                        FloatBuffer probabilities = modelOutput.asFloatBuffer();
+                        String curLabel=FindLabel(probabilities);
+                        Log.i("Label:", String.format("Current activity: %s", curLabel));
+
+                        if(curLabel!=lastActivity)
+                        {
+                            if(lastActivity=="")
+                            {
+                                lastActivity=curLabel;
+                                lastTimeStamp=System.currentTimeMillis()/1000;
+                            }
+                            else
+                                {
+                                    onActivityChange(curLabel,System.currentTimeMillis()/1000);
+                                }
+                        }
+
+
+                            // File not found?
+
+                    }
 
                 }
 
@@ -51,6 +139,46 @@ public class TrackService extends Service {
         looper= handlerThread.getLooper();
         Handler handler=new Handler(looper);
         this.registerReceiver(respeckLiveReceiver,filterTest , null,handler);
+    }
+
+
+
+
+
+    private void onActivityChange(String newlabel, long timestamp) {
+        long newTime=(timestamp-lastTimeStamp);
+        if(newTime==0)
+        {
+            return;
+        }
+        Log.i("Change","Activity "+lastActivity+" lasted: "+newTime+" seconds.");
+        if(movementTimes.containsKey(lastActivity))
+          {
+              newTime= movementTimes.get(lastActivity)+(timestamp-lastTimeStamp);
+              movementTimes.put(lastActivity,newTime);
+          }
+        else
+            {
+                movementTimes.put(lastActivity,newTime);
+            }
+        lastActivity=newlabel;
+        lastTimeStamp=timestamp;
+    }
+
+    private String[] getClassLabels(String filename,int numLabels) {
+        String[] classes=new String[numLabels];
+        try {
+            BufferedReader reader = new BufferedReader(
+                    new InputStreamReader(getAssets().open(filename)));
+            for(int i=0; i<numLabels; i++)
+            {
+                classes[i]=reader.readLine();
+            }
+        } catch (IOException e) {
+
+        }
+        return classes;
+
     }
 
     @Override
@@ -71,15 +199,32 @@ public class TrackService extends Service {
 
     @Override
     public void onDestroy() {
-        Intent restart=new Intent(this,TrackService.class);
-        restart.putExtra("counter",counter);
-        restart.putExtra("inputExtra","Welcome "+Integer.toString(counter)+" times");
-        startService(restart);
+        for(String key: movementTimes.keySet())
+        {
+            Log.i("Times","Movement "+key+" "+movementTimes.get(key).toString());
+        }
     }
+
 
     @Override
     public IBinder onBind(Intent intent) {
         // TODO: Return the communication channel to the service.
         return null;
+    }
+
+    private String FindLabel(FloatBuffer probabilities)
+    {
+        float maxprob=0.0f;
+        int maxIndex=-1;
+        for(int i=0; i<probabilities.capacity(); i++)
+        {
+            if(probabilities.get(i)>maxprob)
+            {
+                maxprob=probabilities.get(i);
+                maxIndex=i;
+            }
+        }
+        return classLabels[maxIndex];
+
     }
 }

@@ -1,0 +1,12 @@
+walking
+climbing
+descending
+deskwork
+lyingLeft
+lyingRight
+lyingBack
+lyingStomach
+run
+sitForward,
+sitBackward
+sitStand
