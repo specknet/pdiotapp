@@ -7,11 +7,13 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.os.CountDownTimer;
 import android.os.Handler;
 import android.os.HandlerThread;
 import android.os.IBinder;
 import android.os.Looper;
 import android.util.Log;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.core.app.NotificationCompat;
@@ -61,12 +63,13 @@ public class TrackService extends Service {
 
     @Override
     public void onCreate() {
+        Toast.makeText(this, "Service launched!", Toast.LENGTH_SHORT).show();
         movementQueue=new MovementQueue(36);
-        classLabels=getClassLabels("model_class.txt",12);
+        classLabels=getClassLabels("model_class.txt",6);
         movementTimes=new HashMap<String,Long>();
 
         FirebaseCustomRemoteModel remoteModel =
-                new FirebaseCustomRemoteModel.Builder("Movement_Classifier").build();
+                new FirebaseCustomRemoteModel.Builder("Movement_Classifier2").build();
         FirebaseModelDownloadConditions conditions = new FirebaseModelDownloadConditions.Builder()
                 .requireWifi()
                 .build();
@@ -139,6 +142,23 @@ public class TrackService extends Service {
         looper= handlerThread.getLooper();
         Handler handler=new Handler(looper);
         this.registerReceiver(respeckLiveReceiver,filterTest , null,handler);
+        new CountDownTimer(60000, 1000)
+        {
+
+            @Override
+            public void onTick(long millisUntilFinished) {
+
+            }
+
+            @Override
+            public void onFinish() {
+                onActivityChange(lastActivity,System.currentTimeMillis()/1000);
+                String dom=dominantAction();
+                movementTimes.clear();
+                Toast.makeText(getApplicationContext(), "Dominant action: "+dom+" !", Toast.LENGTH_LONG).show();
+
+            }
+        }.start();
     }
 
 
@@ -226,5 +246,19 @@ public class TrackService extends Service {
         }
         return classLabels[maxIndex];
 
+    }
+    private String dominantAction()
+    {
+        long max=0;
+        String maxKey="";
+        for(String key:movementTimes.keySet())
+        {
+            if(movementTimes.get(key)>max)
+            {
+                max=movementTimes.get(key);
+                maxKey=key;
+            }
+        }
+        return maxKey;
     }
 }
