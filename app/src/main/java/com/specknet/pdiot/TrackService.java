@@ -62,7 +62,7 @@ public class TrackService extends Service {
     private Map<String, Long> movementTimes;
     private Map<String, Integer> minuteActions;
     private int minutes=0;
-    private int savePerMin=15;
+    private int savePerMin=10;
     private MovementData saveData;
 
     private String lastActivity="";
@@ -83,7 +83,7 @@ public class TrackService extends Service {
         minuteActions=new HashMap<String, Integer>();
 
         FirebaseCustomRemoteModel remoteModel =
-                new FirebaseCustomRemoteModel.Builder("Movement_Classifier2").build();
+                new FirebaseCustomRemoteModel.Builder("Movement_Classifier").build();
         FirebaseModelDownloadConditions conditions = new FirebaseModelDownloadConditions.Builder()
                 .requireWifi()
                 .build();
@@ -285,10 +285,7 @@ public class TrackService extends Service {
 
     @Override
     public void onDestroy() {
-        for(String key: movementTimes.keySet())
-        {
-            Log.i("Times","Movement "+key+" "+movementTimes.get(key).toString());
-        }
+        saveActionToDataBase();
     }
 
 
