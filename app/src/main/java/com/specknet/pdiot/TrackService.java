@@ -21,6 +21,12 @@ import androidx.core.app.NotificationCompat;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.ml.common.modeldownload.FirebaseModelDownloadConditions;
 import com.google.firebase.ml.common.modeldownload.FirebaseModelManager;
 import com.google.firebase.ml.custom.FirebaseCustomRemoteModel;
@@ -35,6 +41,9 @@ import java.io.InputStreamReader;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.nio.FloatBuffer;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.Dictionary;
 import java.util.Enumeration;
 import java.util.HashMap;
@@ -43,16 +52,18 @@ import java.util.Map;
 import static com.specknet.pdiot.AppNotify.CHANNEL_ID;
 
 public class TrackService extends Service {
-    private int counter=0;
 
     private MovementQueue movementQueue;
+    private String today;
 
-    private Looper looper;
-    private BroadcastReceiver respeckLiveReceiver;
-    private IntentFilter filterTest=new IntentFilter(Constants.ACTION_INNER_RESPECK_BROADCAST);
+    private final IntentFilter filterTest=new IntentFilter(Constants.ACTION_INNER_RESPECK_BROADCAST);
     private Interpreter interpreter;
     private String[] classLabels;
     private Map<String, Long> movementTimes;
+    private Map<String, Integer> minuteActions;
+    private int minutes=0;
+    private int savePerMin=15;
+    private MovementData saveData;
 
     private String lastActivity="";
     private long lastTimeStamp;
@@ -63,10 +74,13 @@ public class TrackService extends Service {
 
     @Override
     public void onCreate() {
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy/MM/dd");
+        today = sdf.format(new Date());
         Toast.makeText(this, "Service launched!", Toast.LENGTH_SHORT).show();
         movementQueue=new MovementQueue(36);
         classLabels=getClassLabels("model_class.txt",6);
         movementTimes=new HashMap<String,Long>();
+        minuteActions=new HashMap<String, Integer>();
 
         FirebaseCustomRemoteModel remoteModel =
                 new FirebaseCustomRemoteModel.Builder("Movement_Classifier2").build();
@@ -93,43 +107,38 @@ public class TrackService extends Service {
                     }
                 });
 
-           respeckLiveReceiver=new BroadcastReceiver() {
+        // File not found?
+        BroadcastReceiver respeckLiveReceiver = new BroadcastReceiver() {
             @Override
             public void onReceive(Context context, Intent intent) {
 
-                if(intent.getAction() == Constants.ACTION_INNER_RESPECK_BROADCAST)
-                {
+                if (intent.getAction() == Constants.ACTION_INNER_RESPECK_BROADCAST) {
                     float x = intent.getFloatExtra(Constants.EXTRA_RESPECK_LIVE_X, 0f);
                     float y = intent.getFloatExtra(Constants.EXTRA_RESPECK_LIVE_Y, 0f);
                     float z = intent.getFloatExtra(Constants.EXTRA_RESPECK_LIVE_Z, 0f);
-                    MovePoint nextPoint=new MovePoint(x,y,z);
+                    MovePoint nextPoint = new MovePoint(x, y, z);
                     movementQueue.AddMove(nextPoint);
-                    if(movementQueue.isFull())
-                    {
-                        ByteBuffer input=movementQueue.ConvertDataToBuffer();
-                        int bufferSize = 12 * java.lang.Float.SIZE / java.lang.Byte.SIZE;
+                    if (movementQueue.isFull()) {
+                        ByteBuffer input = movementQueue.ConvertDataToBuffer();
+                        int bufferSize = 12 * Float.SIZE / Byte.SIZE;
                         ByteBuffer modelOutput = ByteBuffer.allocateDirect(bufferSize).order(ByteOrder.nativeOrder());
                         interpreter.run(input, modelOutput);
                         modelOutput.rewind();
                         FloatBuffer probabilities = modelOutput.asFloatBuffer();
-                        String curLabel=FindLabel(probabilities);
+                        String curLabel = FindLabel(probabilities);
                         Log.i("Label:", String.format("Current activity: %s", curLabel));
 
-                        if(curLabel!=lastActivity)
-                        {
-                            if(lastActivity=="")
-                            {
-                                lastActivity=curLabel;
-                                lastTimeStamp=System.currentTimeMillis()/1000;
+                        if (curLabel != lastActivity) {
+                            if (lastActivity == "") {
+                                lastActivity = curLabel;
+                                lastTimeStamp = System.currentTimeMillis() / 1000;
+                            } else {
+                                onActivityChange(curLabel, System.currentTimeMillis() / 1000);
                             }
-                            else
-                                {
-                                    onActivityChange(curLabel,System.currentTimeMillis()/1000);
-                                }
                         }
 
 
-                            // File not found?
+                        // File not found?
 
                     }
 
@@ -139,7 +148,7 @@ public class TrackService extends Service {
         };
         HandlerThread handlerThread=new HandlerThread("bgThread");
         handlerThread.start();
-        looper= handlerThread.getLooper();
+        Looper looper = handlerThread.getLooper();
         Handler handler=new Handler(looper);
         this.registerReceiver(respeckLiveReceiver,filterTest , null,handler);
         new CountDownTimer(60000, 1000)
@@ -154,15 +163,73 @@ public class TrackService extends Service {
             public void onFinish() {
                 onActivityChange(lastActivity,System.currentTimeMillis()/1000);
                 String dom=dominantAction();
+                if(dom!="")
+                {
+                    addActionToMinutes(dom);
+                }
                 movementTimes.clear();
-                Toast.makeText(getApplicationContext(), "Dominant action: "+dom+" !", Toast.LENGTH_LONG).show();
+                //Toast.makeText(getApplicationContext(), "Dominant action: "+dom+" !", Toast.LENGTH_LONG).show();
+
+                this.start();
 
             }
         }.start();
     }
 
+    private void addActionToMinutes(String dom) {
+        if(minuteActions.containsKey(dom))
+        {
+            int minutes=minuteActions.get(dom);
+            minuteActions.put(dom,minutes+1);
+        }
+        else
+            {
+                minuteActions.put(dom,1);
+            }
+        minutes++;
+        if(minutes>=savePerMin)
+        {
+            saveActionToDataBase();
+            minutes=0;
+            minuteActions.clear();
+        }
+    }
 
+    private void saveActionToDataBase() {
 
+        saveData=new MovementData(minuteActions);
+        String uid=FirebaseAuth.getInstance().getCurrentUser().getUid();
+        updateTodayRecord(uid);
+    }
+    private void updateTodayRecord(final String uid)
+    {
+        DatabaseReference databaseRef= FirebaseDatabase.getInstance().getReference("/movements/");
+        databaseRef.child(uid).child(today).addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                saveData.AddMovementData(snapshot.getValue(MovementData.class));
+                editMoveDataBase(uid,saveData);
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+                Log.w("TAG", "loadPost:onCancelled", error.toException());
+                editMoveDataBase(uid,saveData);
+
+            }
+
+        });
+    }
+    private void editMoveDataBase(String uid,MovementData data)
+    {
+        DatabaseReference dataRef=FirebaseDatabase.getInstance().getReference("movements/");
+        dataRef.child(uid).child(today).setValue(saveData).addOnCompleteListener(new OnCompleteListener<Void>() {
+            @Override
+            public void onComplete(@NonNull Task<Void> task) {
+                Log.w("TAG","User added to database!");
+            }
+        });
+    }
 
 
     private void onActivityChange(String newlabel, long timestamp) {
@@ -204,7 +271,6 @@ public class TrackService extends Service {
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
         String input=intent.getStringExtra("inputExtra");
-        counter=1+intent.getIntExtra("counter",0);
         Intent notificationIntent= new Intent(this,MainActivity.class);
         PendingIntent pendingIntent=PendingIntent.getActivity(this,0,notificationIntent,0);
         Notification notification=new NotificationCompat.Builder(this,CHANNEL_ID)
@@ -261,4 +327,5 @@ public class TrackService extends Service {
         }
         return maxKey;
     }
+
 }
