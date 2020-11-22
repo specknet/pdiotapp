@@ -42,16 +42,17 @@ import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.nio.FloatBuffer;
 import java.text.SimpleDateFormat;
-import java.util.Calendar;
 import java.util.Date;
-import java.util.Dictionary;
-import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Map;
 
 import static com.specknet.pdiot.AppNotify.CHANNEL_ID;
 
 public class TrackService extends Service {
+
+    private BroadcastReceiver respeckLiveReceiver;
+    private Looper looper;
+    private CountDownTimer timer;
 
     private MovementQueue movementQueue;
     private String today;
@@ -62,11 +63,13 @@ public class TrackService extends Service {
     private Map<String, Long> movementTimes;
     private Map<String, Integer> minuteActions;
     private int minutes=0;
-    private int savePerMin=10;
+    private final int savePerMin=10;
     private MovementData saveData;
 
     private String lastActivity="";
     private long lastTimeStamp;
+
+    private boolean disconnect=false;
 
 
     public TrackService() {
@@ -74,6 +77,7 @@ public class TrackService extends Service {
 
     @Override
     public void onCreate() {
+        filterTest.addAction(Constants.ACTION_RESPECK_DISCONNECTED);
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy/MM/dd");
         today = sdf.format(new Date());
         Toast.makeText(this, "Service launched!", Toast.LENGTH_SHORT).show();
@@ -103,55 +107,14 @@ public class TrackService extends Service {
                         File modelFile = task.getResult();
                         if (modelFile != null) {
                             interpreter = new Interpreter(modelFile);
+                            startReciever();
                         }
                     }
                 });
 
         // File not found?
-        BroadcastReceiver respeckLiveReceiver = new BroadcastReceiver() {
-            @Override
-            public void onReceive(Context context, Intent intent) {
 
-                if (intent.getAction() == Constants.ACTION_INNER_RESPECK_BROADCAST) {
-                    float x = intent.getFloatExtra(Constants.EXTRA_RESPECK_LIVE_X, 0f);
-                    float y = intent.getFloatExtra(Constants.EXTRA_RESPECK_LIVE_Y, 0f);
-                    float z = intent.getFloatExtra(Constants.EXTRA_RESPECK_LIVE_Z, 0f);
-                    MovePoint nextPoint = new MovePoint(x, y, z);
-                    movementQueue.AddMove(nextPoint);
-                    if (movementQueue.isFull()) {
-                        ByteBuffer input = movementQueue.ConvertDataToBuffer();
-                        int bufferSize = 12 * Float.SIZE / Byte.SIZE;
-                        ByteBuffer modelOutput = ByteBuffer.allocateDirect(bufferSize).order(ByteOrder.nativeOrder());
-                        interpreter.run(input, modelOutput);
-                        modelOutput.rewind();
-                        FloatBuffer probabilities = modelOutput.asFloatBuffer();
-                        String curLabel = FindLabel(probabilities);
-                        Log.i("Label:", String.format("Current activity: %s", curLabel));
-
-                        if (curLabel != lastActivity) {
-                            if (lastActivity == "") {
-                                lastActivity = curLabel;
-                                lastTimeStamp = System.currentTimeMillis() / 1000;
-                            } else {
-                                onActivityChange(curLabel, System.currentTimeMillis() / 1000);
-                            }
-                        }
-
-
-                        // File not found?
-
-                    }
-
-                }
-
-            }
-        };
-        HandlerThread handlerThread=new HandlerThread("bgThread");
-        handlerThread.start();
-        Looper looper = handlerThread.getLooper();
-        Handler handler=new Handler(looper);
-        this.registerReceiver(respeckLiveReceiver,filterTest , null,handler);
-        new CountDownTimer(60000, 1000)
+        timer=new CountDownTimer(60000, 1000)
         {
 
             @Override
@@ -168,12 +131,13 @@ public class TrackService extends Service {
                     addActionToMinutes(dom);
                 }
                 movementTimes.clear();
-                //Toast.makeText(getApplicationContext(), "Dominant action: "+dom+" !", Toast.LENGTH_LONG).show();
+
 
                 this.start();
 
             }
-        }.start();
+        };
+        timer.start();
     }
 
     private void addActionToMinutes(String dom) {
@@ -207,20 +171,21 @@ public class TrackService extends Service {
         databaseRef.child(uid).child(today).addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
+               if(snapshot.getValue()!=null) //if data couldn't be found, we skip addition with null data to avoid crash, current sessions data is saved.
                 saveData.AddMovementData(snapshot.getValue(MovementData.class));
-                editMoveDataBase(uid,saveData);
+                editMoveDataBase(uid);
             }
 
             @Override
             public void onCancelled(@NonNull DatabaseError error) {
                 Log.w("TAG", "loadPost:onCancelled", error.toException());
-                editMoveDataBase(uid,saveData);
+                editMoveDataBase(uid);
 
             }
 
         });
     }
-    private void editMoveDataBase(String uid,MovementData data)
+    private void editMoveDataBase(String uid)
     {
         DatabaseReference dataRef=FirebaseDatabase.getInstance().getReference("movements/");
         dataRef.child(uid).child(today).setValue(saveData).addOnCompleteListener(new OnCompleteListener<Void>() {
@@ -285,7 +250,16 @@ public class TrackService extends Service {
 
     @Override
     public void onDestroy() {
+        super.onDestroy();
+        if(disconnect)
+        Toast.makeText(this, "Respeck disconnected!", Toast.LENGTH_SHORT).show();
         saveActionToDataBase();
+        timer.cancel();
+        unregisterReceiver(respeckLiveReceiver);
+        looper.quit();
+
+
+
     }
 
 
@@ -323,6 +297,62 @@ public class TrackService extends Service {
             }
         }
         return maxKey;
+    }
+    private void startReciever()
+    {
+         respeckLiveReceiver = new BroadcastReceiver() {
+            @Override
+            public void onReceive(Context context, Intent intent) {
+
+                if (intent.getAction().equals(Constants.ACTION_INNER_RESPECK_BROADCAST)) {
+                    float x = intent.getFloatExtra(Constants.EXTRA_RESPECK_LIVE_X, 0f);
+                    float y = intent.getFloatExtra(Constants.EXTRA_RESPECK_LIVE_Y, 0f);
+                    float z = intent.getFloatExtra(Constants.EXTRA_RESPECK_LIVE_Z, 0f);
+                    MovePoint nextPoint = new MovePoint(x, y, z);
+                    movementQueue.AddMove(nextPoint);
+                    if (movementQueue.isFull()) {
+                        ByteBuffer input = movementQueue.ConvertDataToBuffer();
+                        int bufferSize = 12 * Float.SIZE / Byte.SIZE;
+                        ByteBuffer modelOutput = ByteBuffer.allocateDirect(bufferSize).order(ByteOrder.nativeOrder());
+                        interpreter.run(input, modelOutput);
+                        modelOutput.rewind();
+                        FloatBuffer probabilities = modelOutput.asFloatBuffer();
+                        String curLabel = FindLabel(probabilities);
+                        Log.i("Label:", String.format("Current activity: %s", curLabel));
+
+                        if (curLabel != lastActivity) {
+                            if (lastActivity == "") {
+                                lastActivity = curLabel;
+                                lastTimeStamp = System.currentTimeMillis() / 1000;
+                            } else {
+                                onActivityChange(curLabel, System.currentTimeMillis() / 1000);
+                            }
+                        }
+
+
+                        // File not found?
+
+                    }
+
+                }
+                if(intent.getAction()==Constants.ACTION_RESPECK_DISCONNECTED)
+                {
+                    stopService();
+                }
+
+
+            }
+        };
+        HandlerThread handlerThread=new HandlerThread("bgThread");
+        handlerThread.start();
+        looper = handlerThread.getLooper();
+        Handler handler=new Handler(looper);
+        this.registerReceiver(respeckLiveReceiver,filterTest , null,handler);
+    }
+    private void stopService()
+    {
+        disconnect=true;
+        this.stopSelf();
     }
 
 }
