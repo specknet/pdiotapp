@@ -144,12 +144,14 @@ public class TrackService extends Service {
         {
             sumTime+=movementTimes.get(key);
         }
+        int remainderTime=0;
         for(String key:movementTimes.keySet())
         {
             float percentile=movementTimes.get(key)/(float)sumTime;
-            if(percentile>1/60)
+            if(percentile>5/60) //if 5 seconds of a motion is in a minute then it's probably a relevant move
             {
                 int addseconds=Math.round(percentile*60);
+                remainderTime+=addseconds;
                 if(minuteActions.containsKey(key))
                 {
                     int seconds=minuteActions.get(key);
@@ -160,6 +162,10 @@ public class TrackService extends Service {
                     minuteActions.put(key,addseconds);
                 }
             }
+        }
+        if(remainderTime<60)
+        {
+            minuteActions.put("transition",60-remainderTime);
         }
         movementTimes.clear();
         minutes++;
