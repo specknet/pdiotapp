@@ -66,8 +66,6 @@ public class TrackService extends Service {
     private final int savePerMin=10;
     private MovementData saveData;
 
-    private String lastActivity="";
-    private long lastTimeStamp;
 
     private boolean disconnect=false;
 
@@ -124,20 +122,51 @@ public class TrackService extends Service {
 
             @Override
             public void onFinish() {
-                onActivityChange(lastActivity,System.currentTimeMillis()/1000);
-                String dom=dominantAction();
-                if(dom!="")
-                {
-                    addActionToMinutes(dom);
-                }
-                movementTimes.clear();
-
-
+                //onActivityChange(lastActivity,System.currentTimeMillis()/1000);
+                //String dom=dominantAction();
+               // if(dom!="")
+                //{
+                 //   addActionToMinutes(dom);
+                //}
+                addMovesToSave();
                 this.start();
 
             }
         };
         timer.start();
+    }
+
+    private void addMovesToSave() {
+
+        long sumTime=0;
+
+        for(String key:movementTimes.keySet())
+        {
+            sumTime+=movementTimes.get(key);
+        }
+        for(String key:movementTimes.keySet())
+        {
+            float percentile=movementTimes.get(key)/(float)sumTime;
+            if(percentile>1/60)
+            {
+                int addseconds=Math.round(percentile*60);
+                if(minuteActions.containsKey(key))
+                {
+                    int seconds=minuteActions.get(key);
+                    minuteActions.put(key,seconds+addseconds);
+                }
+                else
+                {
+                    minuteActions.put(key,addseconds);
+                }
+            }
+        }
+        movementTimes.clear();
+        minutes++;
+        if(minutes>=savePerMin)
+        {
+            saveActionToDataBase();
+        }
     }
 
     private void addActionToMinutes(String dom) {
@@ -154,8 +183,6 @@ public class TrackService extends Service {
         if(minutes>=savePerMin)
         {
             saveActionToDataBase();
-            minutes=0;
-            minuteActions.clear();
         }
     }
 
@@ -164,6 +191,8 @@ public class TrackService extends Service {
         saveData=new MovementData(minuteActions);
         String uid=FirebaseAuth.getInstance().getCurrentUser().getUid();
         updateTodayRecord(uid);
+        minutes=0;
+        minuteActions.clear();
     }
     private void updateTodayRecord(final String uid)
     {
@@ -197,7 +226,7 @@ public class TrackService extends Service {
     }
 
 
-    private void onActivityChange(String newlabel, long timestamp) {
+    /*private void onActivityChange(String newlabel, long timestamp) {
         long newTime=(timestamp-lastTimeStamp);
         if(newTime==0)
         {
@@ -215,6 +244,18 @@ public class TrackService extends Service {
             }
         lastActivity=newlabel;
         lastTimeStamp=timestamp;
+    }*/
+    private void addClassifiedMove(String move)
+    {
+        if(movementTimes.containsKey(move))
+        {
+            long existingTime=movementTimes.get(move);
+            movementTimes.put(move,existingTime+1);
+        }
+        else
+            {
+                movementTimes.put(move, (long) 1);
+            }
     }
 
     private String[] getClassLabels(String filename,int numLabels) {
@@ -319,15 +360,16 @@ public class TrackService extends Service {
                         FloatBuffer probabilities = modelOutput.asFloatBuffer();
                         String curLabel = FindLabel(probabilities);
                         Log.i("Label:", String.format("Current activity: %s", curLabel));
-
-                        if (curLabel != lastActivity) {
+                        addClassifiedMove(curLabel);
+                        /*if (curLabel != lastActivity) {
                             if (lastActivity == "") {
                                 lastActivity = curLabel;
                                 lastTimeStamp = System.currentTimeMillis() / 1000;
                             } else {
                                 onActivityChange(curLabel, System.currentTimeMillis() / 1000);
                             }
-                        }
+                        }*/
+
 
 
                         // File not found?
