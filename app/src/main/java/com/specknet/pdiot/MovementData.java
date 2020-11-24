@@ -9,7 +9,7 @@ public class MovementData {
     public int lying;
     //public int sitstanding;
     //public int stairsdown;
-    public int stairsup;
+    public int stairmoving;
     public int deskwork;
     public int stateTransition;
     public void Init()
@@ -17,7 +17,7 @@ public class MovementData {
         walking=0;
         sitting=0;
         running=0;
-        stairsup=0;
+        stairmoving=0;
         //stairsdown=0;
         lying=0;
         deskwork=0;
@@ -50,8 +50,8 @@ public class MovementData {
                 case "deskworking":
                     deskwork=actionRecorder.get(key);
                     break;
-                case "stairsup" :
-                    stairsup=actionRecorder.get(key);
+                case "stairmoving" :
+                    stairmoving=actionRecorder.get(key);
                     break;
                 //case "stairsdown":
                   /*  stairsdown=actionRecorder.get(key);
@@ -67,7 +67,7 @@ public class MovementData {
     }
     public void AddMovementData(MovementData otherMove)
     {
-        stairsup+=otherMove.stairsup;
+        stairmoving+=otherMove.stairmoving;
         deskwork+=otherMove.deskwork;
         sitting+=otherMove.sitting;
         walking+=otherMove.walking;
@@ -79,7 +79,7 @@ public class MovementData {
     }
     public float ActivityLevel()
     {
-        int activeSecs=10*running+5*stairsup+2*walking+stateTransition;
+        int activeSecs=10*running+5*stairmoving+2*walking+stateTransition;
         int passiveSecs=10*lying+5*sitting+2*deskwork;
         int allMotion=activeSecs+passiveSecs;
         return activeSecs/(float)allMotion;
