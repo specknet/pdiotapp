@@ -74,7 +74,7 @@ public class WelcomeActivity extends AppCompatActivity {
         PendingIntent pendingIntent=PendingIntent.getBroadcast(this,0,notifyIntent,0);
 
         AlarmManager alarmManager= (AlarmManager) getSystemService(ALARM_SERVICE);
-        alarmManager.setInexactRepeating(AlarmManager.RTC_WAKEUP,System.currentTimeMillis(),10000,pendingIntent);
+        alarmManager.setInexactRepeating(AlarmManager.RTC_WAKEUP,System.currentTimeMillis(),AlarmManager.INTERVAL_HOUR*4,pendingIntent);
 
     }
 
@@ -115,12 +115,12 @@ public class WelcomeActivity extends AppCompatActivity {
             case R.id.sign_out:
                 signOut();
                 break;
-            case R.id.test_service:
+         /*   case R.id.test_service:
                 startService();
                 break;
             case R.id.test_stop:
                 stopService();
-                break;
+                break;*/
             default:
         }
         return super.onOptionsItemSelected(item);
@@ -136,7 +136,7 @@ public class WelcomeActivity extends AppCompatActivity {
     }
     private void startService()
     {
-        String input = welcomeText.getText().toString(); //will change it just testing
+        String input = "Keep service running to record your actions!"; //will change it just testing
 
         Intent serviceIntent = new Intent(this,TrackService.class);
         serviceIntent.putExtra("inputExtra",input);

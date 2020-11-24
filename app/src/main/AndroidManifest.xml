@@ -34,11 +34,7 @@
             android:exported="true" />
 
         <activity android:name=".WelcomeActivity">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
 
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
         </activity>
         <activity
             android:name=".live.LiveDataActivity"
@@ -98,6 +94,11 @@
             </intent-filter>
             <intent-filter>
                 <action android:name="com.specknet.respeckmodeltesting.RESPECK_DISCONNECTED" />
+            </intent-filter>
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
         <activity android:name=".ProfileActivity" />

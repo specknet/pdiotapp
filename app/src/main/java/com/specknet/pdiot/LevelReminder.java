@@ -33,7 +33,7 @@ public class LevelReminder extends BroadcastReceiver {
     @Override
     public void onReceive(Context context, Intent intent) {
         String uid=intent.getStringExtra("userUID");
-        Intent notificationIntent= new Intent(context,WelcomeActivity.class);
+        Intent notificationIntent= new Intent(context,MainActivity.class);
         PendingIntent pendingIntent=PendingIntent.getActivity(context,0,notificationIntent,0);
         builder= new NotificationCompat.Builder(context,CHANNEL_ID)
                 .setSmallIcon(R.drawable.ic_baseline_notifications_none_24)

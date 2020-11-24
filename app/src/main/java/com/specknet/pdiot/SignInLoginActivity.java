@@ -32,7 +32,7 @@ public class SignInLoginActivity extends AppCompatActivity {
          registerLink=findViewById(R.id.reg_link);
          loginButton=findViewById(R.id.loginButton);
          moveToRegister=new Intent(this, SignInRegisterActivity.class);
-         backToMain=new Intent(this, WelcomeActivity.class);
+         backToMain=new Intent(this, MainActivity.class);
 
 
 

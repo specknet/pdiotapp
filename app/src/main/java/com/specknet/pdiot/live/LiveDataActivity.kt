@@ -264,7 +264,16 @@ class LiveDataActivity : AppCompatActivity() {
         if (curLabel !== lastActivity) {
             if (curLabel != null) {
                 lastActivity = curLabel
-                currentActionText.setText(lastActivity)
+                var activityType=""
+                if(lastActivity=="lying" || lastActivity=="sitting/standing" || lastActivity=="deskworking")
+                {
+                    activityType="Passive"
+                }
+                else
+                {
+                    activityType="Active"
+                }
+                currentActionText.setText(activityType+" action: "+lastActivity)
             }
         }
 

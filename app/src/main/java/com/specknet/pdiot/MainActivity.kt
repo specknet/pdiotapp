@@ -1,12 +1,13 @@
 package com.specknet.pdiot
 
 import android.Manifest
+import android.app.AlarmManager
+import android.app.PendingIntent
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
 import android.content.pm.PackageManager
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.provider.Settings
 import android.util.Log
@@ -14,16 +15,23 @@ import android.view.Menu
 import android.view.MenuItem
 import android.widget.Button
 import android.widget.TextView
+import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
+import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import com.google.android.material.snackbar.Snackbar
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.FirebaseUser
+import com.google.firebase.database.DataSnapshot
+import com.google.firebase.database.DatabaseError
+import com.google.firebase.database.FirebaseDatabase
+import com.google.firebase.database.ValueEventListener
 import com.specknet.pdiot.bluetooth.BluetoothService
 import com.specknet.pdiot.bluetooth.ConnectingActivity
 import com.specknet.pdiot.live.LiveDataActivity
 import com.specknet.pdiot.onboarding.OnBoardingActivity
 import com.specknet.pdiot.utils.Constants
 import com.specknet.pdiot.utils.Utils
-import com.specknet.pdiot.R
 import kotlinx.android.synthetic.main.activity_main.*
 
 class MainActivity : AppCompatActivity() {
@@ -32,7 +40,13 @@ class MainActivity : AppCompatActivity() {
     lateinit var liveProcessingButton: Button
     lateinit var pairingButton: Button
     lateinit var recordButton: Button
+    lateinit var stopRecordButton: Button
+    lateinit var profileButton: Button
     lateinit var respeckStatus: TextView
+    lateinit var welcomeText: TextView
+    lateinit var mAuth: FirebaseAuth
+    var  user: FirebaseUser? =null
+
 
     // permissions
     lateinit var permissionAlertDialog: AlertDialog.Builder
@@ -53,6 +67,18 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
+        mAuth= FirebaseAuth.getInstance()
+        user=mAuth.currentUser
+        if(user==null)
+        {
+            val intent = Intent(this, SignInRegisterActivity::class.java)
+            startActivity(intent)
+            finish()
+        }
+        else
+        {
+            updateUI(user!!)
+        }
 
 
         // check whether the onboarding screen should be shown
@@ -70,7 +96,10 @@ class MainActivity : AppCompatActivity() {
         liveProcessingButton = findViewById(R.id.live_button)
         pairingButton = findViewById(R.id.ble_button)
         recordButton = findViewById(R.id.record_button)
+        stopRecordButton=findViewById(R.id.stop_record_button)
+        profileButton=findViewById(R.id.profile_button)
         respeckStatus = findViewById(R.id.respeck_status_welcome)
+        welcomeText=findViewById(R.id.welcome_TextView)
 
         permissionAlertDialog = AlertDialog.Builder(this)
 
@@ -97,6 +126,34 @@ class MainActivity : AppCompatActivity() {
         }
 
         this.registerReceiver(respeckStatusReceiver, filter)
+        val notifyIntent = Intent(this, LevelReminder::class.java)
+        notifyIntent.putExtra("userUID", user!!.uid)
+        val pendingIntent = PendingIntent.getBroadcast(this, 0, notifyIntent, 0)
+
+        val alarmManager =
+            getSystemService(Context.ALARM_SERVICE) as AlarmManager
+        alarmManager.setInexactRepeating(
+            AlarmManager.RTC_WAKEUP,
+            System.currentTimeMillis()+AlarmManager.INTERVAL_HOUR*4,
+            AlarmManager.INTERVAL_HOUR * 4,
+            pendingIntent
+        )
+    }
+
+    private fun updateUI(user: FirebaseUser) {
+        val uid = user.uid
+        val databaseRef = FirebaseDatabase.getInstance().getReference("/users/")
+        databaseRef.child(uid).addListenerForSingleValueEvent(object : ValueEventListener {
+            override fun onDataChange(snapshot: DataSnapshot) {
+                val userData =
+                    snapshot.getValue(User::class.java)!!
+                welcomeText.setText("Welcome " + userData.username)
+            }
+
+            override fun onCancelled(error: DatabaseError) {}
+        })
+
+
     }
 
     fun setupClickListeners() {
@@ -111,9 +168,27 @@ class MainActivity : AppCompatActivity() {
         }
 
         recordButton.setOnClickListener {
-            val intent = Intent(this, RecordingActivity::class.java)
+            if(respeckStatus.text=="Respeck status: Connected")
+            {
+                startService()
+            }
+            else
+            {
+                Toast.makeText(this,"Connect Respect first to record your activity!",Toast.LENGTH_LONG).show();
+            }
+        }
+        stopRecordButton.setOnClickListener{
+            stopService()
+        }
+        profileButton.setOnClickListener {
+             val intent=Intent(this, ProfileActivity::class.java)
             startActivity(intent)
         }
+    }
+
+    private fun stopService() {
+        val serviceIntent = Intent(this, TrackService::class.java)
+        stopService(serviceIntent)
     }
 
     fun setupPermissions() {
@@ -276,7 +351,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
-        menuInflater.inflate(R.menu.menu_main, menu)
+        menuInflater.inflate(R.menu.menu_welcome, menu)
         return true
     }
 
@@ -287,8 +362,23 @@ class MainActivity : AppCompatActivity() {
             startActivity(introIntent)
             return true
         }
+        if(id==R.id.sign_out)
+        {
+            stopService()
+            mAuth.signOut()
+            val intent = Intent(this, SignInRegisterActivity::class.java)
+            startActivity(intent)
+            finish()
+        }
 
         return super.onOptionsItemSelected(item)
+    }
+    private fun startService() {
+        val input =
+            "Keep service running to record your actions!" //will change it just testing
+        val serviceIntent = Intent(this, TrackService::class.java)
+        serviceIntent.putExtra("inputExtra", input)
+        startService(serviceIntent)
     }
 
 }

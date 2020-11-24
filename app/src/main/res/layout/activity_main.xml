@@ -23,11 +23,12 @@
 
 
         <TextView
-            android:id="@+id/textView2"
+            android:id="@+id/welcome_TextView"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="100px"
-            android:text="I want to"
+            android:text="Welcome User"
+            android:textSize="24sp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/respeck_status_welcome"
@@ -37,14 +38,26 @@
             android:id="@+id/record_button"
             android:layout_width="550px"
             android:layout_height="wrap_content"
-            android:layout_marginTop="100px"
+            android:layout_marginTop="16dp"
             android:background="#03A9F4"
             android:text="Record data"
             android:textColor="#FFFFFF"
+            app:layout_constraintBottom_toTopOf="@+id/stop_record_button"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/textView2"
-            app:layout_constraintBottom_toTopOf="@+id/live_button"/>
+            app:layout_constraintTop_toBottomOf="@+id/welcome_TextView" />
+        <Button
+            android:id="@+id/stop_record_button"
+            android:layout_width="550px"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="100px"
+            android:background="#03A9F4"
+            android:text="Stop Recording"
+            android:textColor="#FFFFFF"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/live_button"
+            app:layout_constraintBottom_toTopOf="@+id/record_button"/>
 
 
         <Button
@@ -57,7 +70,7 @@
             android:textColor="#FFFFFF"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/record_button"
+            app:layout_constraintTop_toBottomOf="@+id/stop_record_button"
             app:layout_constraintBottom_toTopOf="@+id/ble_button"/>
 
 
@@ -71,6 +84,20 @@
             android:background="#03A9F4"
             android:textColor="#FFFFFF"
             app:layout_constraintTop_toBottomOf="@+id/live_button"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintBottom_toTopOf="@id/profile_button"
+            />
+        <Button
+            android:id="@+id/profile_button"
+            android:layout_width="550px"
+            android:layout_height="wrap_content"
+            android:text="Profile and Progress"
+            android:layout_marginTop="100px"
+            android:layout_marginBottom="100px"
+            android:background="#03A9F4"
+            android:textColor="#FFFFFF"
+            app:layout_constraintTop_toBottomOf="@+id/ble_button"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintBottom_toBottomOf="parent"

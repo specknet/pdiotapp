@@ -8,16 +8,4 @@
         android:orderInCategory="100"
         android:title="Sign-out"
         app:showAsAction="never|ifRoom" />
-    <item
-        android:id="@+id/test_service"
-        android:orderInCategory="90"
-        android:title="test service"
-        app:showAsAction="never"
-        />
-    <item
-        android:id="@+id/test_stop"
-        android:orderInCategory="90"
-        android:title="stop service"
-        app:showAsAction="never"
-        />
 </menu>

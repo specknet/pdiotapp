@@ -34,7 +34,7 @@ public class SignInRegisterActivity extends AppCompatActivity {
         registerButton=findViewById(R.id.regButton);
         loginLink=findViewById(R.id.login_link);
         moveToLogin=new Intent(this, SignInLoginActivity.class);
-        backToMain=new Intent(this,WelcomeActivity.class);
+        backToMain=new Intent(this,MainActivity.class);
 
 
         /* Setting register Button to use the registration function on the entered data */

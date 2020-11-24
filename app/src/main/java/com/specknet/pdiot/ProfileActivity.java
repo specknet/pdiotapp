@@ -1,6 +1,8 @@
 package com.specknet.pdiot;
 
+import android.content.res.Resources;
 import android.graphics.Color;
+import android.graphics.PorterDuff;
 import android.os.Bundle;
 import android.provider.ContactsContract;
 import android.text.Editable;
@@ -8,6 +10,7 @@ import android.text.TextWatcher;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ProgressBar;
 import android.widget.SeekBar;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -25,6 +28,7 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
+import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
@@ -41,6 +45,8 @@ public class ProfileActivity extends AppCompatActivity {
     private Button editData;
     private SeekBar levelBar;
     private String today;
+    private ProgressBar todayProgress;
+    private ProgressBar averageProgress;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -54,6 +60,8 @@ public class ProfileActivity extends AppCompatActivity {
         averageLevel=findViewById(R.id.averageText);
         disableEditText(editLevel);
         levelBar=findViewById(R.id.seekBarLevel);
+        todayProgress=findViewById(R.id.todayProgressBar);
+        averageProgress=findViewById(R.id.averageProgressBar);
         restoreData=findViewById(R.id.restore_button);
         editData=findViewById(R.id.edit_Button);
         mAuth=FirebaseAuth.getInstance();
@@ -168,7 +176,7 @@ public class ProfileActivity extends AppCompatActivity {
                        {
                            numofDays++;
                            MovementData dayData=day.getValue(MovementData.class);
-                           activitySum=dayData.ActivityLevel();
+                           activitySum+=dayData.ActivityLevel();
 
                        }
                    }
@@ -188,8 +196,10 @@ public class ProfileActivity extends AppCompatActivity {
     }
 
     private void updateAverageScore(float activitySum) {
-        String message="Current activity level: "+activitySum;
+        DecimalFormat decFormat= new DecimalFormat("0");
+        String message="Current average activity level: "+decFormat.format(activitySum*100);
         averageLevel.setText(message);
+        averageProgress.setProgress(Math.round(activitySum*100));
     }
 
     private void getTodayActivityLevel()
@@ -213,11 +223,14 @@ public class ProfileActivity extends AppCompatActivity {
         String message="";
         if(todayscore!=null)
         {
-             message="Today's activity level: "+todayscore.ActivityLevel();
+            DecimalFormat decFormat= new DecimalFormat("0");
+             message="Today's activity level: "+decFormat.format(todayscore.ActivityLevel()*100);
+             todayProgress.setProgress(Math.round(todayscore.ActivityLevel()*100));
         }
         else
             {
                  message="Record your activity to measure your activity level!";
+                 todayProgress.setProgress(0);
             }
         todayLevel.setText(message);
     }
