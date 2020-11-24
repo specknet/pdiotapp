@@ -288,7 +288,7 @@ public class TrackService extends Service {
         Notification notification=new NotificationCompat.Builder(this,CHANNEL_ID)
                 .setContentTitle("Movement Tracker")
                 .setContentText(input)
-                .setSmallIcon(R.drawable.android_black_24dp)
+                .setSmallIcon(R.drawable.ic_recording_icon)
                 .setContentIntent(pendingIntent)
                 .build();
         startForeground(1,notification);

@@ -2,7 +2,13 @@ package com.specknet.pdiot;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.NotificationCompat;
+import androidx.core.app.NotificationManagerCompat;
 
+import android.app.AlarmManager;
+import android.app.NotificationChannel;
+import android.app.NotificationManager;
+import android.app.PendingIntent;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.Menu;
@@ -18,6 +24,8 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+
+import static com.specknet.pdiot.AppNotify.CHANNEL_ID;
 
 public class WelcomeActivity extends AppCompatActivity {
 
@@ -60,6 +68,13 @@ public class WelcomeActivity extends AppCompatActivity {
                 startActivity(toProfile);
             }
         });
+
+        Intent notifyIntent=new Intent(this,LevelReminder.class);
+        notifyIntent.putExtra("userUID",user.getUid());
+        PendingIntent pendingIntent=PendingIntent.getBroadcast(this,0,notifyIntent,0);
+
+        AlarmManager alarmManager= (AlarmManager) getSystemService(ALARM_SERVICE);
+        alarmManager.setInexactRepeating(AlarmManager.RTC_WAKEUP,System.currentTimeMillis(),10000,pendingIntent);
 
     }
 

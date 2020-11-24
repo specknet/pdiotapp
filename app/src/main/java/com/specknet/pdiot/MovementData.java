@@ -80,7 +80,7 @@ public class MovementData {
     public float ActivityLevel()
     {
         int activeSecs=20*running+10*stairsup+5*walking+stateTransition;
-        int passiveSecs=10*lying+5*sitting+2*deskwork;
+        int passiveSecs=10*lying+5*sitting+deskwork;
         int allMotion=activeSecs+passiveSecs;
         if(allMotion==0)
         {
