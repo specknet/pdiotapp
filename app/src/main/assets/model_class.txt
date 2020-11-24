@@ -2,5 +2,5 @@ deskworking
 lying
 running
 sitting
-stairsup
 walking
+stairsup

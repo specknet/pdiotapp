@@ -173,6 +173,8 @@ public class ProfileActivity extends AppCompatActivity {
                        }
                    }
                }
+               if(numofDays==0)
+                   numofDays++;
                activitySum/=numofDays;
                updateAverageScore(activitySum);
 
@@ -197,7 +199,7 @@ public class ProfileActivity extends AppCompatActivity {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 MovementData todayScore=snapshot.getValue(MovementData.class);
-                updateTodayScore(todayScore.ActivityLevel());
+                updateTodayScore(todayScore);
             }
 
             @Override
@@ -207,8 +209,16 @@ public class ProfileActivity extends AppCompatActivity {
         });
     }
 
-    private void updateTodayScore(float activityLevel) {
-        String message="Today's activity level: "+activityLevel;
+    private void updateTodayScore(MovementData todayscore) {
+        String message="";
+        if(todayscore!=null)
+        {
+             message="Today's activity level: "+todayscore.ActivityLevel();
+        }
+        else
+            {
+                 message="Record your activity to measure your activity level!";
+            }
         todayLevel.setText(message);
     }
 }
