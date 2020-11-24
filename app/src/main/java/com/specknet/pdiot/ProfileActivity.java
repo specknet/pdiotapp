@@ -173,7 +173,7 @@ public class ProfileActivity extends AppCompatActivity {
                        }
                    }
                }
-               if(numofDays==0)
+               if(numofDays==0) //to avoid 0 division
                    numofDays++;
                activitySum/=numofDays;
                updateAverageScore(activitySum);
