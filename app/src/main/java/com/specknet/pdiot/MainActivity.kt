@@ -82,6 +82,7 @@ class MainActivity : AppCompatActivity() {
 
 
         // check whether the onboarding screen should be shown
+        /*
         val sharedPreferences = getSharedPreferences(Constants.PREFERENCES_FILE, Context.MODE_PRIVATE)
         if (sharedPreferences.contains(Constants.PREF_USER_FIRST_TIME)) {
             isUserFirstTime = false
@@ -91,7 +92,7 @@ class MainActivity : AppCompatActivity() {
             sharedPreferences.edit().putBoolean(Constants.PREF_USER_FIRST_TIME, false).apply()
             val introIntent = Intent(this, OnBoardingActivity::class.java)
             startActivity(introIntent)
-        }
+        }*/
 
         liveProcessingButton = findViewById(R.id.live_button)
         pairingButton = findViewById(R.id.ble_button)
@@ -132,12 +133,18 @@ class MainActivity : AppCompatActivity() {
 
         val alarmManager =
             getSystemService(Context.ALARM_SERVICE) as AlarmManager
+        alarmManager.cancel(pendingIntent)
         alarmManager.setInexactRepeating(
             AlarmManager.RTC_WAKEUP,
             System.currentTimeMillis()+AlarmManager.INTERVAL_HOUR*4,
             AlarmManager.INTERVAL_HOUR * 4,
             pendingIntent
         )
+    }
+
+    override fun onResume() {
+        super.onResume()
+        updateUI(user!!)
     }
 
     private fun updateUI(user: FirebaseUser) {

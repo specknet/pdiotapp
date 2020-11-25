@@ -70,7 +70,7 @@ class LiveDataActivity : AppCompatActivity() {
         setContentView(R.layout.activity_live_data)
 
         classLabels=getClassLabels("model_class.txt",6)
-        movementQueue=MovementQueue(36)
+        movementQueue=MovementQueue(16)
         currentActionText=findViewById(R.id.current_action_text)
 
         // get the accel fields

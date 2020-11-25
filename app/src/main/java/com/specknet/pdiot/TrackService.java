@@ -53,6 +53,7 @@ public class TrackService extends Service {
     private BroadcastReceiver respeckLiveReceiver;
     private Looper looper;
     private CountDownTimer timer;
+    private boolean timerStarted=false;
 
     private MovementQueue movementQueue;
     private String today;
@@ -79,7 +80,7 @@ public class TrackService extends Service {
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy/MM/dd");
         today = sdf.format(new Date());
         Toast.makeText(this, "Service launched!", Toast.LENGTH_SHORT).show();
-        movementQueue=new MovementQueue(36);
+        movementQueue=new MovementQueue(16);
         classLabels=getClassLabels("model_class.txt",6);
         movementTimes=new HashMap<String,Long>();
         minuteActions=new HashMap<String, Integer>();
@@ -133,7 +134,6 @@ public class TrackService extends Service {
 
             }
         };
-        timer.start();
     }
 
     private void addMovesToSave() {
@@ -367,6 +367,11 @@ public class TrackService extends Service {
                         String curLabel = FindLabel(probabilities);
                         Log.i("Label:", String.format("Current activity: %s", curLabel));
                         addClassifiedMove(curLabel);
+                        if(!timerStarted)
+                        {
+                            timer.start();
+                            timerStarted=true;
+                        }
                         /*if (curLabel != lastActivity) {
                             if (lastActivity == "") {
                                 lastActivity = curLabel;
