@@ -1,6 +1,7 @@
-sitting/standing
+deskworking
 lying
 running
-deskworking
-walking
+sitting/standing
 stairmoving
+walking
+
