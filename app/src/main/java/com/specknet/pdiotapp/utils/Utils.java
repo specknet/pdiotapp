@@ -38,12 +38,24 @@ public class Utils {
         return new String(hexChars);
     }
 
+    public static float qToFloat(Byte upper, Byte lower) {
+        short unsigned_lower = (short) (lower & 0xFF);
+        short value = (short) ((upper << 8) | unsigned_lower);
+        return  (((float)value) / 1024);
+    }
+
     public static String getRESpeckUUID(Context context) {
         // this will always exist because the service is going to be started only after the respeck has been scanned\
 
         SharedPreferences sharedPreferences = context.getSharedPreferences(Constants.PREFERENCES_FILE, Context.MODE_PRIVATE);
 
         return sharedPreferences.getString(Constants.RESPECK_MAC_ADDRESS_PREF, "");
+    }
+
+    public static String getThingyUUID(Context context) {
+        SharedPreferences sharedPreferences = context.getSharedPreferences(Constants.PREFERENCES_FILE, Context.MODE_PRIVATE);
+
+        return sharedPreferences.getString(Constants.THINGY_MAC_ADDRESS_PREF, "");
     }
 
     public static int getRESpeckVersion(Context context) {

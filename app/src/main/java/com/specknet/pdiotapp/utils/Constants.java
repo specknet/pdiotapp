@@ -27,6 +27,7 @@ public class Constants {
     public static final String PREFERENCES_FILE = "com.specknet.pdiotapp.PREFERENCE_FILE";
     public static final String RESPECK_MAC_ADDRESS_PREF = "respeck_id_pref";
     public static final String RESPECK_VERSION = "respeck_version";
+    public static final String THINGY_MAC_ADDRESS_PREF = "thingy_id_pref";
 
     //The REQUEST_ENABLE_BT constant passed to startActivityForResult(android.content.Intent, int)
     // is a locally-defined integer (which must be greater than 0) that the system passes back
@@ -141,6 +142,7 @@ public class Constants {
         public static final Uri CONFIG_CONTENT_URI = Uri.parse("content://" + PROVIDER_NAME + "/config");
         public static final String SUBJECT_ID = "SubjectID";
         public static final String RESPECK_UUID = "RESpeckUUID";
+        public static final String THINGY_UUID = "ThingyUUID";
         public static final String AIRSPECKP_UUID = "AirspeckPUUID";
         public static final String PULSEOX_UUID = "PulseoxUUID";
         public static final String SPIROMETER_UUID = "SpirometerUUID";
@@ -170,6 +172,13 @@ public class Constants {
             "com.specknet.respeck.RESPECK_LIVE_BROADCAST";
     public static final float MINUTES_FOR_MEDIAN_CALC = 500;
     public static final SimpleDateFormat dateFormatter = new SimpleDateFormat("yyyy-MM-dd", Locale.UK);
+
+    public static final String THINGY_MOTION_CHARACTERISTIC = "ef680406-9b35-4933-9b10-52ffa9740042";
+
+    public static final String ACTION_THINGY_BROADCAST = "com.specknet.pdiotapp.RESPECK_BROADCAST";
+    public static final String ACTION_THINGY_CONNECTED = "com.specknet.pdiotapp.RESPECK_CONNECTED";
+    public static final String ACTION_THINGY_DISCONNECTED = "com.specknet.pdiotapp.RESPECK_DISCONNECTED";
+
 
 
 }

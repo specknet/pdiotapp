@@ -14,16 +14,21 @@ import kotlin.math.abs
  * It contains all logic to transform the incoming bytes into the desired variables and then stores and broadcasts
  * this information
  */
-class RESpeckPacketHandler(val speckService: BluetoothSpeckService) {
+class ThingyPacketHandler(val speckService: BluetoothSpeckService) {
 
     var fwVersion: String = speckService.reSpeckFwVersion
         set(value) {
             field = value
-//            if (value != "-1") {
-//                respeckCsvWriter = getNormalCsvFileWriter()
-//                respeckIMUCsvWriter = getIMUCsvFileWriter()
-//            }
         }
+
+    // TODO here is where we process a thingy packet
+    fun processThingyPacket(values: ByteArray) {
+        val actualPhoneTimestamp = Utils.getUnixTimestamp()
+
+        val r = ThingyPacketDecoder.decodeThingyPacket(values)
+
+        Log.d(TAG, "processThingyPacket: decoded data " + r.batchData.toString())
+    }
 
     fun processRESpeckLivePacket(values: ByteArray) {
         val fwVersionStr: String = speckService.reSpeckFwVersion

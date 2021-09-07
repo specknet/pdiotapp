@@ -10,62 +10,86 @@ import android.text.TextWatcher
 import android.util.Log
 import android.widget.Button
 import android.widget.EditText
-import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
-//import com.polidea.rxandroidble2.RxBleClient
-//import com.polidea.rxandroidble2.exceptions.BleException
 import com.specknet.pdiotapp.R
 import com.specknet.pdiotapp.barcode.BarcodeActivity
 import com.specknet.pdiotapp.utils.Constants
-import com.specknet.pdiotapp.utils.Utils
-//import io.reactivex.exceptions.UndeliverableException
-//import io.reactivex.plugins.RxJavaPlugins
 import kotlinx.android.synthetic.main.activity_connecting.*
 
 class ConnectingActivity : AppCompatActivity() {
 
     val REQUEST_CODE_SCAN_RESPECK = 0
 
-    private lateinit var scanButton: Button
-    private lateinit var qrCode: EditText
-    private lateinit var connectButton: Button
-    private lateinit var disconnectButton: Button
+    // Respeck
+    private lateinit var scanRespeckButton: Button
+    private lateinit var respeckQrCode: EditText
+    private lateinit var connectRespeckButton: Button
+    private lateinit var disconnectRespeckButton: Button
 
-    private var respeckMAC = ""
+    // Thingy
+    private lateinit var scanThingyButton: Button
+    private lateinit var thingyQrCode: EditText
+    private lateinit var connectThingyButton: Button
+    private lateinit var disconnectThingyButton: Button
 
     lateinit var sharedPreferences: SharedPreferences
-    val filter = IntentFilter()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_connecting)
 
         // scan respeck
-        scanButton = findViewById(R.id.scan_respeck)
-        qrCode = findViewById(R.id.respeck_code)
-        connectButton = findViewById(R.id.connect_button)
-        disconnectButton = findViewById(R.id.disconnect_button)
+        scanRespeckButton = findViewById(R.id.scan_respeck)
+        respeckQrCode = findViewById(R.id.respeck_code)
+        connectRespeckButton = findViewById(R.id.connect_button)
+        disconnectRespeckButton = findViewById(R.id.disconnect_button)
 
-        scanButton.setOnClickListener {
+        scanThingyButton = findViewById(R.id.scan_thingy)
+        thingyQrCode = findViewById(R.id.thingy_code)
+        connectThingyButton = findViewById(R.id.connect_thingy_button)
+        disconnectThingyButton = findViewById(R.id.disconnect_thingy_button)
+
+        scanRespeckButton.setOnClickListener {
             val barcodeScanner = Intent(this, BarcodeActivity::class.java)
             startActivityForResult(barcodeScanner, REQUEST_CODE_SCAN_RESPECK)
         }
 
-        connectButton.setOnClickListener {
+        scanThingyButton.setOnClickListener {
+            // TODO this should only be done with NFC
+        }
+
+        connectRespeckButton.setOnClickListener {
             // start the bluetooth service
 
             sharedPreferences.edit().putString(
                 Constants.RESPECK_MAC_ADDRESS_PREF,
-                qrCode.text.toString()
+                respeckQrCode.text.toString()
             ).apply()
             sharedPreferences.edit().putInt(Constants.RESPECK_VERSION, 6).apply()
 
+            // TODO if it's not already running
             Log.i("service", "Starting BLT service")
             val simpleIntent = Intent(this, BluetoothSpeckService::class.java)
             this.startService(simpleIntent)
         }
 
-        disconnectButton.setOnClickListener {
+        connectThingyButton.setOnClickListener {
+            // start the bluetooth service
+
+            sharedPreferences.edit().putString(
+                Constants.THINGY_MAC_ADDRESS_PREF,
+                thingyQrCode.text.toString()
+            ).apply()
+
+            // TODO if it's not already running
+
+//            Log.i("service", "Starting BLT service")
+//            val simpleIntent = Intent(this, BluetoothSpeckService::class.java)
+//            this.startService(simpleIntent)
+
+        }
+
+        disconnectRespeckButton.setOnClickListener {
             Log.i("service", "Tearing down BLT service")
 //            val simpleIntent = Intent(this, BluetoothService::class.java)
 //            this.stopService(simpleIntent)
@@ -81,21 +105,31 @@ class ConnectingActivity : AppCompatActivity() {
                     ""
                 )
             )
-        }
-        else {
+        } else {
             Log.i("sharedpref", "No respeck seen before")
-            connectButton.isEnabled = false
-            connectButton.isClickable = false
+            connectRespeckButton.isEnabled = false
+            connectRespeckButton.isClickable = false
         }
 
-        qrCode.addTextChangedListener(object : TextWatcher {
+        if (sharedPreferences.contains(Constants.THINGY_MAC_ADDRESS_PREF)) {
+            Log.i("sharedpref", "Already saw a thingy ID")
+
+            thingy_code.setText(
+                sharedPreferences.getString(
+                    Constants.THINGY_MAC_ADDRESS_PREF,
+                    ""
+                )
+            )
+        }
+
+        respeckQrCode.addTextChangedListener(object : TextWatcher {
             override fun onTextChanged(cs: CharSequence, start: Int, before: Int, count: Int) {
                 if (cs.toString().trim().length != 17) {
-                    connectButton.isEnabled = false
-                    connectButton.isClickable = false
+                    connectRespeckButton.isEnabled = false
+                    connectRespeckButton.isClickable = false
                 } else {
-                    connectButton.isEnabled = true
-                    connectButton.isClickable = true
+                    connectRespeckButton.isEnabled = true
+                    connectRespeckButton.isClickable = true
                 }
             }
 
@@ -108,20 +142,43 @@ class ConnectingActivity : AppCompatActivity() {
             }
         })
 
-        qrCode.filters = arrayOf<InputFilter>(AllCaps())
+        respeckQrCode.filters = arrayOf<InputFilter>(AllCaps())
+
+        thingyQrCode.addTextChangedListener(object : TextWatcher {
+            override fun onTextChanged(cs: CharSequence, start: Int, before: Int, count: Int) {
+                if (cs.toString().trim().length != 17) {
+                    connectThingyButton.isEnabled = false
+                    connectThingyButton.isClickable = false
+                } else {
+                    connectThingyButton.isEnabled = true
+                    connectThingyButton.isClickable = true
+                }
+            }
+
+            override fun beforeTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
+
+            }
+
+            override fun afterTextChanged(p0: Editable?) {
+
+            }
+        })
+
+        thingyQrCode.filters = arrayOf<InputFilter>(AllCaps())
+
 
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
 
-        if(resultCode == Activity.RESULT_OK) {
+        if (resultCode == Activity.RESULT_OK) {
             var scanResult = data?.extras?.getString("ScanResult")
 
-            if(scanResult != null) {
+            if (scanResult != null) {
                 Log.i("ble", "Scan result=" + scanResult)
 
-                if(scanResult.contains(":")) {
+                if (scanResult.contains(":")) {
                     // this is a respeck V6 and we should store its MAC address
                     respeck_code.setText(scanResult)
                     sharedPreferences.edit().putString(
@@ -148,11 +205,10 @@ class ConnectingActivity : AppCompatActivity() {
                     sharedPreferences.edit().putInt(Constants.RESPECK_VERSION, 5).apply()
                 }
 
-                connectButton.isEnabled = true
-                connectButton.isClickable = true
+                connectRespeckButton.isEnabled = true
+                connectRespeckButton.isClickable = true
 
-            }
-            else {
+            } else {
                 respeck_code.setText("No respeck found :(")
             }
 
