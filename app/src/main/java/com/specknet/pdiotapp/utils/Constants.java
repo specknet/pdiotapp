@@ -1,6 +1,10 @@
 package com.specknet.pdiotapp.utils;
 
+import android.net.Uri;
+
+import java.text.SimpleDateFormat;
 import java.util.HashMap;
+import java.util.Locale;
 import java.util.Map;
 
 public class Constants {
@@ -33,7 +37,7 @@ public class Constants {
 
     public static final int REQUEST_CODE_PERMISSIONS = 4;
 
-    public static final String RECORDING_CSV_HEADER = "timestamp,seq,accel_x,accel_y,accel_z";
+    public static final String RECORDING_CSV_HEADER = "timestamp,accel_x,accel_y,accel_z,gyro_x,gyro_y,gyro_z";
 
     // activity mappings
     public static final Map<String, Integer> ACTIVITY_NAME_TO_CODE_MAPPING = new HashMap<String, Integer>() {{
@@ -113,5 +117,59 @@ public class Constants {
     }};
 
     public static final String PREF_USER_FIRST_TIME = "user_first_time";
+
+    // Broadcast strings
+    public static final String ACTION_RESPECK_RECORDING_PAUSE = "com.specknet.respeck.ACTION_RESPECK_RECORDING_PAUSE";
+    public static final String ACTION_RESPECK_RECORDING_CONTINUE = "com.specknet.respeck.ACTION_RESPECK_RECORDING_CONTINUE";
+    public static final String RESPECK_USE_IMU_CHARACTERISTIC = "respeck_char_imu";
+    public static final String ACTION_SPECK_BLUETOOTH_SERVICE_SCAN_DEVICES = "com.specknet.airrespeck.ACTION_SPECK_BLUETOOTH_SERVICE_SCAN_DEVICES";
+
+
+    public final static String RESPECK_LIVE_CHARACTERISTIC = "00002010-0000-1000-8000-00805f9b34fb";
+    public final static String RESPECK_LIVE_V4_CHARACTERISTIC = "00001524-1212-efde-1523-785feabcd125";
+    // https://github.com/specknet/respeckmodeltesting/blob/two_characteristics/app/src/main/java/com/specknet/respeckmodeltesting/utils/Constants.java#L60
+    public final static String RESPECK_IMU_CHARACTERISTIC_UUID = "00001527-1212-efde-1523-785feabcd125"; // accel + gyro + mag
+
+    // Bluetooth connection timeout: how long to wait after loosing connection before trying reconnect
+    public static final int RECONNECTION_TIMEOUT_MILLIS = 10000;
+    public static final long RESPECK_CHARACTERISTIC_CHANGE_TIMEOUT_MS = 4000; // 4 seconds
+    public static final String CSV_DELIMITER = ","; // yes it's just a comma :)
+
+    // Information for config content provider
+    public static class Config {
+        public static final String PROVIDER_NAME = "com.specknet.pairing.provider.config";
+        public static final Uri CONFIG_CONTENT_URI = Uri.parse("content://" + PROVIDER_NAME + "/config");
+        public static final String SUBJECT_ID = "SubjectID";
+        public static final String RESPECK_UUID = "RESpeckUUID";
+        public static final String AIRSPECKP_UUID = "AirspeckPUUID";
+        public static final String PULSEOX_UUID = "PulseoxUUID";
+        public static final String SPIROMETER_UUID = "SpirometerUUID";
+        public static final String INHALER_UUID = "InhalerUUID";
+        public static final String UPLOAD_TO_SERVER = "UploadToServer";
+        public static final String STORE_DATA_LOCALLY = "StoreDataLocally";
+        public static final String ENCRYPT_LOCAL_DATA = "EncryptLocalData";
+        public static final String IS_SUPERVISED_STARTING_MODE = "IsSupervisedStartingMode";
+        public static final String ENABLE_PHONE_LOCATION_STORAGE = "EnablePhoneLocationStorage";
+        public static final String ENABLE_VOLUME_BAG_CALIBRATION_VIEW = "EnableVolumeBagCalibrationView";
+        public static final String DISABLE_POST_FILTERING_BREATHING = "DisablePostFilteringBreathing";
+        public static final String DISABLE_WRONG_ORIENTATION_DIALOG = "DisableWrongOrientationDialog";
+        public static final String SHOW_SUBJECT_VALUES_SCREEN = "ShowSubjectValues";
+        public static final String SHOW_MEDIA_BUTTONS = "ShowMediaButtons";
+        public static final String IS_REHAB_PROJECT = "IsRehabProject";
+        public static final String HIDE_ACTIVITY_TYPE = "HideActivityType";
+    }
+
+    public static final String RESPECK_DATA_DIRECTORY_NAME = "/RESpeck/";
+    public static final String RESPECK_IMU_DATA_DIRECTORY_NAME = "/RESpeck-IMU/";
+    public static final long NUMBER_OF_MILLIS_IN_A_DAY = 1000 * 60 * 60 * 24;
+    public static final String RESPECK_LIVE_DATA = "respeck_live_data";
+    public static final String EXTRA_RESPECK_BS_TIMESTAMP = "respeck_interpolated_phone_timestamp";
+    public static final String EXTRA_RESPECK_RS_TIMESTAMP = "respeck_sensor_timestamp";
+    public static final String ACTION_RESPECK_REHAB_BROADCAST = "com.specknet.respeck.RESPECK_REHAB_BROADCAST";
+    public static final String ACTION_RESPECK_LIVE_BROADCAST =
+            "com.specknet.respeck.RESPECK_LIVE_BROADCAST";
+    public static final float MINUTES_FOR_MEDIAN_CALC = 500;
+    public static final SimpleDateFormat dateFormatter = new SimpleDateFormat("yyyy-MM-dd", Locale.UK);
+
 
 }

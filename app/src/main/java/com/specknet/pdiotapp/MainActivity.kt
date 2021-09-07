@@ -1,7 +1,6 @@
 package com.specknet.pdiotapp
 
 import android.Manifest
-import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
@@ -13,11 +12,10 @@ import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
 import android.widget.Button
-import android.widget.TextView
 import androidx.appcompat.app.AlertDialog
 import androidx.core.app.ActivityCompat
 import com.google.android.material.snackbar.Snackbar
-import com.specknet.pdiotapp.bluetooth.BluetoothService
+import com.specknet.pdiotapp.bluetooth.BluetoothSpeckService
 import com.specknet.pdiotapp.bluetooth.ConnectingActivity
 import com.specknet.pdiotapp.live.LiveDataActivity
 import com.specknet.pdiotapp.onboarding.OnBoardingActivity
@@ -31,7 +29,6 @@ class MainActivity : AppCompatActivity() {
     lateinit var liveProcessingButton: Button
     lateinit var pairingButton: Button
     lateinit var recordButton: Button
-    lateinit var respeckStatus: TextView
 
     // permissions
     lateinit var permissionAlertDialog: AlertDialog.Builder
@@ -44,7 +41,6 @@ class MainActivity : AppCompatActivity() {
     var writeStoragePermissionGranted = false
 
     // broadcast receiver
-    lateinit var respeckStatusReceiver: BroadcastReceiver
     val filter = IntentFilter()
 
     var isUserFirstTime = false
@@ -68,7 +64,6 @@ class MainActivity : AppCompatActivity() {
         liveProcessingButton = findViewById(R.id.live_button)
         pairingButton = findViewById(R.id.ble_button)
         recordButton = findViewById(R.id.record_button)
-        respeckStatus = findViewById(R.id.respeck_status_welcome)
 
         permissionAlertDialog = AlertDialog.Builder(this)
 
@@ -76,25 +71,12 @@ class MainActivity : AppCompatActivity() {
 
         setupPermissions()
 
-        setupRespeckStatus()
+        setupBluetoothService()
 
         // register a broadcast receiver for respeck status
         filter.addAction(Constants.ACTION_RESPECK_CONNECTED)
         filter.addAction(Constants.ACTION_RESPECK_DISCONNECTED)
 
-        respeckStatusReceiver = object : BroadcastReceiver() {
-            override fun onReceive(context: Context, intent: Intent) {
-                val action = intent.action
-
-                when(action) {
-                    Constants.ACTION_RESPECK_CONNECTED -> respeckStatus.text = "Respeck status: Connected"
-                    Constants.ACTION_RESPECK_DISCONNECTED -> respeckStatus.text = "Respeck status: Disconnected"
-                    else -> respeckStatus.text = "Error"
-                }
-            }
-        }
-
-        this.registerReceiver(respeckStatusReceiver, filter)
     }
 
     fun setupClickListeners() {
@@ -169,33 +151,32 @@ class MainActivity : AppCompatActivity() {
 
     }
 
-    fun setupRespeckStatus() {
-        val isServiceRunning = Utils.isServiceRunning(BluetoothService::class.java, applicationContext)
+    fun setupBluetoothService() {
+        val isServiceRunning = Utils.isServiceRunning(BluetoothSpeckService::class.java, applicationContext)
         Log.i("debug","isServiceRunning = " + isServiceRunning)
 
         // check sharedPreferences for an existing Respeck id
         val sharedPreferences = getSharedPreferences(Constants.PREFERENCES_FILE, Context.MODE_PRIVATE)
         if (sharedPreferences.contains(Constants.RESPECK_MAC_ADDRESS_PREF)) {
             Log.i("sharedpref", "Already saw a respeckID, starting service and attempting to reconnect")
-            respeckStatus.text = "Respeck status: Connecting..."
 
             // launch service to reconnect
             // start the bluetooth service if it's not already running
             if(!isServiceRunning) {
                 Log.i("service", "Starting BLT service")
-                val simpleIntent = Intent(this, BluetoothService::class.java)
+                val simpleIntent = Intent(this, BluetoothSpeckService::class.java)
                 this.startService(simpleIntent)
             }
         }
         else {
             Log.i("sharedpref", "No Respeck seen before, must pair first")
-            respeckStatus.text = "Respeck status: Unpaired"
+            // TODO then start the service from the connection activity
         }
     }
 
     override fun onDestroy() {
         super.onDestroy()
-        unregisterReceiver(respeckStatusReceiver)
+        System.exit(0)
     }
 
     override fun onRequestPermissionsResult(

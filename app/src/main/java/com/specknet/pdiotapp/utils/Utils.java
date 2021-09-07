@@ -3,16 +3,16 @@ package com.specknet.pdiotapp.utils;
 import android.app.ActivityManager;
 import android.content.Context;
 import android.content.Intent;
-import android.provider.ContactsContract;
-import android.text.format.DateUtils;
+import android.content.SharedPreferences;
 import android.util.Log;
 
-import com.specknet.pdiotapp.bluetooth.BluetoothService;
+import com.specknet.pdiotapp.bluetooth.BluetoothSpeckService;
 
+import java.io.PrintWriter;
+import java.io.StringWriter;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.concurrent.TimeUnit;
 
 public class Utils {
@@ -38,7 +38,23 @@ public class Utils {
         return new String(hexChars);
     }
 
-    public static void processRESpeckPacket(final byte[] values, int respeckVersion, BluetoothService bltService) {
+    public static String getRESpeckUUID(Context context) {
+        // this will always exist because the service is going to be started only after the respeck has been scanned\
+
+        SharedPreferences sharedPreferences = context.getSharedPreferences(Constants.PREFERENCES_FILE, Context.MODE_PRIVATE);
+
+        return sharedPreferences.getString(Constants.RESPECK_MAC_ADDRESS_PREF, "");
+    }
+
+    public static int getRESpeckVersion(Context context) {
+        // this will always exist because the service is going to be started only after the respeck has been scanned\
+
+        SharedPreferences sharedPreferences = context.getSharedPreferences(Constants.PREFERENCES_FILE, Context.MODE_PRIVATE);
+
+        return sharedPreferences.getInt(Constants.RESPECK_VERSION, 0);
+    }
+
+    public static void processRESpeckPacket(final byte[] values, int respeckVersion, BluetoothSpeckService bltService) {
 
         long currentProcessedMinute = 0;
 
@@ -217,5 +233,11 @@ public class Utils {
         return samplingFreq;
     }
 
+    public static String getStackTraceAsString(Throwable throwable) {
+        StringWriter sw = new StringWriter();
+        PrintWriter pw = new PrintWriter(sw);
+        throwable.printStackTrace(pw);
+        return sw.toString();
+    }
 
 }
