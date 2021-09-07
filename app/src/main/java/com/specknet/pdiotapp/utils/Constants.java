@@ -38,7 +38,8 @@ public class Constants {
 
     public static final int REQUEST_CODE_PERMISSIONS = 4;
 
-    public static final String RECORDING_CSV_HEADER = "timestamp,accel_x,accel_y,accel_z,gyro_x,gyro_y,gyro_z";
+    public static final String RECORDING_CSV_HEADER_RESPECK = "timestamp,accel_x,accel_y,accel_z,gyro_x,gyro_y,gyro_z";
+    public static final String RECORDING_CSV_HEADER_THINGY = "timestamp,accel_x,accel_y,accel_z,gyro_x,gyro_y,gyro_z,mag_x,mag_y,mag_z";
 
     // activity mappings
     public static final Map<String, Integer> ACTIVITY_NAME_TO_CODE_MAPPING = new HashMap<String, Integer>() {{
@@ -178,6 +179,7 @@ public class Constants {
     public static final String ACTION_THINGY_BROADCAST = "com.specknet.pdiotapp.RESPECK_BROADCAST";
     public static final String ACTION_THINGY_CONNECTED = "com.specknet.pdiotapp.RESPECK_CONNECTED";
     public static final String ACTION_THINGY_DISCONNECTED = "com.specknet.pdiotapp.RESPECK_DISCONNECTED";
+    public static final String THINGY_LIVE_DATA = "thingy_live_data";
 
 
 

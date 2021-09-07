@@ -444,10 +444,8 @@ public class BluetoothSpeckService extends Service {
         // re-usable connect callback
         Consumer<RxBleConnection.RxBleConnectionState> establishConnectionAndSubscribe = (connectionState) -> {
             thingyConnection = establishThingyConnection();
-//            String fwV = getRESpeckFwVersion();
-//            thingyHandler.setFwVersion(fwV);
 
-            Log.d(TAG, "connectToThingy: set respeck handler");
+            Log.d(TAG, "connectToThingy: set thingy handler");
 
             // TODO set thingy characteristic here
 
@@ -727,7 +725,6 @@ public class BluetoothSpeckService extends Service {
         // Close the handlers
         try {
             respeckHandler.closeHandler();
-            thingyHandler.closeHandler();
         } catch (Exception e) {
             Log.e(TAG, "Error while closing handlers: " + e.getMessage());
         }

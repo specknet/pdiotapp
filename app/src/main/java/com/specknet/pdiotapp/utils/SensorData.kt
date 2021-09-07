@@ -46,6 +46,13 @@ data class RESpeckRawPacket(
     val chargingStatus: Boolean = false
 ) : Serializable
 
+data class ThingyRawPacket(
+    val phoneTimestamp: Long,
+    val accelData: AccelerometerReading,
+    val gyroData: GyroscopeReading,
+    val magData: MagnetometerReading
+) : Serializable
+
 /**
  * Data class to hold only the sensor data originating from the RESpeck.
  * All other data is dependent on this raw data, and can be added later in the process.
@@ -92,7 +99,6 @@ data class RESpeckSensorData(
  */
 data class ThingySensorData(
     val phoneTimestamp: Long,
-    val sequenceNumberInBatch: Int,
     val acc: AccelerometerReading = AccelerometerReading(),
 
     /** IMU data (gyro / magnetometer) may be disabled */

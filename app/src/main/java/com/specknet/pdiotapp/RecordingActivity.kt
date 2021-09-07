@@ -8,8 +8,6 @@ import android.os.Bundle
 import android.os.Handler
 import android.os.HandlerThread
 import android.os.Looper
-import android.text.Editable
-import android.text.TextWatcher
 import android.util.Log
 import android.view.View
 import android.widget.*
@@ -17,6 +15,7 @@ import androidx.appcompat.app.AppCompatActivity
 import com.specknet.pdiotapp.utils.Constants
 import com.specknet.pdiotapp.utils.CountUpTimer
 import com.specknet.pdiotapp.utils.RESpeckLiveData
+import com.specknet.pdiotapp.utils.ThingyLiveData
 import java.io.*
 import java.text.SimpleDateFormat
 import java.util.*
@@ -36,24 +35,30 @@ class RecordingActivity : AppCompatActivity() {
     lateinit var countUpTimer: CountUpTimer
 
     lateinit var respeckReceiver: BroadcastReceiver
-    lateinit var looper: Looper
+    lateinit var thingyReceiver: BroadcastReceiver
+    lateinit var respeckLooper: Looper
+    lateinit var thingyLooper: Looper
 
-    val filterTest = IntentFilter(Constants.ACTION_RESPECK_LIVE_BROADCAST)
+    val respeckFilterTest = IntentFilter(Constants.ACTION_RESPECK_LIVE_BROADCAST)
+    val thingyFilterTest = IntentFilter(Constants.ACTION_THINGY_BROADCAST)
 
     var sensorType = ""
-    var universalSubjectId = "s123456"
+    var universalSubjectId = "s1234567"
     var activityType = ""
     var activityCode = 0
     var notes = ""
 
-    private var mIsRecording = false
+    private var mIsRespeckRecording = false
+    private var mIsThingyRecording = false
     private lateinit var respeckOutputData: StringBuilder
+    private lateinit var thingyOutputData: StringBuilder
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_recording)
 
         respeckOutputData = StringBuilder()
+        thingyOutputData = StringBuilder()
 
         setupSpinners()
 
@@ -61,7 +66,7 @@ class RecordingActivity : AppCompatActivity() {
 
         setupInputs()
 
-        // register receiver
+        // register respeck receiver
         respeckReceiver = object : BroadcastReceiver() {
             override fun onReceive(context: Context, intent: Intent) {
 
@@ -80,11 +85,36 @@ class RecordingActivity : AppCompatActivity() {
         }
 
         // important to set this on a background thread otherwise it will block the UI
-        val handlerThread = HandlerThread("bgProcThread")
-        handlerThread.start()
-        looper = handlerThread.looper
-        val handler = Handler(looper)
-        this.registerReceiver(respeckReceiver, filterTest, null, handler)
+        val respeckHandlerThread = HandlerThread("bgProcThreadRespeck")
+        respeckHandlerThread.start()
+        respeckLooper = respeckHandlerThread.looper
+        val respeckHandler = Handler(respeckLooper)
+        this.registerReceiver(respeckReceiver, respeckFilterTest, null, respeckHandler)
+
+        // register thingy receiver
+        thingyReceiver = object : BroadcastReceiver() {
+            override fun onReceive(context: Context, intent: Intent) {
+
+                val action = intent.action
+
+                if (action == Constants.ACTION_THINGY_BROADCAST) {
+
+                    val liveData = intent.getSerializableExtra(Constants.THINGY_LIVE_DATA) as ThingyLiveData
+                    Log.d("Live", "onReceive: thingyLiveData = " + liveData)
+
+                    updateThingyData(liveData)
+
+                }
+
+            }
+        }
+
+        // important to set this on a background thread otherwise it will block the UI
+        val thingyHandlerThread = HandlerThread("bgProcThreadThingy")
+        thingyHandlerThread.start()
+        thingyLooper = thingyHandlerThread.looper
+        val thingyHandler = Handler(thingyLooper)
+        this.registerReceiver(thingyReceiver, thingyFilterTest, null, thingyHandler)
 
         timer = findViewById(R.id.count_up_timer_text)
         timer.visibility = View.INVISIBLE
@@ -101,13 +131,25 @@ class RecordingActivity : AppCompatActivity() {
     }
 
     private fun updateRespeckData(liveData: RESpeckLiveData) {
-        if (mIsRecording) {
+        if (mIsRespeckRecording) {
             val output = liveData.phoneTimestamp.toString() + "," +
                     liveData.accelX + "," + liveData.accelY + "," + liveData.accelZ + "," +
                     liveData.gyro.x + "," + liveData.gyro.y + "," + liveData.gyro.z + "\n"
 
             respeckOutputData.append(output)
             Log.d(TAG, "updateRespeckData: appended to respeckoutputdata = " + output)
+        }
+    }
+
+    private fun updateThingyData(liveData: ThingyLiveData) {
+        if (mIsThingyRecording) {
+            val output = liveData.phoneTimestamp.toString() + "," +
+                    liveData.accelX + "," + liveData.accelY + "," + liveData.accelZ + "," +
+                    liveData.gyro.x + "," + liveData.gyro.y + "," + liveData.gyro.z + "," +
+                    liveData.mag.x + "," + liveData.mag.y + "," + liveData.mag.z + "\n"
+
+            thingyOutputData.append(output)
+            Log.d(TAG, "updateThingyData: appended to thingyOutputData = " + output)
         }
     }
 
@@ -231,7 +273,7 @@ class RecordingActivity : AppCompatActivity() {
         // reset output data
         respeckOutputData = StringBuilder()
 
-        mIsRecording = false
+        mIsRespeckRecording = false
     }
 
     private fun startRecording() {
@@ -239,7 +281,14 @@ class RecordingActivity : AppCompatActivity() {
 
         countUpTimer.start()
 
-        mIsRecording = true
+        if (sensorType.equals("Thingy")) {
+            mIsThingyRecording = true
+            mIsRespeckRecording = false
+        }
+        else {
+            mIsRespeckRecording = true
+            mIsThingyRecording = false
+        }
     }
 
     private fun stopRecording() {
@@ -250,57 +299,81 @@ class RecordingActivity : AppCompatActivity() {
 
         Log.d(TAG, "stopRecording")
 
-        saveRespeckRecording()
+        if (sensorType.equals("Thingy")) {
+            mIsThingyRecording = false
+        }
+        else {
+            mIsRespeckRecording = false
+        }
 
-        mIsRecording = false
+        saveRecording()
 
     }
 
-    private fun saveRespeckRecording() {
+    private fun saveRecording() {
         val filename = "${sensorType}_${universalSubjectId}_${activityType}_${System.currentTimeMillis()}.csv" // TODO format this to human readable
 
         val file = File(getExternalFilesDir(null), filename)
 
-        Log.d(TAG, "saveRespeckRecording: filename = " + filename)
+        Log.d(TAG, "saveRecording: filename = " + filename)
 
-        val respeckWriter: BufferedWriter
+        val dataWriter: BufferedWriter
 
         // Create file for current day and append header, if it doesn't exist yet
         try {
             val exists = file.exists()
-            respeckWriter = BufferedWriter(OutputStreamWriter(FileOutputStream(file, true)))
+            dataWriter = BufferedWriter(OutputStreamWriter(FileOutputStream(file, true)))
 
             if (!exists) {
-                Log.d(TAG, "saveRespeckRecording: filename doesn't exist")
+                Log.d(TAG, "saveRecording: filename doesn't exist")
 
                 // the header columns in here
-                respeckWriter.append("# Sensor type: $sensorType").append("\n")
-                respeckWriter.append("# Activity type: $activityType").append("\n")
-                respeckWriter.append("# Activity code: $activityCode").append("\n")
-                respeckWriter.append("# Subject id: $universalSubjectId").append("\n")
-                respeckWriter.append("# Notes: $notes").append("\n")
+                dataWriter.append("# Sensor type: $sensorType").append("\n")
+                dataWriter.append("# Activity type: $activityType").append("\n")
+                dataWriter.append("# Activity code: $activityCode").append("\n")
+                dataWriter.append("# Subject id: $universalSubjectId").append("\n")
+                dataWriter.append("# Notes: $notes").append("\n")
 
-                respeckWriter.write(Constants.RECORDING_CSV_HEADER)
-                respeckWriter.newLine()
-                respeckWriter.flush()
+                if (sensorType.equals("Thingy")) {
+                    dataWriter.write(Constants.RECORDING_CSV_HEADER_THINGY)
+                }
+                else {
+                    dataWriter.write(Constants.RECORDING_CSV_HEADER_RESPECK)
+                }
+                dataWriter.newLine()
+                dataWriter.flush()
             }
             else {
-                Log.d(TAG, "saveRespeckRecording: filename exists")
+                Log.d(TAG, "saveRecording: filename exists")
             }
 
-            if (respeckOutputData.isNotEmpty()) {
-                respeckWriter.write(respeckOutputData.toString())
-                respeckWriter.flush()
+            if (sensorType.equals("Thingy")) {
+                if (thingyOutputData.isNotEmpty()) {
+                    dataWriter.write(thingyOutputData.toString())
+                    dataWriter.flush()
 
-                Log.d(TAG, "saveRespeckRecording: recording saved")
+                    Log.d(TAG, "saveRecording: thingy recording saved")
+                }
+                else {
+                    Log.d(TAG, "saveRecording: no data from thingy during recording period")
+                }
             }
             else {
-                Log.d(TAG, "saveRespeckRecording: no data from recording period")
+                if (respeckOutputData.isNotEmpty()) {
+                    dataWriter.write(respeckOutputData.toString())
+                    dataWriter.flush()
+
+                    Log.d(TAG, "saveRecording: respeck recording saved")
+                }
+                else {
+                    Log.d(TAG, "saveRecording: no data from respeck during recording period")
+                }
             }
 
-            respeckWriter.close()
+            dataWriter.close()
 
             respeckOutputData = StringBuilder()
+            thingyOutputData = StringBuilder()
         }
         catch (e: IOException) {
             Log.e(TAG, "saveRespeckRecording: Error while writing to the respeck file: " + e.message )
@@ -321,7 +394,9 @@ class RecordingActivity : AppCompatActivity() {
     override fun onDestroy() {
         super.onDestroy()
         unregisterReceiver(respeckReceiver)
-        looper.quit()
+        unregisterReceiver(thingyReceiver)
+        respeckLooper.quit()
+        thingyLooper.quit()
     }
 
 }

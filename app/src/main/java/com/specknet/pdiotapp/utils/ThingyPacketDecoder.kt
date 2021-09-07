@@ -9,22 +9,11 @@ import java.nio.ByteOrder
  */
 object ThingyPacketDecoder {
 
-
-
     /**
      * Special decode function for the IMU characteristic.
-     * The processing done is sourced from `respeckmodeltesting`:
-     * https://github.com/specknet/respeckmodeltesting/blob/two_characteristics/app/src/main/java/com/specknet/respeckmodeltesting/utils/Utils.java#L163
-     * No additional data in this packet:
-     *  - do the two characteristics run together? toggle between them or on / off?
-     *  -
-     * Note: A `short` is 16 bits, 2 bytes.
-     * 3 axes * 3 readings = 9 shorts => 9 * 2 bytes = 18 bytes
-     * @param values the byte array to be decoded
-     * @param highFrequency flag this packet as "high-frequency" to distinguish between 12.5hz and 25hz data
      */
     @JvmStatic // https://stackoverflow.com/q/56237695/9184658
-    fun decodeThingyPacket(values: ByteArray, highFrequency: Boolean = false): RESpeckRawPacket {
+    fun decodeThingyPacket(values: ByteArray): ThingyRawPacket {
         Log.d("decodeThingyPacket", "values = $values")
 
         val accelX = Utils.qToFloat(values[0], values[1])
@@ -35,26 +24,23 @@ object ThingyPacketDecoder {
         val gyroY = Utils.qToFloat(values[8], values[9])
         val gyroZ = Utils.qToFloat(values[10], values[11])
 
-        Log.d("decodeThingyPacket", "Thingy data: Accel($accelX, $accelY, $accelZ), Gyro($gyroX, $gyroY, $gyroZ)")
+        val magX = Utils.qToFloat(values[12], values[13])
+        val magY = Utils.qToFloat(values[14], values[15])
+        val magZ = Utils.qToFloat(values[16], values[17])
 
+        Log.d("decodeThingyPacket", "Thingy data: Accel($accelX, $accelY, $accelZ), " +
+                "Gyro($gyroX, $gyroY, $gyroZ), " +
+                "Mag($magX, $magY, $magZ)")
 
         val acc = AccelerometerReading(accelX, accelY, accelZ)
         val gyro = GyroscopeReading(gyroX, gyroY, gyroZ)
-//        val mag = MagnetometerReading(magX, magY, magZ)
+        val mag = MagnetometerReading(magX, magY, magZ)
 
-        val r = RESpeckSensorData(
+        return ThingyRawPacket(
             0,
-            acc, gyro,
-//            mag
-            highFrequency = highFrequency
-        )
-
-        return RESpeckRawPacket(
-            0,
-            0,
-            listOf(
-                r
-            )
+            acc,
+            gyro,
+            mag
         )
     }
 
