@@ -1,9 +1,16 @@
 package com.specknet.pdiotapp
 
+import android.app.Activity
+import android.app.PendingIntent
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
+import android.content.IntentFilter.MalformedMimeTypeException
+import android.nfc.NfcAdapter
+import android.nfc.Tag
+import android.nfc.tech.Ndef
+import android.nfc.tech.NfcA
 import android.os.Bundle
 import android.os.Handler
 import android.os.HandlerThread
@@ -16,7 +23,9 @@ import com.specknet.pdiotapp.utils.Constants
 import com.specknet.pdiotapp.utils.CountUpTimer
 import com.specknet.pdiotapp.utils.RESpeckLiveData
 import com.specknet.pdiotapp.utils.ThingyLiveData
+import com.specknet.pdiotapp.utils.Utils.bytesToHex
 import java.io.*
+import java.lang.RuntimeException
 import java.text.SimpleDateFormat
 import java.util.*
 import java.lang.StringBuilder
@@ -53,7 +62,9 @@ class RecordingActivity : AppCompatActivity() {
     private lateinit var respeckOutputData: StringBuilder
     private lateinit var thingyOutputData: StringBuilder
 
+
     override fun onCreate(savedInstanceState: Bundle?) {
+        Log.d(TAG, "onCreate: here")
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_recording)
 
@@ -66,6 +77,7 @@ class RecordingActivity : AppCompatActivity() {
 
         setupInputs()
 
+        Log.d(TAG, "onCreate: setting up respeck receiver")
         // register respeck receiver
         respeckReceiver = object : BroadcastReceiver() {
             override fun onReceive(context: Context, intent: Intent) {
@@ -91,6 +103,7 @@ class RecordingActivity : AppCompatActivity() {
         val respeckHandler = Handler(respeckLooper)
         this.registerReceiver(respeckReceiver, respeckFilterTest, null, respeckHandler)
 
+        Log.d(TAG, "onCreate: registering thingy receiver")
         // register thingy receiver
         thingyReceiver = object : BroadcastReceiver() {
             override fun onReceive(context: Context, intent: Intent) {
@@ -130,6 +143,11 @@ class RecordingActivity : AppCompatActivity() {
 
     }
 
+
+
+
+
+
     private fun updateRespeckData(liveData: RESpeckLiveData) {
         if (mIsRespeckRecording) {
             val output = liveData.phoneTimestamp.toString() + "," +
@@ -154,11 +172,13 @@ class RecordingActivity : AppCompatActivity() {
     }
 
     private fun setupInputs() {
+        Log.d(TAG, "setupInputs: here")
         univSubjectIdInput = findViewById(R.id.universal_subject_id_input)
         notesInput = findViewById(R.id.notes_input)
     }
 
     private fun setupSpinners() {
+        Log.d(TAG, "setupSpinners: here")
         sensorTypeSpinner = findViewById(R.id.sensor_type_spinner)
 
         ArrayAdapter.createFromResource(
@@ -389,7 +409,6 @@ class RecordingActivity : AppCompatActivity() {
         notes = notesInput.text.toString().trim()
 
     }
-
 
     override fun onDestroy() {
         super.onDestroy()

@@ -176,9 +176,9 @@ public class Constants {
 
     public static final String THINGY_MOTION_CHARACTERISTIC = "ef680406-9b35-4933-9b10-52ffa9740042";
 
-    public static final String ACTION_THINGY_BROADCAST = "com.specknet.pdiotapp.RESPECK_BROADCAST";
-    public static final String ACTION_THINGY_CONNECTED = "com.specknet.pdiotapp.RESPECK_CONNECTED";
-    public static final String ACTION_THINGY_DISCONNECTED = "com.specknet.pdiotapp.RESPECK_DISCONNECTED";
+    public static final String ACTION_THINGY_BROADCAST = "com.specknet.pdiotapp.THINGY_BROADCAST";
+    public static final String ACTION_THINGY_CONNECTED = "com.specknet.pdiotapp.THINGY_CONNECTED";
+    public static final String ACTION_THINGY_DISCONNECTED = "com.specknet.pdiotapp.THINGY_DISCONNECTED";
     public static final String THINGY_LIVE_DATA = "thingy_live_data";
 
 

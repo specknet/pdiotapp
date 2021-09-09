@@ -599,20 +599,6 @@ public class BluetoothSpeckService extends Service {
                 Constants.THINGY_MOTION_CHARACTERISTIC;
 
         Log.i(TAG, String.format("Setting up subscription, characteristic: %s", characteristic));
-        // specify the consumer function which will handle the RESpeck packets in different modes
-//        Consumer<byte[]> cvHandler = useIMU ?
-//                (byte[] cv) -> {
-//                    RESpeckRawPacket r = RESpeckPacketDecoder.decodeV6PacketIMU(cv);
-//                    for (RESpeckSensorData d : r.getBatchData()) {
-//                        // From RESpeckPacketHandler
-//                        Log.d("IMU Decoder", String.format("RESpeck IMU data: %s", d));
-//                        Intent liveDataIntent = new Intent(Constants.ACTION_RESPECK_LIVE_BROADCAST);
-//                        liveDataIntent.putExtra(Constants.RESPECK_LIVE_DATA, d.toRESpeckLiveData());
-//                        this.sendBroadcast(liveDataIntent);
-//                    }
-//                } :
-//                // Given characteristic has been changed, process the value
-//                respeckHandler::processRESpeckLivePacket;
 
         Consumer<byte[]> cvHandler = (byte[] cv) -> thingyHandler.processThingyPacket(cv);
 
@@ -729,7 +715,10 @@ public class BluetoothSpeckService extends Service {
             Log.e(TAG, "Error while closing handlers: " + e.getMessage());
         }
 
-        unregisterReceiver(respeckPausedReceiver);
+        if (respeckPausedReceiver != null ) {
+            unregisterReceiver(respeckPausedReceiver);
+        }
+
     }
 
     @Override
