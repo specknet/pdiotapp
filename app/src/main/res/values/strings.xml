@@ -46,4 +46,11 @@
     <string name="notification_speck_title">RESpeck and Airspeck</string>
     <string name="notification_speck_text">Listening for sensor data</string>
     <string name="respeck_name">RESpeck</string>
+
+    <string name="respeck_accel">Accel = (%1$.3f, %2$.3f, %3$.3f)</string>
+    <string name="respeck_gyro">Gyro = (%1$.3f, %2$.3f, %3$.3f)</string>
+
+    <string name="thingy_accel">Accel = (%1$.3f, %2$.3f, %3$.3f)</string>
+    <string name="thingy_gyro">Gyro = (%1$.3f, %2$.3f, %3$.3f)</string>
+    <string name="thingy_mag">Mag = (%1$.3f, %2$.3f, %3$.3f)</string>
 </resources>

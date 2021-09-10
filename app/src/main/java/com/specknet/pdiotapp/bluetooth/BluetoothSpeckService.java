@@ -174,9 +174,11 @@ public class BluetoothSpeckService extends Service {
     public void onDestroy() {
         stopSpeckService();
         Log.i(TAG, "SpeckService has been stopped");
+//        int pid = android.os.Process.myPid();
+//        android.os.Process.killProcess(pid);
+
         super.onDestroy();
-        int pid = android.os.Process.myPid();
-        android.os.Process.killProcess(pid);
+
     }
 
     @Nullable
@@ -693,30 +695,39 @@ public class BluetoothSpeckService extends Service {
     }
 
     public void stopSpeckService() {
-        Log.i(TAG, "Stopping Speck Service");
+        Log.i(TAG, "Stopping SpeckService");
         mIsServiceRunning = false;
 
         if (scanSubscription != null) {
+            Log.i(TAG, "stopSpeckService: unsubscribed scansub");
             scanSubscription.unsubscribe();
         }
 
         if (respeckLiveSubscription != null) {
+            Log.i(TAG, "stopSpeckService: unsubscribed respecksub");
             respeckLiveSubscription.unsubscribe();
         }
 
         if (thingyLiveSubscription != null) {
+            Log.i(TAG, "stopSpeckService: unsubscribed thingysub");
             thingyLiveSubscription.unsubscribe();
         }
 
         // Close the handlers
         try {
+            Log.i(TAG, "stopSpeckService: closing handler");
             respeckHandler.closeHandler();
         } catch (Exception e) {
             Log.e(TAG, "Error while closing handlers: " + e.getMessage());
         }
 
         if (respeckPausedReceiver != null ) {
+            Log.i(TAG, "stopSpeckService: unregistered receiver");
             unregisterReceiver(respeckPausedReceiver);
+        }
+
+        if (respeckIMUChangeReceiver != null) {
+            unregisterReceiver(respeckIMUChangeReceiver);
         }
 
     }

@@ -16,17 +16,22 @@ object ThingyPacketDecoder {
     fun decodeThingyPacket(values: ByteArray): ThingyRawPacket {
         Log.d("decodeThingyPacket", "values = $values")
 
-        val accelX = Utils.qToFloat(values[0], values[1])
-        val accelY = Utils.qToFloat(values[2], values[3])
-        val accelZ = Utils.qToFloat(values[4], values[5])
+        val decoded = Utils.decodeThingyPacket(values)
+        Log.d("decodeThingyPacket", "Thingy accel data new: Accel(${decoded[0]},${decoded[1]},${decoded[2]})")
 
-        val gyroX = Utils.qToFloat(values[6], values[7])
-        val gyroY = Utils.qToFloat(values[8], values[9])
-        val gyroZ = Utils.qToFloat(values[10], values[11])
+        val accelX = decoded[0]
+        val accelY = decoded[1]
+        val accelZ = decoded[2]
 
-        val magX = Utils.qToFloat(values[12], values[13])
-        val magY = Utils.qToFloat(values[14], values[15])
-        val magZ = Utils.qToFloat(values[16], values[17])
+        Log.d("decodeThingyPacket", "Thingy accel data old: Accel($accelX, $accelY, $accelZ), ")
+
+        val gyroX = decoded[3]
+        val gyroY = decoded[4]
+        val gyroZ = decoded[5]
+
+        val magX = decoded[6]
+        val magY = decoded[7]
+        val magZ = decoded[8]
 
         Log.d("decodeThingyPacket", "Thingy data: Accel($accelX, $accelY, $accelZ), " +
                 "Gyro($gyroX, $gyroY, $gyroZ), " +
@@ -43,5 +48,7 @@ object ThingyPacketDecoder {
             mag
         )
     }
+
+
 
 }

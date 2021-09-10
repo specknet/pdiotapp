@@ -62,6 +62,13 @@ class RecordingActivity : AppCompatActivity() {
     private lateinit var respeckOutputData: StringBuilder
     private lateinit var thingyOutputData: StringBuilder
 
+    private lateinit var respeckAccel: TextView
+    private lateinit var respeckGyro: TextView
+
+    private lateinit var thingyAccel: TextView
+    private lateinit var thingyGyro: TextView
+    private lateinit var thingyMag: TextView
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         Log.d(TAG, "onCreate: here")
@@ -70,6 +77,8 @@ class RecordingActivity : AppCompatActivity() {
 
         respeckOutputData = StringBuilder()
         thingyOutputData = StringBuilder()
+
+        setupViews()
 
         setupSpinners()
 
@@ -143,10 +152,14 @@ class RecordingActivity : AppCompatActivity() {
 
     }
 
+    private fun setupViews() {
+        respeckAccel = findViewById(R.id.respeck_accel)
+        respeckGyro = findViewById(R.id.respeck_gyro)
 
-
-
-
+        thingyAccel = findViewById(R.id.thingy_accel)
+        thingyGyro = findViewById(R.id.thingy_gyro)
+        thingyMag = findViewById(R.id.thingy_mag)
+    }
 
     private fun updateRespeckData(liveData: RESpeckLiveData) {
         if (mIsRespeckRecording) {
@@ -156,6 +169,13 @@ class RecordingActivity : AppCompatActivity() {
 
             respeckOutputData.append(output)
             Log.d(TAG, "updateRespeckData: appended to respeckoutputdata = " + output)
+
+        }
+
+        // update UI thread
+        runOnUiThread {
+            respeckAccel.text = getString(R.string.respeck_accel, liveData.accelX, liveData.accelY, liveData.accelZ)
+            respeckGyro.text = getString(R.string.respeck_gyro, liveData.gyro.x, liveData.gyro.y, liveData.gyro.z)
         }
     }
 
@@ -168,6 +188,13 @@ class RecordingActivity : AppCompatActivity() {
 
             thingyOutputData.append(output)
             Log.d(TAG, "updateThingyData: appended to thingyOutputData = " + output)
+        }
+
+        // update UI thread
+        runOnUiThread {
+            thingyAccel.text = getString(R.string.thingy_accel, liveData.accelX, liveData.accelY, liveData.accelZ)
+            thingyGyro.text = getString(R.string.thingy_gyro, liveData.gyro.x, liveData.gyro.y, liveData.gyro.z)
+            thingyMag.text = getString(R.string.thingy_mag, liveData.mag.x, liveData.mag.y, liveData.mag.z)
         }
     }
 

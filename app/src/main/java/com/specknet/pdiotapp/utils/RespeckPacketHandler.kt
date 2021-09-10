@@ -248,8 +248,8 @@ class RESpeckPacketHandler(val speckService: BluetoothSpeckService) {
         if (currentWriteDay != previousWriteDay || now.time - dateOfLastRESpeckWrite.time > Constants.NUMBER_OF_MILLIS_IN_A_DAY) {
             try {
                 Log.i("RESpeckPacketHandler", "RESpeck data file re-created")
-                respeckCsvWriter = getNormalCsvFileWriter()
-                respeckIMUCsvWriter = getIMUCsvFileWriter()
+//                respeckCsvWriter = getNormalCsvFileWriter()
+//                respeckIMUCsvWriter = getIMUCsvFileWriter()
             } catch (e: IOException) {
                 Log.e(
                     "RESpeckPacketHandler",
@@ -257,28 +257,28 @@ class RESpeckPacketHandler(val speckService: BluetoothSpeckService) {
                 )
             }
         }
-        // conditionally write to both files
-        try {
-            val r = RESpeckSensorDataCsv(data)
-            when (useIMU) {
-                // normal data comes in, goes to the regular file
-                false -> respeckCsvWriter.write(r)
-                // high-frequency data: downsample to regular file, but also keep full data in a separate one
-                true -> {
-                    // write all IMU data to IMU log file
-                    Log.d(TAG, "writing to high frequency file")
-                    respeckIMUCsvWriter.write(RESpeckIMUSensorDataCsv(data))
-                    // and every other packet to the regular file
-                    if (!data.highFrequency) {
-                        Log.d(TAG, "writing to regular file")
-                        respeckCsvWriter.write(r)
-                    }
-                }
-            }
-            dateOfLastRESpeckWrite = now
-        } catch (e: IOException) {
-            Log.e(TAG, "Error while writing to respeck file: " + e.message)
-        }
+//        // conditionally write to both files
+//        try {
+//            val r = RESpeckSensorDataCsv(data)
+//            when (useIMU) {
+//                // normal data comes in, goes to the regular file
+//                false -> respeckCsvWriter.write(r)
+//                // high-frequency data: downsample to regular file, but also keep full data in a separate one
+//                true -> {
+//                    // write all IMU data to IMU log file
+//                    Log.d(TAG, "writing to high frequency file")
+//                    respeckIMUCsvWriter.write(RESpeckIMUSensorDataCsv(data))
+//                    // and every other packet to the regular file
+//                    if (!data.highFrequency) {
+//                        Log.d(TAG, "writing to regular file")
+//                        respeckCsvWriter.write(r)
+//                    }
+//                }
+//            }
+//            dateOfLastRESpeckWrite = now
+//        } catch (e: IOException) {
+//            Log.e(TAG, "Error while writing to respeck file: " + e.message)
+//        }
     }
 
     fun getNormalCsvFileWriter() =
@@ -387,15 +387,15 @@ class RESpeckPacketHandler(val speckService: BluetoothSpeckService) {
 
         // A simple flag to alternate between which IMU packets to take
         private var takeIMU = true
-
-        // two writers, one for regular data, one for IMU
-        lateinit var respeckCsvWriter: SensorDataCsvWriter<RESpeckSensorDataCsv>
-        lateinit var respeckIMUCsvWriter: SensorDataCsvWriter<RESpeckIMUSensorDataCsv>
+//
+//        // two writers, one for regular data, one for IMU
+//        lateinit var respeckCsvWriter: SensorDataCsvWriter<RESpeckSensorDataCsv>
+//        lateinit var respeckIMUCsvWriter: SensorDataCsvWriter<RESpeckIMUSensorDataCsv>
 
     }
 
     fun closeHandler() {
         Log.i(TAG, "Close handler (i.e. OutputstreamWriters)")
-        respeckCsvWriter.close()
+//        respeckCsvWriter.close()
     }
 }

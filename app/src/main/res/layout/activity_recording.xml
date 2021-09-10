@@ -10,7 +10,7 @@
         android:id="@+id/title_record_respeck"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Record Respeck Data"
+        android:text="Record Data"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
@@ -197,7 +197,7 @@
         android:id="@+id/countup_container"
         android:gravity="center"
         app:layout_constraintTop_toBottomOf="@id/buttons_container"
-        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintBottom_toTopOf="@id/sensor_data"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent">
 
@@ -206,6 +206,75 @@
             android:layout_height="wrap_content"
             android:text="Time elapsed: 00:00"
             android:id="@+id/count_up_timer_text"/>
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/sensor_data"
+        android:orientation="vertical"
+        app:layout_constraintTop_toBottomOf="@id/countup_container"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        android:gravity="left"
+        android:layout_marginTop="20dp"
+        android:paddingLeft="20dp"
+        android:paddingRight="20dp">
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/thingy_live_data"
+            android:orientation="vertical">
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Thingy Live Data"
+                android:textSize="20sp"/>
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/thingy_accel"
+                android:text="Accel = "
+                android:layout_marginTop="5dp"/>
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/thingy_gyro"
+                android:text="Gyro = "/>
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/thingy_mag"
+                android:text="Mag = "/>
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/respeck_live_data"
+            android:orientation="vertical"
+            android:layout_marginTop="10dp">
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Respeck Live Data"
+                android:textSize="20sp"/>
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/respeck_accel"
+                android:text="Accel = "
+                android:layout_marginTop="5dp"/>
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/respeck_gyro"
+                android:text="Gyro = "/>
+
+        </LinearLayout>
+
     </LinearLayout>
 
 

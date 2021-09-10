@@ -54,7 +54,7 @@
             android:id="@+id/ble_button"
             android:layout_width="550px"
             android:layout_height="wrap_content"
-            android:text="Connect respeck"
+            android:text="Connect sensors"
             android:layout_marginTop="100px"
             android:layout_marginBottom="100px"
             android:background="#03A9F4"
