@@ -18,9 +18,6 @@ object RESpeckPacketDecoder {
 
         @JvmStatic // https://stackoverflow.com/q/56237695/9184658
         fun decodePacketData(values: ByteArray): AccelerometerReading {
-//            val x: Float = combineAccelerationBytes(values[0], values[1])
-//            val y: Float = combineAccelerationBytes(values[2], values[3])
-//            val z: Float = combineAccelerationBytes(values[4], values[5])
             val (x, y, z) = values
                 .take(6) // ensure there are six values per batch: [a, b, c, d, e, f]
                 .chunked(2) // take in pairs: [(a, b), (c, d), (e, f)]

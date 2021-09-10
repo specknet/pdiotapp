@@ -4,6 +4,7 @@ import android.app.Activity
 import android.app.PendingIntent
 import android.content.*
 import android.nfc.NfcAdapter
+import android.nfc.NfcManager
 import android.nfc.Tag
 import android.nfc.tech.Ndef
 import android.nfc.tech.NfcF
@@ -44,7 +45,7 @@ class ConnectingActivity : AppCompatActivity() {
 
     lateinit var sharedPreferences: SharedPreferences
 
-    lateinit var nfcAdapter: NfcAdapter
+    var nfcAdapter: NfcAdapter? = null
     val MIME_TEXT_PLAIN = "application/vnd.bluetooth.le.oob"
     private val TAG = "NFCReader"
 
@@ -139,12 +140,12 @@ class ConnectingActivity : AppCompatActivity() {
         respeckID.filters = arrayOf<InputFilter>(AllCaps())
 
         thingyID.filters = arrayOf<InputFilter>(AllCaps())
-
-        nfcAdapter = NfcAdapter.getDefaultAdapter(this)
+        val nfcManager = getSystemService(Context.NFC_SERVICE) as NfcManager
+        nfcAdapter = nfcManager.defaultAdapter
 
         if (nfcAdapter == null) {
             Toast.makeText(this, "Phone does not support NFC pairing", Toast.LENGTH_LONG).show()
-        } else if (nfcAdapter.isEnabled()) {
+        } else if (nfcAdapter!!.isEnabled()) {
             Toast.makeText(this, "NFC Enabled", Toast.LENGTH_LONG).show()
         } else {
             Toast.makeText(this, "NFC Disabled", Toast.LENGTH_LONG).show()
@@ -176,7 +177,7 @@ class ConnectingActivity : AppCompatActivity() {
         super.onResume()
 
         if (nfcAdapter != null) {
-            setupForegroundDispatch(this, nfcAdapter)
+            setupForegroundDispatch(this, nfcAdapter!!)
         }
     }
 
@@ -320,7 +321,7 @@ class ConnectingActivity : AppCompatActivity() {
     override fun onPause() {
 
         if(nfcAdapter != null) {
-            stopForegroundDispatch(this, nfcAdapter)
+            stopForegroundDispatch(this, nfcAdapter!!)
         }
         super.onPause()
     }
