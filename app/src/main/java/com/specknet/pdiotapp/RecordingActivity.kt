@@ -1,16 +1,9 @@
 package com.specknet.pdiotapp
 
-import android.app.Activity
-import android.app.PendingIntent
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
-import android.content.IntentFilter.MalformedMimeTypeException
-import android.nfc.NfcAdapter
-import android.nfc.Tag
-import android.nfc.tech.Ndef
-import android.nfc.tech.NfcA
 import android.os.Bundle
 import android.os.Handler
 import android.os.HandlerThread
@@ -23,9 +16,8 @@ import com.specknet.pdiotapp.utils.Constants
 import com.specknet.pdiotapp.utils.CountUpTimer
 import com.specknet.pdiotapp.utils.RESpeckLiveData
 import com.specknet.pdiotapp.utils.ThingyLiveData
-import com.specknet.pdiotapp.utils.Utils.bytesToHex
 import java.io.*
-import java.lang.RuntimeException
+import java.lang.Exception
 import java.text.SimpleDateFormat
 import java.util.*
 import java.lang.StringBuilder
@@ -69,6 +61,9 @@ class RecordingActivity : AppCompatActivity() {
     private lateinit var thingyGyro: TextView
     private lateinit var thingyMag: TextView
 
+    var thingyOn = false
+    var respeckOn = false
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         Log.d(TAG, "onCreate: here")
@@ -100,6 +95,8 @@ class RecordingActivity : AppCompatActivity() {
 
                     updateRespeckData(liveData)
 
+                    respeckOn = true
+
                 }
 
             }
@@ -125,6 +122,8 @@ class RecordingActivity : AppCompatActivity() {
                     Log.d("Live", "onReceive: thingyLiveData = " + liveData)
 
                     updateThingyData(liveData)
+
+                    thingyOn = true
 
                 }
 
@@ -251,14 +250,14 @@ class RecordingActivity : AppCompatActivity() {
 
     }
 
-    private fun enableButton(button: Button) {
-        button.isClickable = true
-        button.isEnabled = true
+    private fun enableView(view: View) {
+        view.isClickable = true
+        view.isEnabled = true
     }
 
-    private fun disableButton(button: Button) {
-        button.isClickable = false
-        button.isEnabled = false
+    private fun disableView(view: View) {
+        view.isClickable = false
+        view.isEnabled = false
     }
 
     private fun setupButtons() {
@@ -266,46 +265,71 @@ class RecordingActivity : AppCompatActivity() {
         cancelRecordingButton = findViewById(R.id.cancel_recording_button)
         stopRecordingButton = findViewById(R.id.stop_recording_button)
 
-        disableButton(stopRecordingButton)
-        disableButton(cancelRecordingButton)
+        disableView(stopRecordingButton)
+        disableView(cancelRecordingButton)
 
         startRecordingButton.setOnClickListener {
 
             getInputs()
 
             if (universalSubjectId.length != 8) {
-                Toast.makeText(this, "Input a correct student id", Toast.LENGTH_LONG).show()
-                // TODO use material design here to highlight field
+                Toast.makeText(this, "Input a correct student id", Toast.LENGTH_SHORT).show()
                 return@setOnClickListener
             }
 
-            Toast.makeText(this, "Starting recording", Toast.LENGTH_LONG).show()
+            if (sensorType == "Respeck" && !respeckOn) {
+                Toast.makeText(this, "Respeck is not on! Check connection.", Toast.LENGTH_SHORT).show()
+                return@setOnClickListener
+            }
 
-            disableButton(startRecordingButton)
 
-            enableButton(cancelRecordingButton)
-            enableButton(stopRecordingButton)
+            if (sensorType == "Thingy" && !thingyOn) {
+                Toast.makeText(this, "Thingy is not on! Check connection.", Toast.LENGTH_SHORT).show()
+                return@setOnClickListener
+            }
+
+            Toast.makeText(this, "Starting recording", Toast.LENGTH_SHORT).show()
+
+            disableView(startRecordingButton)
+
+            enableView(cancelRecordingButton)
+            enableView(stopRecordingButton)
+
+            disableView(sensorTypeSpinner)
+            disableView(activityTypeSpinner)
+            disableView(univSubjectIdInput)
+            disableView(notesInput)
 
             startRecording()
         }
 
         cancelRecordingButton.setOnClickListener {
-            Toast.makeText(this, "Cancelling recording", Toast.LENGTH_LONG).show()
+            Toast.makeText(this, "Cancelling recording", Toast.LENGTH_SHORT).show()
 
-            enableButton(startRecordingButton)
-            disableButton(cancelRecordingButton)
-            disableButton(stopRecordingButton)
+            enableView(startRecordingButton)
+            disableView(cancelRecordingButton)
+            disableView(stopRecordingButton)
+
+            enableView(sensorTypeSpinner)
+            enableView(activityTypeSpinner)
+            enableView(univSubjectIdInput)
+            enableView(notesInput)
 
             cancelRecording()
 
         }
 
         stopRecordingButton.setOnClickListener {
-            Toast.makeText(this, "Stop recording", Toast.LENGTH_LONG).show()
+            Toast.makeText(this, "Stop recording", Toast.LENGTH_SHORT).show()
 
-            enableButton(startRecordingButton)
-            disableButton(cancelRecordingButton)
-            disableButton(stopRecordingButton)
+            enableView(startRecordingButton)
+            disableView(cancelRecordingButton)
+            disableView(stopRecordingButton)
+
+            enableView(sensorTypeSpinner)
+            enableView(activityTypeSpinner)
+            enableView(univSubjectIdInput)
+            enableView(notesInput)
 
             stopRecording()
         }
@@ -319,8 +343,10 @@ class RecordingActivity : AppCompatActivity() {
 
         // reset output data
         respeckOutputData = StringBuilder()
+        thingyOutputData = StringBuilder()
 
         mIsRespeckRecording = false
+        mIsThingyRecording = false
     }
 
     private fun startRecording() {
@@ -346,19 +372,24 @@ class RecordingActivity : AppCompatActivity() {
 
         Log.d(TAG, "stopRecording")
 
-        if (sensorType.equals("Thingy")) {
-            mIsThingyRecording = false
-        }
-        else {
-            mIsRespeckRecording = false
-        }
+        mIsRespeckRecording = false
+        mIsThingyRecording = false
 
         saveRecording()
 
     }
 
     private fun saveRecording() {
-        val filename = "${sensorType}_${universalSubjectId}_${activityType}_${System.currentTimeMillis()}.csv" // TODO format this to human readable
+        val currentTime = System.currentTimeMillis()
+        var formattedDate = ""
+        try {
+            formattedDate = SimpleDateFormat("dd-MM-yyyy_HH-mm-ss", Locale.UK).format(Date())
+            Log.i(TAG, "saveRecording: formattedDate = " + formattedDate)
+        } catch (e: Exception) {
+            Log.i(TAG, "saveRecording: error = ${e.toString()}")
+            formattedDate = currentTime.toString()
+        }
+        val filename = "${sensorType}_${universalSubjectId}_${activityType}_${formattedDate}.csv" // TODO format this to human readable
 
         val file = File(getExternalFilesDir(null), filename)
 
@@ -421,8 +452,11 @@ class RecordingActivity : AppCompatActivity() {
 
             respeckOutputData = StringBuilder()
             thingyOutputData = StringBuilder()
+
+            Toast.makeText(this, "Recording saved!", Toast.LENGTH_SHORT).show()
         }
         catch (e: IOException) {
+            Toast.makeText(this, "Error while saving recording!", Toast.LENGTH_SHORT).show()
             Log.e(TAG, "saveRespeckRecording: Error while writing to the respeck file: " + e.message )
         }
     }
@@ -438,11 +472,17 @@ class RecordingActivity : AppCompatActivity() {
     }
 
     override fun onDestroy() {
-        super.onDestroy()
         unregisterReceiver(respeckReceiver)
         unregisterReceiver(thingyReceiver)
         respeckLooper.quit()
         thingyLooper.quit()
+
+        if (mIsThingyRecording || mIsRespeckRecording) {
+            saveRecording()
+        }
+
+        super.onDestroy()
+
     }
 
 }
