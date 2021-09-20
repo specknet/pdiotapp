@@ -1,82 +1,176 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".bluetooth.ConnectingActivity">
 
-    <TextView
-        android:id="@+id/respeck_status_connection"
-        android:layout_width="wrap_content"
+    <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_height="wrap_content"
-        android:text="Respeck status: Disconnected"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        android:layout_marginTop="20px"
-        android:layout_marginRight="20px"/>
+        android:layout_width="match_parent">
 
-    <TextView
-        android:id="@+id/textView3"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Input the RESpeck ID or scan it"
-        android:layout_marginTop="100px"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/respeck_status_connection"
-        app:layout_constraintBottom_toTopOf="@+id/scan_respeck"/>
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            android:orientation="vertical">
 
-    <Button
-        android:id="@+id/scan_respeck"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Scan Respeck"
-        android:layout_marginTop="100px"
-        app:layout_constraintBottom_toTopOf="@+id/title"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/textView3"/>
+            <LinearLayout
+                android:gravity="left"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:padding="20dp">
 
-    <TextView
-        android:id="@+id/title"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Respeck ID"
-        app:layout_constraintStart_toStartOf="@id/respeck_code"
-        app:layout_constraintEnd_toEndOf="@id/respeck_code"
-        app:layout_constraintBottom_toTopOf="@id/respeck_code"/>
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Respeck"
+                    android:textSize="30dp"/>
 
-    <EditText
-        android:id="@+id/respeck_code"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:ems="10"
-        android:inputType="textPersonName"
-        android:hint="Scan respeck for code"
-        android:layout_marginTop="100px"
-        app:layout_constraintBottom_toTopOf="@id/connect_button"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/scan_respeck" />
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="If your phone supports NFC, tap it against the white surface of the Respeck to obtain the ID.\nYou can also find the ID on the Respeck label, or scan the Respeck QR code by pressing the Scan QR button."
+                    android:layout_marginTop="20dp"/>
 
-    <Button
-        android:id="@+id/connect_button"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Connect"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toStartOf="@id/disconnect_button"
-        app:layout_constraintTop_toBottomOf="@id/respeck_code"
-        app:layout_constraintBottom_toBottomOf="parent"/>
+                <TextView
+                    android:id="@+id/title"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Respeck ID"
+                    android:layout_marginTop="30dp"/>
 
-    <Button
-        android:id="@+id/disconnect_button"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text = "Disconnect"
-        app:layout_constraintTop_toBottomOf="@+id/respeck_code"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toEndOf="@id/connect_button"
-        app:layout_constraintEnd_toEndOf="parent"/>
-</androidx.constraintlayout.widget.ConstraintLayout>
+                <LinearLayout
+                    android:gravity="left"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
+
+                    <EditText
+                        android:id="@+id/respeck_code"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:ems="10"
+                        android:inputType="textPersonName"
+                        android:hint="Enter Respeck ID"/>
+
+                    <Button
+                        android:id="@+id/scan_respeck"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Scan QR"/>
+                </LinearLayout>
+
+
+<!--                <LinearLayout-->
+<!--                    android:layout_width="match_parent"-->
+<!--                    android:layout_height="wrap_content"-->
+<!--                    android:orientation="horizontal"-->
+<!--                    android:gravity="center">-->
+
+
+<!--                    <Button-->
+<!--                        android:id="@+id/connect_button"-->
+<!--                        android:layout_width="0dp"-->
+<!--                        android:layout_weight="1"-->
+<!--                        android:layout_height="wrap_content"-->
+<!--                        android:text="Connect"/>-->
+
+<!--                    <Button-->
+<!--                        android:id="@+id/disconnect_button"-->
+<!--                        android:layout_width="0dp"-->
+<!--                        android:layout_weight="1"-->
+<!--                        android:layout_height="wrap_content"-->
+<!--                        android:text = "Disconnect"/>-->
+
+<!--                </LinearLayout>-->
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:gravity="left"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:padding="20dp">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Thingy"
+                    android:textSize="30dp"/>
+
+                <TextView
+                    android:id="@+id/textView4"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="If your phone supports NFC, tap it against the top of the Thingy to obtain the ID.\nThe Thingy ID is also written on a label under the black rubber case."
+                    android:layout_marginTop="20dp"/>
+
+
+
+                <TextView
+                    android:id="@+id/title_thingy"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Thingy ID"
+                    android:layout_marginTop="30dp"/>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
+
+                    <EditText
+                        android:id="@+id/thingy_code"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:ems="10"
+                        android:inputType="textPersonName"
+                        android:hint="Enter Thingy ID"/>
+
+                </LinearLayout>
+
+            </LinearLayout>
+
+            <TextView
+                android:paddingLeft="30dp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Try to always connect both sensors."/>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:gravity="center"
+                android:padding="30dp">
+
+
+                <Button
+                    android:id="@+id/connect_sensors_button"
+                    android:layout_width="0dp"
+                    android:layout_weight="1"
+                    android:layout_height="wrap_content"
+                    android:text="Pair Sensors"/>
+
+                <Button
+                    android:id="@+id/restart_service_button"
+                    android:layout_width="0dp"
+                    android:layout_weight="1"
+                    android:layout_height="wrap_content"
+                    android:text = "Restart connection"/>
+
+            </LinearLayout>
+
+        </LinearLayout>
+
+
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+</ScrollView>

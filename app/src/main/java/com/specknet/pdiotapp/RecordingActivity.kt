@@ -14,60 +14,66 @@ import android.widget.*
 import androidx.appcompat.app.AppCompatActivity
 import com.specknet.pdiotapp.utils.Constants
 import com.specknet.pdiotapp.utils.CountUpTimer
-import com.specknet.pdiotapp.utils.Utils
-import java.io.File
-import java.io.FileOutputStream
-import java.io.IOException
-import java.io.OutputStreamWriter
+import com.specknet.pdiotapp.utils.RESpeckLiveData
+import com.specknet.pdiotapp.utils.ThingyLiveData
+import java.io.*
+import java.lang.Exception
 import java.text.SimpleDateFormat
 import java.util.*
-import java.util.concurrent.TimeUnit
-import kotlin.collections.ArrayList
+import java.lang.StringBuilder
 
 class RecordingActivity : AppCompatActivity() {
-    lateinit var sensorPositionSpinner: Spinner
-    lateinit var sensorSideSpinner: Spinner
+    private val TAG = "RecordingActivity"
+    lateinit var sensorTypeSpinner: Spinner
     lateinit var activityTypeSpinner: Spinner
     lateinit var startRecordingButton: Button
+    lateinit var cancelRecordingButton: Button
     lateinit var stopRecordingButton: Button
     lateinit var univSubjectIdInput: EditText
+    lateinit var notesInput: EditText
 
     lateinit var timer: TextView
     lateinit var countUpTimer: CountUpTimer
 
-    lateinit var writer: OutputStreamWriter
-    var outputData: StringBuilder = StringBuilder()
-    var fileClosed = true
-
     lateinit var respeckReceiver: BroadcastReceiver
-    lateinit var looper: Looper
+    lateinit var thingyReceiver: BroadcastReceiver
+    lateinit var respeckLooper: Looper
+    lateinit var thingyLooper: Looper
 
-    var seq = 0
+    val respeckFilterTest = IntentFilter(Constants.ACTION_RESPECK_LIVE_BROADCAST)
+    val thingyFilterTest = IntentFilter(Constants.ACTION_THINGY_BROADCAST)
 
-    val filterTest = IntentFilter(Constants.ACTION_INNER_RESPECK_BROADCAST)
-
-    var sensorPosition = ""
-    var sensorSide = ""
-    var universalSubjectId = "s123456"
+    var sensorType = ""
+    var universalSubjectId = "s1234567"
     var activityType = ""
-    var recordingId = "123"
+    var activityCode = 0
+    var notes = ""
 
-    var last_x = -100f
-    var last_y = -100f
-    var last_z = -100f
+    private var mIsRespeckRecording = false
+    private var mIsThingyRecording = false
+    private lateinit var respeckOutputData: StringBuilder
+    private lateinit var thingyOutputData: StringBuilder
 
-    var last_x_rec = -100f
-    var last_y_rec = -100f
-    var last_z_rec = -100f
+    private lateinit var respeckAccel: TextView
+    private lateinit var respeckGyro: TextView
 
-    lateinit var frequencies: ArrayList<Long>
-    lateinit var frequenciesAppend: ArrayList<Long>
+    private lateinit var thingyAccel: TextView
+    private lateinit var thingyGyro: TextView
+    private lateinit var thingyMag: TextView
 
-    var lastProcessedMinuteAppend = -1L
+    var thingyOn = false
+    var respeckOn = false
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
+        Log.d(TAG, "onCreate: here")
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_recording)
+
+        respeckOutputData = StringBuilder()
+        thingyOutputData = StringBuilder()
+
+        setupViews()
 
         setupSpinners()
 
@@ -75,46 +81,21 @@ class RecordingActivity : AppCompatActivity() {
 
         setupInputs()
 
-        frequencies = ArrayList<Long>()
-        frequenciesAppend = ArrayList()
-        var lastProcessedMinute = -1L
-
-        // register receiver
+        Log.d(TAG, "onCreate: setting up respeck receiver")
+        // register respeck receiver
         respeckReceiver = object : BroadcastReceiver() {
             override fun onReceive(context: Context, intent: Intent) {
 
                 val action = intent.action
 
-                if (action == Constants.ACTION_INNER_RESPECK_BROADCAST) {
-                    // get all relevant intent contents
-                    val x = intent.getFloatExtra(Constants.EXTRA_RESPECK_LIVE_X, 0f)
-                    val y = intent.getFloatExtra(Constants.EXTRA_RESPECK_LIVE_Y, 0f)
-                    val z = intent.getFloatExtra(Constants.EXTRA_RESPECK_LIVE_Z, 0f)
-                    val ts = intent.getLongExtra(Constants.EXTRA_INTERPOLATED_TS, 0L)
+                if (action == Constants.ACTION_RESPECK_LIVE_BROADCAST) {
 
-                    if (x == last_x && y == last_y && z == last_z) {
-                        Log.e("Debug", "DUPLICATE VALUES")
-                    }
+                    val liveData = intent.getSerializableExtra(Constants.RESPECK_LIVE_DATA) as RESpeckLiveData
+                    Log.d("Live", "onReceive: liveData = " + liveData)
 
-                    last_x = x
-                    last_y = y
-                    last_z = z
+                    updateRespeckData(liveData)
 
-                    var now = System.currentTimeMillis()
-                    frequencies.add(now)
-                    var currentProcessedMinute = TimeUnit.MILLISECONDS.toMinutes(now)
-
-                    if (lastProcessedMinute != currentProcessedMinute && lastProcessedMinute != -1L) {
-                        var freq = calculateRecordingFrequency()
-                        Log.i("Debug", "Recording freq = " + freq)
-                    }
-
-                    lastProcessedMinute = currentProcessedMinute
-
-                    if(!fileClosed) {
-
-                        appendToFile(x, y, z, ts)
-                    }
+                    respeckOn = true
 
                 }
 
@@ -122,11 +103,39 @@ class RecordingActivity : AppCompatActivity() {
         }
 
         // important to set this on a background thread otherwise it will block the UI
-        val handlerThread = HandlerThread("bgProcThread")
-        handlerThread.start()
-        looper = handlerThread.looper
-        val handler = Handler(looper)
-        this.registerReceiver(respeckReceiver, filterTest, null, handler)
+        val respeckHandlerThread = HandlerThread("bgProcThreadRespeck")
+        respeckHandlerThread.start()
+        respeckLooper = respeckHandlerThread.looper
+        val respeckHandler = Handler(respeckLooper)
+        this.registerReceiver(respeckReceiver, respeckFilterTest, null, respeckHandler)
+
+        Log.d(TAG, "onCreate: registering thingy receiver")
+        // register thingy receiver
+        thingyReceiver = object : BroadcastReceiver() {
+            override fun onReceive(context: Context, intent: Intent) {
+
+                val action = intent.action
+
+                if (action == Constants.ACTION_THINGY_BROADCAST) {
+
+                    val liveData = intent.getSerializableExtra(Constants.THINGY_LIVE_DATA) as ThingyLiveData
+                    Log.d("Live", "onReceive: thingyLiveData = " + liveData)
+
+                    updateThingyData(liveData)
+
+                    thingyOn = true
+
+                }
+
+            }
+        }
+
+        // important to set this on a background thread otherwise it will block the UI
+        val thingyHandlerThread = HandlerThread("bgProcThreadThingy")
+        thingyHandlerThread.start()
+        thingyLooper = thingyHandlerThread.looper
+        val thingyHandler = Handler(thingyLooper)
+        this.registerReceiver(thingyReceiver, thingyFilterTest, null, thingyHandler)
 
         timer = findViewById(R.id.count_up_timer_text)
         timer.visibility = View.INVISIBLE
@@ -142,51 +151,79 @@ class RecordingActivity : AppCompatActivity() {
 
     }
 
+    private fun setupViews() {
+        respeckAccel = findViewById(R.id.respeck_accel)
+        respeckGyro = findViewById(R.id.respeck_gyro)
+
+        thingyAccel = findViewById(R.id.thingy_accel)
+        thingyGyro = findViewById(R.id.thingy_gyro)
+        thingyMag = findViewById(R.id.thingy_mag)
+    }
+
+    private fun updateRespeckData(liveData: RESpeckLiveData) {
+        if (mIsRespeckRecording) {
+            val output = liveData.phoneTimestamp.toString() + "," +
+                    liveData.accelX + "," + liveData.accelY + "," + liveData.accelZ + "," +
+                    liveData.gyro.x + "," + liveData.gyro.y + "," + liveData.gyro.z + "\n"
+
+            respeckOutputData.append(output)
+            Log.d(TAG, "updateRespeckData: appended to respeckoutputdata = " + output)
+
+        }
+
+        // update UI thread
+        runOnUiThread {
+            respeckAccel.text = getString(R.string.respeck_accel, liveData.accelX, liveData.accelY, liveData.accelZ)
+            respeckGyro.text = getString(R.string.respeck_gyro, liveData.gyro.x, liveData.gyro.y, liveData.gyro.z)
+        }
+    }
+
+    private fun updateThingyData(liveData: ThingyLiveData) {
+        if (mIsThingyRecording) {
+            val output = liveData.phoneTimestamp.toString() + "," +
+                    liveData.accelX + "," + liveData.accelY + "," + liveData.accelZ + "," +
+                    liveData.gyro.x + "," + liveData.gyro.y + "," + liveData.gyro.z + "," +
+                    liveData.mag.x + "," + liveData.mag.y + "," + liveData.mag.z + "\n"
+
+            thingyOutputData.append(output)
+            Log.d(TAG, "updateThingyData: appended to thingyOutputData = " + output)
+        }
+
+        // update UI thread
+        runOnUiThread {
+            thingyAccel.text = getString(R.string.thingy_accel, liveData.accelX, liveData.accelY, liveData.accelZ)
+            thingyGyro.text = getString(R.string.thingy_gyro, liveData.gyro.x, liveData.gyro.y, liveData.gyro.z)
+            thingyMag.text = getString(R.string.thingy_mag, liveData.mag.x, liveData.mag.y, liveData.mag.z)
+        }
+    }
+
     private fun setupInputs() {
+        Log.d(TAG, "setupInputs: here")
         univSubjectIdInput = findViewById(R.id.universal_subject_id_input)
+        notesInput = findViewById(R.id.notes_input)
     }
 
     private fun setupSpinners() {
-        sensorPositionSpinner = findViewById(R.id.sensor_position_spinner)
+        Log.d(TAG, "setupSpinners: here")
+        sensorTypeSpinner = findViewById(R.id.sensor_type_spinner)
 
         ArrayAdapter.createFromResource(
             this,
-            R.array.sensor_position_array,
+            R.array.sensor_type_array,
             android.R.layout.simple_spinner_item
         ).also { adapter ->
             adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
-            sensorPositionSpinner.adapter = adapter
+            sensorTypeSpinner.adapter = adapter
         }
 
-        sensorPositionSpinner.onItemSelectedListener = object: AdapterView.OnItemSelectedListener {
+        sensorTypeSpinner.onItemSelectedListener = object: AdapterView.OnItemSelectedListener {
             override fun onItemSelected(parent: AdapterView<*>, viwq: View, position: Int, id: Long) {
                 val selectedItem = parent.getItemAtPosition(position).toString()
-                sensorPosition = selectedItem
+                sensorType = selectedItem
             }
 
             override fun onNothingSelected(p0: AdapterView<*>?) {
-                sensorPosition = "Chest"
-            }
-        }
-
-        sensorSideSpinner = findViewById(R.id.sensor_side_spinner)
-        ArrayAdapter.createFromResource(
-            this,
-            R.array.sensor_side_array,
-            android.R.layout.simple_spinner_item
-        ).also { adapter ->
-            adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
-            sensorSideSpinner.adapter = adapter
-        }
-
-        sensorSideSpinner.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
-            override fun onItemSelected(parent: AdapterView<*>, viwq: View, position: Int, id: Long) {
-                val selectedItem = parent.getItemAtPosition(position).toString()
-                sensorSide = selectedItem
-            }
-
-            override fun onNothingSelected(p0: AdapterView<*>?) {
-                sensorSide = "Left"
+                sensorType = "Respeck"
             }
         }
 
@@ -211,169 +248,241 @@ class RecordingActivity : AppCompatActivity() {
             }
         }
 
+    }
 
+    private fun enableView(view: View) {
+        view.isClickable = true
+        view.isEnabled = true
+    }
 
+    private fun disableView(view: View) {
+        view.isClickable = false
+        view.isEnabled = false
     }
 
     private fun setupButtons() {
         startRecordingButton = findViewById(R.id.start_recording_button)
+        cancelRecordingButton = findViewById(R.id.cancel_recording_button)
         stopRecordingButton = findViewById(R.id.stop_recording_button)
 
-        stopRecordingButton.isClickable = false
-        stopRecordingButton.isEnabled = false
+        disableView(stopRecordingButton)
+        disableView(cancelRecordingButton)
 
         startRecordingButton.setOnClickListener {
-            Toast.makeText(this, "Starting recording", Toast.LENGTH_LONG).show()
 
-            startRecordingButton.isClickable = false
-            startRecordingButton.isEnabled = false
+            getInputs()
 
-            stopRecordingButton.isClickable = true
-            stopRecordingButton.isEnabled = true
+            if (universalSubjectId.length != 8) {
+                Toast.makeText(this, "Input a correct student id", Toast.LENGTH_SHORT).show()
+                return@setOnClickListener
+            }
+
+            if (sensorType == "Respeck" && !respeckOn) {
+                Toast.makeText(this, "Respeck is not on! Check connection.", Toast.LENGTH_SHORT).show()
+                return@setOnClickListener
+            }
+
+
+            if (sensorType == "Thingy" && !thingyOn) {
+                Toast.makeText(this, "Thingy is not on! Check connection.", Toast.LENGTH_SHORT).show()
+                return@setOnClickListener
+            }
+
+            Toast.makeText(this, "Starting recording", Toast.LENGTH_SHORT).show()
+
+            disableView(startRecordingButton)
+
+            enableView(cancelRecordingButton)
+            enableView(stopRecordingButton)
+
+            disableView(sensorTypeSpinner)
+            disableView(activityTypeSpinner)
+            disableView(univSubjectIdInput)
+            disableView(notesInput)
 
             startRecording()
         }
 
-        stopRecordingButton.setOnClickListener {
-            Toast.makeText(this, "Stop recording", Toast.LENGTH_LONG).show()
-            startRecordingButton.isClickable = true
-            startRecordingButton.isEnabled = true
+        cancelRecordingButton.setOnClickListener {
+            Toast.makeText(this, "Cancelling recording", Toast.LENGTH_SHORT).show()
 
-            stopRecordingButton.isClickable = false
-            stopRecordingButton.isEnabled = false
+            enableView(startRecordingButton)
+            disableView(cancelRecordingButton)
+            disableView(stopRecordingButton)
+
+            enableView(sensorTypeSpinner)
+            enableView(activityTypeSpinner)
+            enableView(univSubjectIdInput)
+            enableView(notesInput)
+
+            cancelRecording()
+
+        }
+
+        stopRecordingButton.setOnClickListener {
+            Toast.makeText(this, "Stop recording", Toast.LENGTH_SHORT).show()
+
+            enableView(startRecordingButton)
+            disableView(cancelRecordingButton)
+            disableView(stopRecordingButton)
+
+            enableView(sensorTypeSpinner)
+            enableView(activityTypeSpinner)
+            enableView(univSubjectIdInput)
+            enableView(notesInput)
 
             stopRecording()
         }
 
     }
 
-    private fun startRecording() {
-        timer.visibility = View.VISIBLE
-        getInputs()
-        createFile()
-        fileClosed = false
-        countUpTimer.start()
-    }
-
-    private fun stopRecording() {
-        if (!fileClosed) {
-            fileClosed = true
-            if (outputData.isNotEmpty()) {
-                writer.write(outputData.toString())
-            }
-            Log.i("recording", "stop rec")
-            outputData = StringBuilder()
-            writer.close()
-            seq = 0
-        }
+    private fun cancelRecording() {
         countUpTimer.stop()
         countUpTimer.reset()
         timer.text = "Time elapsed: 00:00"
+
+        // reset output data
+        respeckOutputData = StringBuilder()
+        thingyOutputData = StringBuilder()
+
+        mIsRespeckRecording = false
+        mIsThingyRecording = false
+    }
+
+    private fun startRecording() {
+        timer.visibility = View.VISIBLE
+
+        countUpTimer.start()
+
+        if (sensorType.equals("Thingy")) {
+            mIsThingyRecording = true
+            mIsRespeckRecording = false
+        }
+        else {
+            mIsRespeckRecording = true
+            mIsThingyRecording = false
+        }
+    }
+
+    private fun stopRecording() {
+
+        countUpTimer.stop()
+        countUpTimer.reset()
+        timer.text = "Time elapsed: 00:00"
+
+        Log.d(TAG, "stopRecording")
+
+        mIsRespeckRecording = false
+        mIsThingyRecording = false
+
+        saveRecording()
+
+    }
+
+    private fun saveRecording() {
+        val currentTime = System.currentTimeMillis()
+        var formattedDate = ""
+        try {
+            formattedDate = SimpleDateFormat("dd-MM-yyyy_HH-mm-ss", Locale.UK).format(Date())
+            Log.i(TAG, "saveRecording: formattedDate = " + formattedDate)
+        } catch (e: Exception) {
+            Log.i(TAG, "saveRecording: error = ${e.toString()}")
+            formattedDate = currentTime.toString()
+        }
+        val filename = "${sensorType}_${universalSubjectId}_${activityType}_${formattedDate}.csv" // TODO format this to human readable
+
+        val file = File(getExternalFilesDir(null), filename)
+
+        Log.d(TAG, "saveRecording: filename = " + filename)
+
+        val dataWriter: BufferedWriter
+
+        // Create file for current day and append header, if it doesn't exist yet
+        try {
+            val exists = file.exists()
+            dataWriter = BufferedWriter(OutputStreamWriter(FileOutputStream(file, true)))
+
+            if (!exists) {
+                Log.d(TAG, "saveRecording: filename doesn't exist")
+
+                // the header columns in here
+                dataWriter.append("# Sensor type: $sensorType").append("\n")
+                dataWriter.append("# Activity type: $activityType").append("\n")
+                dataWriter.append("# Activity code: $activityCode").append("\n")
+                dataWriter.append("# Subject id: $universalSubjectId").append("\n")
+                dataWriter.append("# Notes: $notes").append("\n")
+
+                if (sensorType.equals("Thingy")) {
+                    dataWriter.write(Constants.RECORDING_CSV_HEADER_THINGY)
+                }
+                else {
+                    dataWriter.write(Constants.RECORDING_CSV_HEADER_RESPECK)
+                }
+                dataWriter.newLine()
+                dataWriter.flush()
+            }
+            else {
+                Log.d(TAG, "saveRecording: filename exists")
+            }
+
+            if (sensorType.equals("Thingy")) {
+                if (thingyOutputData.isNotEmpty()) {
+                    dataWriter.write(thingyOutputData.toString())
+                    dataWriter.flush()
+
+                    Log.d(TAG, "saveRecording: thingy recording saved")
+                }
+                else {
+                    Log.d(TAG, "saveRecording: no data from thingy during recording period")
+                }
+            }
+            else {
+                if (respeckOutputData.isNotEmpty()) {
+                    dataWriter.write(respeckOutputData.toString())
+                    dataWriter.flush()
+
+                    Log.d(TAG, "saveRecording: respeck recording saved")
+                }
+                else {
+                    Log.d(TAG, "saveRecording: no data from respeck during recording period")
+                }
+            }
+
+            dataWriter.close()
+
+            respeckOutputData = StringBuilder()
+            thingyOutputData = StringBuilder()
+
+            Toast.makeText(this, "Recording saved!", Toast.LENGTH_SHORT).show()
+        }
+        catch (e: IOException) {
+            Toast.makeText(this, "Error while saving recording!", Toast.LENGTH_SHORT).show()
+            Log.e(TAG, "saveRespeckRecording: Error while writing to the respeck file: " + e.message )
+        }
     }
 
     private fun getInputs() {
-        universalSubjectId = univSubjectIdInput.text.toString()
-    }
 
-    private fun createFile() {
+        universalSubjectId = univSubjectIdInput.text.toString().toLowerCase().trim()
+        activityType = activityTypeSpinner.selectedItem.toString()
+        activityCode = Constants.ACTIVITY_NAME_TO_CODE_MAPPING[activityType]!!
+        sensorType = sensorTypeSpinner.selectedItem.toString()
+        notes = notesInput.text.toString().trim()
 
-        val activityTypeName = Constants.ACTIVITY_CODE_TO_NAME_MAPPING[activityType.toInt()]
-        val fileName = "${universalSubjectId}_${activityTypeName}_${sensorPosition}_${sensorSide}_${System.currentTimeMillis()}.csv"
-        val file = File(getExternalFilesDir(null), fileName)
-
-        if(file.exists()) {
-            Log.i("recording", "file exists!")
-            try {
-                writer = OutputStreamWriter(FileOutputStream(file, true))
-            } catch (e: IOException) {
-                Log.e("recording", "error while writing to the file")
-            }
-        }
-        else {
-            try {
-                writer = OutputStreamWriter(FileOutputStream(file, true))
-                // the header columns in here
-                writer.append("# Sensor position: $sensorPosition").append("\n")
-                writer.append("# Sensor side: $sensorSide").append("\n")
-                writer.append("# Activity type: $activityTypeName").append("\n")
-                writer.append("# Activity code: $activityType").append("\n")
-                writer.append("# Subject id: $universalSubjectId").append("\n")
-                writer.append(Constants.RECORDING_CSV_HEADER).append("\n")
-                writer.flush()
-                writer.flush()
-            } catch (e: IOException){
-                Log.e("recording", "error while writing to the file")
-            }
-        }
-
-    }
-
-    private fun appendToFile(x: Float, y: Float, z: Float, ts: Long) {
-        val now = System.currentTimeMillis()
-
-        frequenciesAppend.add(now)
-        var currentProcessedMinute = TimeUnit.MILLISECONDS.toMinutes(now)
-
-        if (lastProcessedMinuteAppend != currentProcessedMinute && lastProcessedMinuteAppend != -1L) {
-            var freq = calculateRecordingFrequencyInAppend()
-            Log.i("Debug", "Recording freq in append = " + freq)
-        }
-
-        lastProcessedMinuteAppend = currentProcessedMinute
-
-        val outputString = ts.toString() + "," +
-                seq + "," + x.toString() + "," + y.toString() + "," +
-                z.toString() + "\n"
-        outputData.append(outputString)
-        seq++
-
-        if (x == last_x_rec && y == last_y_rec && z == last_z_rec) {
-            Log.e("Debug", "DUPLICATE VALUES in rec")
-        }
-
-        last_x_rec = x
-        last_y_rec = y
-        last_z_rec = z
-
-        Log.i("Debug-rec", "appending " + outputString)
     }
 
     override fun onDestroy() {
-        super.onDestroy()
         unregisterReceiver(respeckReceiver)
-        looper.quit()
-    }
+        unregisterReceiver(thingyReceiver)
+        respeckLooper.quit()
+        thingyLooper.quit()
 
-    fun calculateRecordingFrequency(): Float {
-        var num_freq = frequencies.size
-
-        if (num_freq <= 1) {
-            return 0f
+        if (mIsThingyRecording || mIsRespeckRecording) {
+            saveRecording()
         }
 
-        var first_ts = frequencies[0]
-        var last_ts = frequencies[num_freq - 1]
-        var samplingFreq = num_freq * 1f / (last_ts - first_ts) * 1000f
+        super.onDestroy()
 
-        frequencies.clear()
-
-        return samplingFreq
-    }
-
-    fun calculateRecordingFrequencyInAppend(): Float {
-        var num_freq = frequenciesAppend.size
-
-        if (num_freq <= 1) {
-            return 0f
-        }
-
-        var first_ts = frequenciesAppend[0]
-        var last_ts = frequenciesAppend[num_freq - 1]
-        var samplingFreq = num_freq * 1f / (last_ts - first_ts) * 1000f
-
-        frequenciesAppend.clear()
-
-        return samplingFreq
     }
 
 }

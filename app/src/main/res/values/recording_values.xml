@@ -1,9 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string-array name="sensor_position_array">
-        <item>Chest</item>
-        <item>Front pocket (trouser)</item>
-        <item>Wrist</item>
+    <string-array name="sensor_type_array">
+        <item>Respeck</item>
+        <item>Thingy</item>
     </string-array>
 
     <string-array name="sensor_side_array">

@@ -17,10 +17,9 @@
     <string name="title_activity_tab_animation">Tabs Animation</string>
     <string name="title_activity_sticky_view">StickyViewActivity</string>
 
-    <string name="section_bluetooth">Welcome to the PDIoT App. Use it to connect to any Respeck device by
-        scanning the QR code on the back of the device.</string>
-    <string name="section_record">You can record data from the sensor in a locally stored csv file.</string>
-    <string name="section_live">You can also view the live data once the sensor is connected and see live predictions of the installed model.</string>
+    <string name="section_bluetooth">Welcome to the PDIoT App. Use it to connect to your Respeck or Thingy devices.</string>
+    <string name="section_record">You can record data from the sensors in a locally stored csv file.</string>
+    <string name="section_live">You can also view the live data once the sensors are connected.</string>
     <string name="section_bluetooth_title">Connect</string>
     <string name="section_record_title">Record</string>
     <string name="section_live_title">View</string>
@@ -42,4 +41,15 @@
     <string name="section_format">Page %1$d</string>
     <string name="action_add">Add</string>
     <string name="android_desserts">Android Desserts</string>
+
+    <string name="notification_speck_title">RESpeck and Airspeck</string>
+    <string name="notification_speck_text">Listening for sensor data</string>
+    <string name="respeck_name">RESpeck</string>
+
+    <string name="respeck_accel">Accel = (%1$.3f, %2$.3f, %3$.3f)</string>
+    <string name="respeck_gyro">Gyro = (%1$.3f, %2$.3f, %3$.3f)</string>
+
+    <string name="thingy_accel">Accel = (%1$.3f, %2$.3f, %3$.3f)</string>
+    <string name="thingy_gyro">Gyro = (%1$.3f, %2$.3f, %3$.3f)</string>
+    <string name="thingy_mag">Mag = (%1$.3f, %2$.3f, %3$.3f)</string>
 </resources>

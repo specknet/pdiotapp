@@ -6,49 +6,52 @@
     android:layout_height="match_parent"
     tools:context=".live.LiveDataActivity">
 
-    <TextView
-        android:id="@+id/textView"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Test your models with the live app!"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toTopOf="parent"/>
-
-    <TextView
-        android:id="@+id/breathing_rate_sec"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="accel_x = "
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/textView"/>
-
-    <TextView
-        android:id="@+id/breathing_rate_min"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="accel_y = "
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/breathing_rate_sec"/>
-
-    <TextView
-        android:id="@+id/breathing_signal"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="accel_z = "
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/breathing_rate_min"/>
-
-    <com.github.mikephil.charting.charts.LineChart
-        android:id="@+id/chart"
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="500px"
-        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:id="@+id/respeck_graphs"
+        app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/breathing_signal" />
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintBottom_toTopOf="@id/thingy_graphs">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Respeck Live Data"/>
+
+        <com.github.mikephil.charting.charts.LineChart
+            android:id="@+id/respeck_chart"
+            android:layout_width="match_parent"
+            android:layout_height="200dp"/>
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toBottomOf="@id/respeck_graphs"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:id="@+id/thingy_graphs"
+        android:orientation="vertical">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Thingy Live Data"/>
+
+        <com.github.mikephil.charting.charts.LineChart
+            android:id="@+id/thingy_chart"
+            android:layout_width="match_parent"
+            android:layout_height="200dp"/>
+
+
+    </LinearLayout>
+
+
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>
