@@ -9,18 +9,12 @@ import java.util.Map;
 
 public class Constants {
     // Respeck extras
-    public static final String EXTRA_RESPECK_LIVE_X = "respeck_x";
-    public static final String EXTRA_RESPECK_LIVE_Y = "respeck_y";
-    public static final String EXTRA_RESPECK_LIVE_Z = "respeck_z";
-    public static final String EXTRA_RESPECK_PACKET_SEQ = "respeck_seq";
-    public static final String EXTRA_INTERPOLATED_TS = "interpolated_timestamp";
     public static final int NUMBER_OF_SAMPLES_PER_BATCH = 32;
     public static final float SAMPLING_FREQUENCY = 12.7f;
     public static final int AVERAGE_TIME_DIFFERENCE_BETWEEN_RESPECK_PACKETS = (int) Math.round(
             NUMBER_OF_SAMPLES_PER_BATCH / SAMPLING_FREQUENCY * 1000.);
     public static final int MAXIMUM_MILLISECONDS_DEVIATION_ACTUAL_AND_CORRECTED_TIMESTAMP = 400;
 
-    public static final String ACTION_INNER_RESPECK_BROADCAST = "com.specknet.pdiotapp.RESPECK_BROADCAST";
     public static final String ACTION_RESPECK_CONNECTED = "com.specknet.pdiotapp.RESPECK_CONNECTED";
     public static final String ACTION_RESPECK_DISCONNECTED = "com.specknet.pdiotapp.RESPECK_DISCONNECTED";
 
@@ -32,9 +26,6 @@ public class Constants {
     //The REQUEST_ENABLE_BT constant passed to startActivityForResult(android.content.Intent, int)
     // is a locally-defined integer (which must be greater than 0) that the system passes back
     // to you in your onActivityResult(int, int, android.content.Intent) implementation as the requestCode parameter.
-
-    public static final String RESPECK_CHARACTERISTIC_UUID = "00001524-1212-efde-1523-785feabcd125";
-    public static final String SERVICE_UUID = "0000180a-0000-1000-8000-00805f9b34fb";
 
     public static final int REQUEST_CODE_PERMISSIONS = 4;
 
@@ -69,6 +60,10 @@ public class Constants {
         put("Step ups", 29);
         put("Driving in car or bus", 30);
         put("Desk work", 31);
+        put("Falling on knees", 48);
+        put("Falling on the left", 45);
+        put("Falling on the right", 46);
+        put("Falling on the back", 47);
     }};
 
     public static final Map<Integer, String> ACTIVITY_CODE_TO_NAME_MAPPING = new HashMap<Integer, String>() {{
@@ -98,25 +93,13 @@ public class Constants {
         put(30, "Driving in car or bus");
         put(31, "Desk work");
         put(100, "Standing");
+        put(48, "Falling on knees");
+        put(45, "Falling on the left");
+        put(46, "Falling on the right");
+        put(47, "Falling on the back");
     }};
 
-    public static final Map<String, Integer> SS_NAME_TO_CODE_MAPPING = new HashMap<String, Integer>() {{
-        put("Coughing", 15);
-        put("Talking", 16);
-        put("Eating", 17);
-        put("Singing", 18);
-        put("Laughing", 19);
-        put("Breathing", 20);
-    }};
 
-    public static final Map<Integer, String> SS_CODE_TO_NAME_MAPPING = new HashMap<Integer, String>() {{
-        put(15, "Coughing");
-        put(16, "Talking");
-        put(17, "Eating");
-        put(18, "Singing");
-        put(19, "Laughing");
-        put(20, "Breathing");
-    }};
 
     public static final String PREF_USER_FIRST_TIME = "user_first_time";
 
@@ -139,36 +122,14 @@ public class Constants {
 
     // Information for config content provider
     public static class Config {
-        public static final String PROVIDER_NAME = "com.specknet.pairing.provider.config";
-        public static final Uri CONFIG_CONTENT_URI = Uri.parse("content://" + PROVIDER_NAME + "/config");
-        public static final String SUBJECT_ID = "SubjectID";
         public static final String RESPECK_UUID = "RESpeckUUID";
         public static final String THINGY_UUID = "ThingyUUID";
-        public static final String AIRSPECKP_UUID = "AirspeckPUUID";
-        public static final String PULSEOX_UUID = "PulseoxUUID";
-        public static final String SPIROMETER_UUID = "SpirometerUUID";
-        public static final String INHALER_UUID = "InhalerUUID";
-        public static final String UPLOAD_TO_SERVER = "UploadToServer";
-        public static final String STORE_DATA_LOCALLY = "StoreDataLocally";
-        public static final String ENCRYPT_LOCAL_DATA = "EncryptLocalData";
-        public static final String IS_SUPERVISED_STARTING_MODE = "IsSupervisedStartingMode";
-        public static final String ENABLE_PHONE_LOCATION_STORAGE = "EnablePhoneLocationStorage";
-        public static final String ENABLE_VOLUME_BAG_CALIBRATION_VIEW = "EnableVolumeBagCalibrationView";
-        public static final String DISABLE_POST_FILTERING_BREATHING = "DisablePostFilteringBreathing";
-        public static final String DISABLE_WRONG_ORIENTATION_DIALOG = "DisableWrongOrientationDialog";
-        public static final String SHOW_SUBJECT_VALUES_SCREEN = "ShowSubjectValues";
-        public static final String SHOW_MEDIA_BUTTONS = "ShowMediaButtons";
-        public static final String IS_REHAB_PROJECT = "IsRehabProject";
-        public static final String HIDE_ACTIVITY_TYPE = "HideActivityType";
     }
 
     public static final String RESPECK_DATA_DIRECTORY_NAME = "/RESpeck/";
     public static final String RESPECK_IMU_DATA_DIRECTORY_NAME = "/RESpeck-IMU/";
     public static final long NUMBER_OF_MILLIS_IN_A_DAY = 1000 * 60 * 60 * 24;
     public static final String RESPECK_LIVE_DATA = "respeck_live_data";
-    public static final String EXTRA_RESPECK_BS_TIMESTAMP = "respeck_interpolated_phone_timestamp";
-    public static final String EXTRA_RESPECK_RS_TIMESTAMP = "respeck_sensor_timestamp";
-    public static final String ACTION_RESPECK_REHAB_BROADCAST = "com.specknet.respeck.RESPECK_REHAB_BROADCAST";
     public static final String ACTION_RESPECK_LIVE_BROADCAST =
             "com.specknet.respeck.RESPECK_LIVE_BROADCAST";
     public static final float MINUTES_FOR_MEDIAN_CALC = 500;

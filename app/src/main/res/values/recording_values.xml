@@ -5,11 +5,6 @@
         <item>Thingy</item>
     </string-array>
 
-    <string-array name="sensor_side_array">
-        <item>Left</item>
-        <item>Right</item>
-    </string-array>
-
     <string-array name="activity_type_array">
         <item>Sitting</item>
         <item>Sitting bent forward</item>
@@ -25,26 +20,10 @@
         <item>Descending stairs</item>
         <item>Movement</item>
         <item>Desk work</item>
-<!--        TODO add more activities here-->
+        <item>Falling on knees</item>
+        <item>Falling on the left</item>
+        <item>Falling on the right</item>
+        <item>Falling on the back</item>
     </string-array>
 
-    <string-array name="social_signal_type_array">
-        <item>Coughing</item>
-        <item>Talking</item>
-        <item>Eating</item>
-        <item>Singing</item>
-        <item>Laughing</item>
-        <item>Breathing</item>
-    </string-array>
-
-    <string-array name="source_project_array">
-        <item>Stationary Social Signals</item>
-        <item>Human Activity Recognition</item>
-        <item>Pulmonary Rehabilitation</item>
-        <item>Robust Human Activity Recognition</item>
-        <item>Mixed Social Signals</item>
-        <item>Simple Social Signals</item>
-        <item>PDIoT</item>
-        <item>Testing</item>
-    </string-array>
 </resources>
