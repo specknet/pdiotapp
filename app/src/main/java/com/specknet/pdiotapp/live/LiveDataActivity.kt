@@ -9,7 +9,9 @@ import android.os.Bundle
 import android.os.Handler
 import android.os.HandlerThread
 import android.os.Looper
+import android.provider.ContactsContract.Data
 import android.util.Log
+import android.widget.TextView
 import androidx.core.content.ContextCompat
 import com.github.mikephil.charting.charts.LineChart
 import com.github.mikephil.charting.data.Entry
@@ -17,10 +19,17 @@ import com.github.mikephil.charting.data.LineData
 import com.github.mikephil.charting.data.LineDataSet
 import com.github.mikephil.charting.interfaces.datasets.ILineDataSet
 import com.specknet.pdiotapp.R
+import com.specknet.pdiotapp.ml.Model
 import com.specknet.pdiotapp.utils.Constants
 import com.specknet.pdiotapp.utils.RESpeckLiveData
 import com.specknet.pdiotapp.utils.ThingyLiveData
+import org.tensorflow.lite.DataType
+import org.tensorflow.lite.support.image.TensorImage
+import org.tensorflow.lite.support.tensorbuffer.TensorBuffer
+import org.w3c.dom.Text
+import java.nio.ByteBuffer
 import kotlin.collections.ArrayList
+import kotlin.random.Random
 
 
 class LiveDataActivity : AppCompatActivity() {
@@ -51,11 +60,40 @@ class LiveDataActivity : AppCompatActivity() {
     val filterTestRespeck = IntentFilter(Constants.ACTION_RESPECK_LIVE_BROADCAST)
     val filterTestThingy = IntentFilter(Constants.ACTION_THINGY_BROADCAST)
 
+    var liveDataChunk = listOf<Float>()
+    val ROWS = 50
+    val VALUES = 6
+    var classy = -1
+
+    fun classify(): Int {
+        val model = Model.newInstance(applicationContext)
+
+        // Creates inputs for reference.
+        val inputFeature0 = TensorBuffer.createFixedSize(intArrayOf(1, ROWS, VALUES), DataType.FLOAT32)
+        inputFeature0.loadArray(liveDataChunk.toFloatArray(), intArrayOf(1, ROWS, VALUES))
+
+        //println(arr[0][0][0])
+        // Runs model inference and gets result.
+        val outputs = model.process(inputFeature0).outputFeature0AsTensorBuffer
+        val outputFeature0 = outputs.floatArray
+
+        val maxIdx = outputFeature0.max()?.let { outputFeature0.indexOf(it) }
+
+        Log.d("HEREHEREHEREHERE", maxIdx.toString())
+
+        Log.i("yyyyyyy", "fuck off fuckfuck off fuck off")
+        // Releases model resources if no longer used.
+        model.close()
+        return maxIdx!!
+    }
+
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_live_data)
-
         setupCharts()
+        (findViewById(R.id.textView2) as TextView).setText("abcd")
+
 
         // set up the broadcast receiver
         respeckLiveUpdateReceiver = object : BroadcastReceiver() {
@@ -71,14 +109,50 @@ class LiveDataActivity : AppCompatActivity() {
                         intent.getSerializableExtra(Constants.RESPECK_LIVE_DATA) as RESpeckLiveData
                     Log.d("Live", "onReceive: liveData = " + liveData)
 
+                    if(liveDataChunk.size == ROWS * VALUES){
+                        classy = classify()
+                        var text = "UH OH BROKEN"
+                        when(classy) {
+                            0 -> text = "Sitting"
+                            1 -> text = "Walking"
+                            2 -> text = "Lying Down On Back"
+                            3 -> text = "Sitting Bent Forward"
+                            4 -> text = "Sitting Bent Backward"
+                            5 -> text = "Lying Down Right"
+                            6 -> text = "Lying Down Left"
+                            7 -> text = "Lying Down on Stomach"
+                            8 -> text = "General Movement"
+                            9 -> text = "Running"
+                            10 -> text = "Climbing Stairs"
+                            11 -> text = "Descending Stairs"
+                            12 -> text = "Desk Work"
+                            13 -> text = "Standing"
+                        }
+
+                        runOnUiThread {
+                            (findViewById(R.id.textView2) as TextView).setText(text)
+                        }
+                        liveDataChunk = listOf<Float>()
+                    }
+
                     // get all relevant intent contents
                     val x = liveData.accelX
                     val y = liveData.accelY
                     val z = liveData.accelZ
+                    val gyro_x = liveData.gyro.x
+                    val gyro_y = liveData.gyro.y
+                    val gyro_z = liveData.gyro.z
+
+                    liveDataChunk += x
+                    liveDataChunk += y
+                    liveDataChunk += z
+                    liveDataChunk += gyro_x
+                    liveDataChunk += gyro_y
+                    liveDataChunk += gyro_z
+
 
                     time += 1
                     updateGraph("respeck", x, y, z)
-
                 }
             }
         }
