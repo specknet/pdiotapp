@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "404188049923",
+    "firebase_url": "https://pidiot-c9962-default-rtdb.europe-west1.firebasedatabase.app",
+    "project_id": "pidiot-c9962",
+    "storage_bucket": "pidiot-c9962.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:404188049923:android:11faea3fc7efd14d709436",
+        "android_client_info": {
+          "package_name": "com.specknet.pdiotapp"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "404188049923-37tmqnaq78as449iqmjbtikdegs4sa91.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.specknet.pdiotapp",
+            "certificate_hash": "e91a22b2204999343f71565e547b4b5c7d2f8e00"
+          }
+        },
+        {
+          "client_id": "404188049923-9ve4ogdm5llov3kq0iscd3c49ohgml3b.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAJZ7BEYt6-CzwFSeJoeLHrcgHjTeaq0Cw"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "404188049923-9ve4ogdm5llov3kq0iscd3c49ohgml3b.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
