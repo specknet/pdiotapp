@@ -12,15 +12,18 @@ import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
 import android.widget.Button
+import android.widget.TextView
 import androidx.appcompat.app.AlertDialog
 import androidx.core.app.ActivityCompat
 import com.google.android.material.snackbar.Snackbar
+import com.google.firebase.FirebaseApp
 import com.specknet.pdiotapp.bluetooth.BluetoothSpeckService
 import com.specknet.pdiotapp.bluetooth.ConnectingActivity
 import com.specknet.pdiotapp.live.LiveDataActivity
 import com.specknet.pdiotapp.onboarding.OnBoardingActivity
 import com.specknet.pdiotapp.utils.Constants
 import com.specknet.pdiotapp.utils.Utils
+import com.specknet.pdiotapp.utils.GlobalVars
 import kotlinx.android.synthetic.main.activity_main.*
 
 class MainActivity : AppCompatActivity() {
@@ -29,6 +32,8 @@ class MainActivity : AppCompatActivity() {
     lateinit var liveProcessingButton: Button
     lateinit var pairingButton: Button
     lateinit var recordButton: Button
+    lateinit var loginButton : Button
+    lateinit var historicDataButton : Button
 
     // permissions
     lateinit var permissionAlertDialog: AlertDialog.Builder
@@ -48,6 +53,7 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
+        FirebaseApp.initializeApp(this)
 
         // check whether the onboarding screen should be shown
         val sharedPreferences = getSharedPreferences(Constants.PREFERENCES_FILE, Context.MODE_PRIVATE)
@@ -64,6 +70,8 @@ class MainActivity : AppCompatActivity() {
         liveProcessingButton = findViewById(R.id.live_button)
         pairingButton = findViewById(R.id.ble_button)
         recordButton = findViewById(R.id.record_button)
+        loginButton = findViewById(R.id.login_button)
+        historicDataButton = findViewById(R.id.view_historic_data_button)
 
         permissionAlertDialog = AlertDialog.Builder(this)
 
@@ -72,6 +80,10 @@ class MainActivity : AppCompatActivity() {
         setupPermissions()
 
         setupBluetoothService()
+
+        if (GlobalVars.loggedIn) {
+
+        }
 
         // register a broadcast receiver for respeck status
         filter.addAction(Constants.ACTION_RESPECK_CONNECTED)
@@ -92,6 +104,16 @@ class MainActivity : AppCompatActivity() {
 
         recordButton.setOnClickListener {
             val intent = Intent(this, RecordingActivity::class.java)
+            startActivity(intent)
+        }
+
+        loginButton.setOnClickListener {
+            val intent = Intent(this, Login::class.java)
+            startActivity(intent)
+        }
+
+        historicDataButton.setOnClickListener {
+            val intent = Intent(this, ViewHistoricData::class.java)
             startActivity(intent)
         }
     }
@@ -267,6 +289,13 @@ class MainActivity : AppCompatActivity() {
         }
 
         return super.onOptionsItemSelected(item)
+    }
+
+    override fun onResume(){
+        super.onResume()
+        runOnUiThread{
+            (findViewById(R.id.textView2) as TextView).setText(GlobalVars.accName)
+        }
     }
 
 }

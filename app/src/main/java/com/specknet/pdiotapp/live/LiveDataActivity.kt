@@ -9,7 +9,6 @@ import android.os.Bundle
 import android.os.Handler
 import android.os.HandlerThread
 import android.os.Looper
-import android.provider.ContactsContract.Data
 import android.util.Log
 import android.widget.TextView
 import androidx.core.content.ContextCompat
@@ -24,12 +23,9 @@ import com.specknet.pdiotapp.utils.Constants
 import com.specknet.pdiotapp.utils.RESpeckLiveData
 import com.specknet.pdiotapp.utils.ThingyLiveData
 import org.tensorflow.lite.DataType
-import org.tensorflow.lite.support.image.TensorImage
 import org.tensorflow.lite.support.tensorbuffer.TensorBuffer
-import org.w3c.dom.Text
-import java.nio.ByteBuffer
 import kotlin.collections.ArrayList
-import kotlin.random.Random
+import com.specknet.pdiotapp.utils.GlobalVars
 
 
 class LiveDataActivity : AppCompatActivity() {
@@ -60,10 +56,11 @@ class LiveDataActivity : AppCompatActivity() {
     val filterTestRespeck = IntentFilter(Constants.ACTION_RESPECK_LIVE_BROADCAST)
     val filterTestThingy = IntentFilter(Constants.ACTION_THINGY_BROADCAST)
 
-    var liveDataChunk = listOf<Float>()
     val ROWS = 50
     val VALUES = 6
     var classy = -1
+    @OptIn(ExperimentalStdlibApi::class)
+    var liveDataChunk = ArrayDeque<Float>(ROWS * VALUES)
 
     fun classify(): Int {
         val model = Model.newInstance(applicationContext)
@@ -88,8 +85,10 @@ class LiveDataActivity : AppCompatActivity() {
     }
 
 
+    @OptIn(ExperimentalStdlibApi::class)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        Log.i("logged3", GlobalVars.accName)
         setContentView(R.layout.activity_live_data)
         setupCharts()
         (findViewById(R.id.textView2) as TextView).setText("abcd")
@@ -109,7 +108,8 @@ class LiveDataActivity : AppCompatActivity() {
                         intent.getSerializableExtra(Constants.RESPECK_LIVE_DATA) as RESpeckLiveData
                     Log.d("Live", "onReceive: liveData = " + liveData)
 
-                    if(liveDataChunk.size == ROWS * VALUES){
+                    if(liveDataChunk.toFloatArray().size == ROWS * VALUES){
+                        Log.i("FUCK SAKE JUST WORK", liveDataChunk.toFloatArray().toString())
                         classy = classify()
                         var text = "UH OH BROKEN"
                         when(classy) {
@@ -132,7 +132,6 @@ class LiveDataActivity : AppCompatActivity() {
                         runOnUiThread {
                             (findViewById(R.id.textView2) as TextView).setText(text)
                         }
-                        liveDataChunk = listOf<Float>()
                     }
 
                     // get all relevant intent contents
@@ -143,12 +142,12 @@ class LiveDataActivity : AppCompatActivity() {
                     val gyro_y = liveData.gyro.y
                     val gyro_z = liveData.gyro.z
 
-                    liveDataChunk += x
-                    liveDataChunk += y
-                    liveDataChunk += z
-                    liveDataChunk += gyro_x
-                    liveDataChunk += gyro_y
-                    liveDataChunk += gyro_z
+                    liveDataChunk.add(x)
+                    liveDataChunk.add(y)
+                    liveDataChunk.add(z)
+                    liveDataChunk.add(gyro_x)
+                    liveDataChunk.add(gyro_y)
+                    liveDataChunk.add(gyro_z)
 
 
                     time += 1

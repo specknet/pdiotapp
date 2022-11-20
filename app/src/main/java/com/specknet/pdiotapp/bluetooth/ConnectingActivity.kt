@@ -24,7 +24,6 @@ import com.specknet.pdiotapp.utils.Constants
 import com.specknet.pdiotapp.utils.Utils
 import kotlinx.android.synthetic.main.activity_connecting.*
 import java.util.*
-import kotlin.experimental.and
 
 class ConnectingActivity : AppCompatActivity() {
 

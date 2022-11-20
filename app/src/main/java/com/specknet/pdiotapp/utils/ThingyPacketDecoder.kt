@@ -1,8 +1,6 @@
 package com.specknet.pdiotapp.utils
 
 import android.util.Log
-import java.nio.ByteBuffer
-import java.nio.ByteOrder
 
 /**
  * A simple singleton to handle RESpeck packet decoding routines.
