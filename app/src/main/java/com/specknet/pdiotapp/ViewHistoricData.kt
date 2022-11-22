@@ -2,13 +2,14 @@ package com.specknet.pdiotapp
 
 import android.graphics.Color
 import android.graphics.Typeface
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
 import android.widget.DatePicker
 import android.widget.TextView
+import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.isVisible
 import com.github.mikephil.charting.charts.PieChart
+import com.github.mikephil.charting.components.Legend
 import com.github.mikephil.charting.data.PieData
 import com.github.mikephil.charting.data.PieDataSet
 import com.github.mikephil.charting.data.PieEntry
@@ -16,7 +17,8 @@ import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.ValueEventListener
 import com.specknet.pdiotapp.utils.GlobalVars
-import java.util.Calendar
+import java.util.*
+
 
 class ViewHistoricData : AppCompatActivity() {
 
@@ -62,10 +64,10 @@ class ViewHistoricData : AppCompatActivity() {
                         }
 
                         val meeple = mutableMapOf<String, Int>();
-                        GlobalVars.basicActivities.forEachIndexed{ index, value ->
+                        GlobalVars.complexActivities.forEachIndexed{ index, value ->
                             var activityCount = userDataOnDate[index]
 
-                            if(activityCount > 0){
+                            if(activityCount > 0 && value.equals("Movement") == false){
                                 meeple[value] = userDataOnDate[index];
                             }
                         }
@@ -97,10 +99,10 @@ class ViewHistoricData : AppCompatActivity() {
                     var userDataOnDate = historicData[GlobalVars.curDateStr]
                     if(userDataOnDate != null){
                         val meeple = mutableMapOf<String, Int>();
-                        GlobalVars.basicActivities.forEachIndexed{ index, value ->
+                        GlobalVars.complexActivities.forEachIndexed{ index, value ->
                             var activityCount = userDataOnDate[index]
 
-                            if(activityCount > 0){
+                            if(activityCount > 0 && value.equals("Movement") == false){
                                 meeple[value] = userDataOnDate[index];
                             }
                         }
@@ -108,12 +110,14 @@ class ViewHistoricData : AppCompatActivity() {
                         set = true;
                     }
                 }
+            }.addOnFailureListener{
+                setupPieChartDataSet(null)
             }
-        }
-
-        if(!set){
+        } else{
             setupPieChartDataSet(null)
         }
+
+
 
 
         handleSignedInStateUI(GlobalVars.loggedIn)
@@ -208,6 +212,15 @@ class ViewHistoricData : AppCompatActivity() {
         pieChart.legend.isEnabled = true
         pieChart.setEntryLabelColor(Color.WHITE)
         pieChart.setEntryLabelTextSize(12f)
+
+        val l = pieChart.legend
+        l.verticalAlignment = Legend.LegendVerticalAlignment.BOTTOM
+        l.horizontalAlignment = Legend.LegendHorizontalAlignment.LEFT
+        l.orientation = Legend.LegendOrientation.HORIZONTAL
+        l.setDrawInside(false)
+        l.xEntrySpace = 4f
+        l.yEntrySpace = 0f
+        l.isWordWrapEnabled = true
     }
 
     // state = true -> logged in

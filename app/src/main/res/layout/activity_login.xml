@@ -8,15 +8,21 @@
 
 <androidx.constraintlayout.widget.ConstraintLayout
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:background="@color/background"
+    >
+
 
     <TextView
-        android:id="@+id/textView2"
-        android:layout_width="wrap_content"
+        android:textColor="#FFF"
+        android:id="@+id/intro_text"
+        android:textAlignment="center"
+        android:layout_width="750px"
         android:layout_height="wrap_content"
         android:layout_marginTop="100px"
-        android:text="Login page!"
+        android:text="Please log in using your google account!\n\nWe only store your name and your account ID. You can delete your data from our system at any point."
         app:layout_constraintEnd_toEndOf="parent"
+        android:textSize="25dp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         />
@@ -25,50 +31,74 @@
         android:id="@+id/sign_in_button"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="0.5in"
+        android:layout_marginTop="100px"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="@id/textView2"/>
+        app:layout_constraintTop_toBottomOf="@id/intro_text"/>
 
     <TextView
+        android:textColor="#FFF"
         android:id="@+id/welcome_user"
         android:visibility="invisible"
-
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textSize="32dp"
-        android:text="lorum ispum"
-        android:layout_marginTop="1in"
+        android:layout_marginTop="500px"
+        android:text="welcome"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="@id/sign_in_button"
+        app:layout_constraintTop_toTopOf="parent"
+        />
+
+    <de.hdodenhof.circleimageview.CircleImageView
+        android:id="@+id/profilePicLogin"
+        android:layout_width="500px"
+        android:layout_height="500px"
+        android:layout_marginTop="200px"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="@id/welcome_user"
+        app:layout_constraintStart_toStartOf="parent"
+        android:background="@drawable/round_outline"
+        app:civ_border_overlay="true"
+        app:civ_border_width="3dp"
+        app:civ_border_color="#fff"
+
+
         />
 
     <Button
+        android:textColor="#FFF"
+
         android:id="@+id/sign_out_button"
-        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="1.5in"
+        android:layout_marginTop="100px"
         android:text="Sign Out"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="@id/sign_in_button"
+        app:layout_constraintTop_toBottomOf="@id/profilePicLogin"
         android:visibility="invisible"
         android:enabled="false"
+        android:layout_width="300px"
+
+        android:background="@drawable/rounded_button_blue"
         />
 
     <Button
+        android:textColor="#FFF"
         android:id="@+id/delete_data_button"
-        android:layout_width="wrap_content"
+        android:layout_width="300px"
         android:layout_height="wrap_content"
-        android:layout_marginTop=".5in"
+        android:layout_marginTop="100px"
         android:text="Delete account"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="@id/sign_out_button"
+        app:layout_constraintTop_toBottomOf="@id/sign_out_button"
         android:visibility="invisible"
         android:enabled="false"
+        android:background="@drawable/rounded_button_red"
         />
+
+
 
 </androidx.constraintlayout.widget.ConstraintLayout>
 

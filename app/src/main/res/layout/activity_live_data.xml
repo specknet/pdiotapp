@@ -4,7 +4,192 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@color/background"
     tools:context=".live.LiveDataActivity">
+
+    <TextView
+        android:textColor="#FFF"
+        android:id="@+id/welcome_user"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textSize="32dp"
+        android:layout_marginTop="100px"
+        android:text="welcome"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        />
+
+    <Button
+        android:textColor="#FFF"
+
+        android:id="@+id/record_button"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="100px"
+        android:text="Start recording"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/welcome_user"
+        android:layout_width="300px"
+        android:background="@drawable/rounded_button_green"
+        />
+
+    <Button
+        android:textColor="#FFF"
+        android:id="@+id/stop_record_button"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="100px"
+        android:text="Stop Recording"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/welcome_user"
+        android:visibility="invisible"
+        android:enabled="false"
+        android:layout_width="300px"
+        android:background="@drawable/rounded_button_red"
+        />
+
+    <TextView
+        android:textColor="#FFF"
+        android:id="@+id/label_currentActivity"
+        android:width="900px"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textSize="16dp"
+        android:layout_marginTop="600px"
+        android:text="Current Essential Activity"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"/>
+
+    <TextView
+        android:textColor="#FFF"
+        android:id="@+id/currentActivity"
+        android:width="900px"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textSize="32dp"
+        android:textFontWeight="700"
+        android:textAlignment="center"
+        android:text="RUNNING"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/label_currentActivity"/>
+
+    <TextView
+        android:textColor="#FFF"
+        android:id="@+id/label_currentDetailedActivity"
+        android:width="900px"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textSize="16dp"
+        android:layout_marginTop="100px"
+        android:text="Current Desirable Activity"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/currentActivity"/>
+
+    <TextView
+        android:textColor="#FFF"
+        android:id="@+id/currentDetailedActivity"
+        android:width="900px"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textSize="32dp"
+        android:textFontWeight="700"
+        android:textAlignment="center"
+        android:text="RUNNING"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/label_currentDetailedActivity"/>
+
+    <LinearLayout
+        android:id="@+id/thingy_connection"
+        android:layout_width="wrap_content"
+        android:paddingTop="200px"
+        android:layout_height="wrap_content"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/currentDetailedActivity"
+        android:orientation="horizontal">
+
+       <TextView
+        android:textColor="#FFF"
+        android:id="@+id/ThingyStatusLabel"
+        android:width="900px"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_weight="0.5"
+        android:layout_marginTop="50px"
+        android:textSize="32dp"
+        android:textFontWeight="700"
+        android:textAlignment="viewEnd"
+        android:text="Thingy: "
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        />
+        <TextView
+            android:textColor="#FFF"
+            android:id="@+id/thingyStatus"
+            android:width="900px"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="0.5"
+
+            android:layout_marginTop="50px"
+            android:textSize="32dp"
+            android:textFontWeight="700"
+            android:textAlignment="viewStart"
+            android:text="Connected"
+
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            />
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/thingy_connection"
+        android:orientation="horizontal">
+
+        <TextView
+            android:textColor="#FFF"
+            android:id="@+id/RespeckStatusLabel"
+            android:textAlignment="viewEnd"
+            android:width="900px"
+            android:paddingHorizontal="20px"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="0.5"
+            android:layout_marginTop="50px"
+            android:textSize="32dp"
+            android:textFontWeight="700"
+            android:text="Respeck:"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            />
+        <TextView
+            android:textColor="#FFF"
+            android:id="@+id/RespeckStatus"
+            android:width="900px"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="0.5"
+            android:layout_marginTop="50px"
+            android:textSize="32dp"
+            android:textFontWeight="700"
+            android:text="Connected"
+            android:textAlignment="viewStart"
+
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            />
+    </LinearLayout>
+
+    />
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -16,17 +201,27 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintBottom_toTopOf="@id/thingy_graphs">
 
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Respeck Live Data"/>
 
         <com.github.mikephil.charting.charts.LineChart
             android:id="@+id/respeck_chart"
             android:layout_width="match_parent"
-            android:layout_height="200dp"/>
+            android:layout_height="200dp" />
 
     </LinearLayout>
+
+    <TextView
+        android:id="@+id/recordWelcome"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="200px"
+        android:width="800px"
+        android:textAlignment="center"
+        android:text="Once both sensors connect, hit 'start recording' to classify and, if logged in, save to your account"
+        android:textColor="@color/white_40"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        />
 
     <TextView
         android:id="@+id/textView2"
@@ -34,9 +229,10 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="200px"
         android:text="HOWDY HOWDY HOWDY HOWDY"
+        android:textColor="@color/white_40"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/recordWelcome"
         />
 
     <LinearLayout
@@ -48,11 +244,6 @@
         app:layout_constraintEnd_toEndOf="parent"
         android:id="@+id/thingy_graphs"
         android:orientation="vertical">
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Thingy Live Data"/>
 
         <com.github.mikephil.charting.charts.LineChart
             android:id="@+id/thingy_chart"

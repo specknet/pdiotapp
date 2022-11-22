@@ -64,7 +64,7 @@ class MainActivity : AppCompatActivity() {
             isUserFirstTime = true
             sharedPreferences.edit().putBoolean(Constants.PREF_USER_FIRST_TIME, false).apply()
             val introIntent = Intent(this, OnBoardingActivity::class.java)
-            startActivity(introIntent)
+            //startActivity(introIntent)
         }
 
         liveProcessingButton = findViewById(R.id.live_button)
@@ -81,13 +81,11 @@ class MainActivity : AppCompatActivity() {
 
         setupBluetoothService()
 
-        if (GlobalVars.loggedIn) {
-
-        }
 
         // register a broadcast receiver for respeck status
         filter.addAction(Constants.ACTION_RESPECK_CONNECTED)
         filter.addAction(Constants.ACTION_RESPECK_DISCONNECTED)
+        supportActionBar?.hide()
 
     }
 
@@ -293,8 +291,13 @@ class MainActivity : AppCompatActivity() {
 
     override fun onResume(){
         super.onResume()
-        runOnUiThread{
-            (findViewById(R.id.textView2) as TextView).setText(GlobalVars.accName)
+        runOnUiThread {
+
+            if (GlobalVars.loggedIn) {
+                (findViewById(R.id.textViewWelcome) as TextView).setText("Welcome, " + GlobalVars.accName + "!")
+            } else {
+                (findViewById(R.id.textViewWelcome) as TextView).setText("Welcome, please log in!")
+            }
         }
     }
 

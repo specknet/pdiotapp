@@ -1,13 +1,17 @@
 package com.specknet.pdiotapp
 
-import androidx.appcompat.app.AppCompatActivity
-import android.os.Bundle
-import android.widget.Button
 import android.content.Intent
+import android.graphics.Bitmap
+import android.graphics.BitmapFactory
+import android.net.Uri
+import android.os.Bundle
 import android.util.Log
+import android.widget.Button
+import android.widget.ImageView
 import android.widget.TextView
+import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.isVisible
-
+import com.bumptech.glide.Glide
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount
 import com.google.android.gms.auth.api.signin.GoogleSignInClient
@@ -15,29 +19,31 @@ import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import com.google.android.gms.common.SignInButton
 import com.google.android.gms.common.api.ApiException
 import com.google.android.gms.tasks.Task
-import com.google.firebase.database.DataSnapshot
-import com.google.firebase.database.DatabaseError
-import com.google.firebase.database.MutableData
-import com.google.firebase.database.ValueEventListener
-import com.google.firebase.database.ktx.getValue
-
 import com.specknet.pdiotapp.utils.GlobalVars
 import kotlinx.android.synthetic.main.activity_login.*
+import java.io.BufferedInputStream
+import java.io.IOException
+import java.io.InputStream
+import java.net.URL
+import java.net.URLConnection
 
 class Login : AppCompatActivity() {
 
     lateinit var gso : GoogleSignInOptions;
     lateinit var gsc : GoogleSignInClient;
     lateinit var gsa : GoogleSignInAccount;
+
+    lateinit var introText : TextView;
     lateinit var googleLoginButton : SignInButton;
     lateinit var signOutButton : Button;
     lateinit var deleteDataButton : Button;
+    lateinit var image : ImageView;
 
     var RC_SIGN_IN = 1
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
+        supportActionBar?.hide()
         setContentView(R.layout.activity_login)
 
         // setup for getting google account
@@ -68,6 +74,10 @@ class Login : AppCompatActivity() {
             handleSignOut()
         }
 
+        image = findViewById(R.id.profilePicLogin)
+
+        introText = findViewById(R.id.intro_text)
+
         // change ui depending on user logged in state
         handleSignedInStateUI(GlobalVars.loggedIn)
     }
@@ -93,6 +103,10 @@ class Login : AppCompatActivity() {
             GlobalVars.accName = loggedInAcc.givenName.toString()
             GlobalVars.loggedIn = true
             GlobalVars.accId = loggedInAcc.id.toString();
+            GlobalVars.photoUrl = loggedInAcc.photoUrl.toString()
+
+            Log.i("image test", GlobalVars.photoUrl.toString())
+
             Log.i("bean db", "---" + GlobalVars.dbRef.get().toString())
 
             // read db to check if user exists
@@ -156,7 +170,10 @@ class Login : AppCompatActivity() {
         runOnUiThread{
             (findViewById(R.id.welcome_user) as TextView).isEnabled = state;
             (findViewById(R.id.welcome_user) as TextView).isVisible = state;
-            (findViewById(R.id.welcome_user) as TextView).setText(GlobalVars.accName)
+            (findViewById(R.id.welcome_user) as TextView).setText("Hi, " + GlobalVars.accName + "!")
+
+            introText.isEnabled = !state;
+            introText.isVisible = !state;
 
             googleLoginButton.isEnabled = !state;
             googleLoginButton.isVisible = !state;
@@ -166,6 +183,11 @@ class Login : AppCompatActivity() {
 
             deleteDataButton.isEnabled = state;
             deleteDataButton.isVisible = state;
+
+            image.isEnabled = state;
+            image.isVisible = state;
+
+            Glide.with(applicationContext).load(GlobalVars.photoUrl).into(image)
         }
     }
 
@@ -174,6 +196,7 @@ class Login : AppCompatActivity() {
         GlobalVars.accName = ""
         GlobalVars.accId = ""
         GlobalVars.loggedIn = false
+        GlobalVars.photoUrl = ""
 
         gsc.signOut()
         gsc.revokeAccess()

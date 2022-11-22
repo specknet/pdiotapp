@@ -5,6 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:id="@+id/coordinatorLayout"
+    android:background="@color/background"
     tools:context=".MainActivity">
 
 <androidx.constraintlayout.widget.ConstraintLayout
@@ -16,60 +17,60 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="100px"
-            android:text="I want to"
+            android:text="PDIOT"
+            android:textColor="#FFF"
+            android:textSize="0.5in"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintBottom_toTopOf="@+id/record_button"/>
+            app:layout_constraintBottom_toTopOf="@+id/textViewWelcome"/>
 
-        <Button
-            android:id="@+id/record_button"
-            android:layout_width="550px"
+        <TextView
+            android:id="@+id/textViewWelcome"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="100px"
-            android:background="#03A9F4"
-            android:text="Record data"
-            android:textColor="#FFFFFF"
+            android:text="Welcome, please log in!"
+            android:paddingBottom="150px"
+            android:textColor="#FFF"
+            android:textSize="0.15in"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/textView2"
-            app:layout_constraintBottom_toTopOf="@+id/live_button"/>
+            app:layout_constraintTop_toBottomOf="@id/textView2"
+            />
 
         <Button
             android:id="@+id/login_button"
             android:layout_width="550px"
             android:layout_height="wrap_content"
             android:layout_marginTop="100px"
-            android:background="#03A9F4"
+            android:background="@drawable/rounded_button_blue"
             android:text="Login"
             android:textColor="#FFFFFF"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/record_button"
-
+            app:layout_constraintTop_toBottomOf="@+id/textViewWelcome"
             />
 
         <Button
             android:id="@+id/live_button"
             android:layout_width="550px"
             android:layout_height="wrap_content"
-            android:layout_marginTop="100px"
-            android:background="#03A9F4"
+            android:background="@drawable/rounded_button_green"
             android:text="Watch live processing"
             android:textColor="#FFFFFF"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/record_button"
-            app:layout_constraintBottom_toTopOf="@+id/ble_button"/>
+            app:layout_constraintTop_toBottomOf="@+id/login_button"
+            app:layout_constraintBottom_toTopOf="@+id/view_historic_data_button"/>
 
         <Button
             android:id="@+id/view_historic_data_button"
             android:layout_width="550px"
             android:layout_height="wrap_content"
-            android:layout_marginTop="100px"
-            android:background="#03A9F4"
+            android:background="@drawable/rounded_button_pink"
             android:text="View historic data"
             android:textColor="#FFFFFF"
+            android:ellipsize="middle"
             app:layout_constraintBottom_toTopOf="@+id/ble_button"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.502"
@@ -82,17 +83,32 @@
             android:layout_width="550px"
             android:layout_height="wrap_content"
             android:text="Connect sensors"
-            android:layout_marginTop="100px"
             android:layout_marginBottom="100px"
-            android:background="#03A9F4"
+            android:background="@drawable/rounded_button_red"
             android:textColor="#FFFFFF"
-            app:layout_constraintTop_toBottomOf="@+id/live_button"
+            app:layout_constraintTop_toBottomOf="@+id/view_historic_data_button"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintBottom_toBottomOf="parent"
             />
 
-    </androidx.constraintlayout.widget.ConstraintLayout>
+        <Button
+            android:enabled="false"
+            android:visibility="invisible"
+            android:id="@+id/record_button"
+            android:layout_width="550px"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="100px"
+            android:background="#03A9F4"
+            android:text="Record data"
+            android:textColor="#FFFFFF"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/textView2"
+            app:layout_constraintBottom_toTopOf="@+id/live_button"/>
+
+
+</androidx.constraintlayout.widget.ConstraintLayout>
 
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>
