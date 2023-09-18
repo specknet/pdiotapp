@@ -47,9 +47,7 @@ class RecordingActivity : AppCompatActivity() {
     var sensorType = ""
     var universalSubjectId = "s1234567"
     var activityType = ""
-    var activityCode = 0
     var activitySubtype = "Normal"
-    var subactivityCode = 0
     var notes = ""
 
     private var mIsRespeckRecording = false
@@ -240,17 +238,6 @@ class RecordingActivity : AppCompatActivity() {
             activityTypeSpinner.adapter = adapter
         }
 
-        activityTypeSpinner.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
-            override fun onItemSelected(parent: AdapterView<*>, viwq: View, position: Int, id: Long) {
-                val selectedItem = parent.getItemAtPosition(position).toString()
-                activityType = Constants.ACTIVITY_NAME_TO_CODE_MAPPING[selectedItem].toString()
-            }
-
-            override fun onNothingSelected(p0: AdapterView<*>?) {
-                activityType = Constants.ACTIVITY_NAME_TO_CODE_MAPPING["Sitting"].toString()
-            }
-        }
-
         activitySubtypeSpinner = findViewById(R.id.activity_subtype_spinner)
         ArrayAdapter.createFromResource(
             this,
@@ -260,18 +247,6 @@ class RecordingActivity : AppCompatActivity() {
             adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
             activitySubtypeSpinner.adapter = adapter
         }
-
-        activitySubtypeSpinner.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
-            override fun onItemSelected(parent: AdapterView<*>, viwq: View, position: Int, id: Long) {
-                val selectedItem = parent.getItemAtPosition(position).toString()
-                activitySubtype = Constants.SUBACTIVITY_NAME_TO_CODE_MAPPING[selectedItem].toString()
-            }
-
-            override fun onNothingSelected(p0: AdapterView<*>?) {
-                activitySubtype = Constants.SUBACTIVITY_NAME_TO_CODE_MAPPING["Normal"].toString()
-            }
-        }
-
     }
 
     private fun enableView(view: View) {
@@ -420,7 +395,7 @@ class RecordingActivity : AppCompatActivity() {
 
         val file = File(getExternalFilesDir(null), filename)
 
-        Log.d(TAG, "saveRecording: filename = " + filename)
+        Log.d(TAG, "saveRecording: filename = " + file.toString())
 
         val dataWriter: BufferedWriter
 
@@ -435,9 +410,7 @@ class RecordingActivity : AppCompatActivity() {
                 // the header columns in here
                 dataWriter.append("# Sensor type: $sensorType").append("\n")
                 dataWriter.append("# Activity type: $activityType").append("\n")
-                dataWriter.append("# Activity code: $activityCode").append("\n")
                 dataWriter.append("# Activity subtype: $activitySubtype").append("\n")
-                dataWriter.append("# Subactivity code: $subactivityCode").append("\n")
                 dataWriter.append("# Subject id: $universalSubjectId").append("\n")
                 dataWriter.append("# Notes: $notes").append("\n")
 
@@ -494,9 +467,7 @@ class RecordingActivity : AppCompatActivity() {
 
         universalSubjectId = univSubjectIdInput.text.toString().toLowerCase().trim()
         activityType = activityTypeSpinner.selectedItem.toString()
-        activityCode = Constants.ACTIVITY_NAME_TO_CODE_MAPPING[activityType]!!
         activitySubtype = activitySubtypeSpinner.selectedItem.toString()
-        subactivityCode = Constants.SUBACTIVITY_NAME_TO_CODE_MAPPING[activitySubtype]!!
         sensorType = sensorTypeSpinner.selectedItem.toString()
         notes = notesInput.text.toString().trim()
 

@@ -32,32 +32,6 @@ public class Constants {
     public static final String RECORDING_CSV_HEADER_RESPECK = "timestamp,accel_x,accel_y,accel_z,gyro_x,gyro_y,gyro_z";
     public static final String RECORDING_CSV_HEADER_THINGY = "timestamp,accel_x,accel_y,accel_z,gyro_x,gyro_y,gyro_z,mag_x,mag_y,mag_z";
 
-    // activity mappings
-    public static final Map<String, Integer> ACTIVITY_NAME_TO_CODE_MAPPING = new HashMap<String, Integer>() {{
-        put("Sitting", 0);
-        put("Standing", 10);
-        put("Normal walking", 20);
-        put("Lying down left", 31);
-        put("Lying down right", 32);
-        put("Lying down on back", 33);
-        put("Lying down on stomach", 34);
-        put("Running", 21);
-        put("Ascending stairs", 41);
-        put("Descending stairs", 42);
-        put("Shuffle walking", 22);
-        put("Miscellaneous movements", 99);
-    }};
-
-    public static final Map<String, Integer> SUBACTIVITY_NAME_TO_CODE_MAPPING = new HashMap<String, Integer>() {{
-        put("Normal", 0);
-        put("Coughing", 11);
-        put("Hyperventilating", 12);
-        put("Talking", 21);
-        put("Eating", 22);
-        put("Singing", 23);
-        put("Laughing", 24);
-    }};
-
     public static final String PREF_USER_FIRST_TIME = "user_first_time";
 
     // Broadcast strings

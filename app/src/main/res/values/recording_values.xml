@@ -24,7 +24,7 @@
     <string-array name="activity_subtype_array">
         <item>Normal</item>
         <item>Coughing</item>
-        <item>hyperventilating</item>
+        <item>Hyperventilating</item>
         <item>Talking</item>
         <item>Eating</item>
         <item>Singing</item>
