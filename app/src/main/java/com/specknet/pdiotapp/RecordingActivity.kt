@@ -26,6 +26,7 @@ class RecordingActivity : AppCompatActivity() {
     private val TAG = "RecordingActivity"
     lateinit var sensorTypeSpinner: Spinner
     lateinit var activityTypeSpinner: Spinner
+    lateinit var activitySubtypeSpinner: Spinner
     lateinit var startRecordingButton: Button
     lateinit var cancelRecordingButton: Button
     lateinit var stopRecordingButton: Button
@@ -47,6 +48,8 @@ class RecordingActivity : AppCompatActivity() {
     var universalSubjectId = "s1234567"
     var activityType = ""
     var activityCode = 0
+    var activitySubtype = "Normal"
+    var subactivityCode = 0
     var notes = ""
 
     private var mIsRespeckRecording = false
@@ -248,6 +251,27 @@ class RecordingActivity : AppCompatActivity() {
             }
         }
 
+        activitySubtypeSpinner = findViewById(R.id.activity_subtype_spinner)
+        ArrayAdapter.createFromResource(
+            this,
+            R.array.activity_subtype_array,
+            android.R.layout.simple_spinner_item
+        ).also { adapter ->
+            adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
+            activitySubtypeSpinner.adapter = adapter
+        }
+
+        activitySubtypeSpinner.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
+            override fun onItemSelected(parent: AdapterView<*>, viwq: View, position: Int, id: Long) {
+                val selectedItem = parent.getItemAtPosition(position).toString()
+                activitySubtype = Constants.SUBACTIVITY_NAME_TO_CODE_MAPPING[selectedItem].toString()
+            }
+
+            override fun onNothingSelected(p0: AdapterView<*>?) {
+                activitySubtype = Constants.SUBACTIVITY_NAME_TO_CODE_MAPPING["Normal"].toString()
+            }
+        }
+
     }
 
     private fun enableView(view: View) {
@@ -297,6 +321,7 @@ class RecordingActivity : AppCompatActivity() {
 
             disableView(sensorTypeSpinner)
             disableView(activityTypeSpinner)
+            disableView(activitySubtypeSpinner)
             disableView(univSubjectIdInput)
             disableView(notesInput)
 
@@ -312,6 +337,7 @@ class RecordingActivity : AppCompatActivity() {
 
             enableView(sensorTypeSpinner)
             enableView(activityTypeSpinner)
+            enableView(activitySubtypeSpinner)
             enableView(univSubjectIdInput)
             enableView(notesInput)
 
@@ -328,6 +354,7 @@ class RecordingActivity : AppCompatActivity() {
 
             enableView(sensorTypeSpinner)
             enableView(activityTypeSpinner)
+            enableView(activitySubtypeSpinner)
             enableView(univSubjectIdInput)
             enableView(notesInput)
 
@@ -389,7 +416,7 @@ class RecordingActivity : AppCompatActivity() {
             Log.i(TAG, "saveRecording: error = ${e.toString()}")
             formattedDate = currentTime.toString()
         }
-        val filename = "${sensorType}_${universalSubjectId}_${activityType}_${formattedDate}.csv" // TODO format this to human readable
+        val filename = "${sensorType}_${universalSubjectId}_${activityType}_${activitySubtype}_${formattedDate}.csv" // TODO format this to human readable
 
         val file = File(getExternalFilesDir(null), filename)
 
@@ -409,6 +436,8 @@ class RecordingActivity : AppCompatActivity() {
                 dataWriter.append("# Sensor type: $sensorType").append("\n")
                 dataWriter.append("# Activity type: $activityType").append("\n")
                 dataWriter.append("# Activity code: $activityCode").append("\n")
+                dataWriter.append("# Activity subtype: $activitySubtype").append("\n")
+                dataWriter.append("# Subactivity code: $subactivityCode").append("\n")
                 dataWriter.append("# Subject id: $universalSubjectId").append("\n")
                 dataWriter.append("# Notes: $notes").append("\n")
 
@@ -466,6 +495,8 @@ class RecordingActivity : AppCompatActivity() {
         universalSubjectId = univSubjectIdInput.text.toString().toLowerCase().trim()
         activityType = activityTypeSpinner.selectedItem.toString()
         activityCode = Constants.ACTIVITY_NAME_TO_CODE_MAPPING[activityType]!!
+        activitySubtype = activitySubtypeSpinner.selectedItem.toString()
+        subactivityCode = Constants.SUBACTIVITY_NAME_TO_CODE_MAPPING[activitySubtype]!!
         sensorType = sensorTypeSpinner.selectedItem.toString()
         notes = notesInput.text.toString().trim()
 

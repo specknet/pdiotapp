@@ -35,71 +35,28 @@ public class Constants {
     // activity mappings
     public static final Map<String, Integer> ACTIVITY_NAME_TO_CODE_MAPPING = new HashMap<String, Integer>() {{
         put("Sitting", 0);
-        put("Sitting bent forward", 4);
-        put("Sitting bent backward", 5);
-        put("Standing", 100);
-        put("Walking at normal speed", 1);
-        put("Lying down on back", 2);
-        put("Lying down left", 7);
-        put("Lying down right", 6);
-        put("Lying down on stomach", 8);
-        put("Movement", 9);
-        put("Walking slow", 10);
-        put("Running", 11);
-        put("Climbing stairs", 12);
-        put("Descending stairs", 13);
-        put("Riding a bike", 14);
-        put("Sit to stand (PR)", 21);
-        put("Knee extension (PR)", 22);
-        put("Squats (PR)", 23);
-        put("Heel raises (PR)", 24);
-        put("Bicep curls (PR)", 25);
-        put("Shoulder press (PR)", 26);
-        put("Wall push offs (PR)", 27);
-        put("Leg slides (PR)", 28);
-        put("Step ups", 29);
-        put("Driving in car or bus", 30);
-        put("Desk work", 31);
-        put("Falling on knees", 48);
-        put("Falling on the left", 45);
-        put("Falling on the right", 46);
-        put("Falling on the back", 47);
+        put("Standing", 10);
+        put("Normal walking", 20);
+        put("Lying down left", 31);
+        put("Lying down right", 32);
+        put("Lying down on back", 33);
+        put("Lying down on stomach", 34);
+        put("Running", 21);
+        put("Ascending stairs", 41);
+        put("Descending stairs", 42);
+        put("Shuffle walking", 22);
+        put("Miscellaneous movements", 99);
     }};
 
-    public static final Map<Integer, String> ACTIVITY_CODE_TO_NAME_MAPPING = new HashMap<Integer, String>() {{
-        put(0, "Sitting");
-        put(4, "Sitting bent forward");
-        put(5, "Sitting bent backward");
-        put(1, "Walking at normal speed");
-        put(2, "Lying down on back");
-        put(7, "Lying down left");
-        put(6, "Lying down right");
-        put(8, "Lying down on stomach");
-        put(9, "Movement");
-        put(10, "Walking slow");
-        put(11, "Running");
-        put(12, "Climbing stairs");
-        put(13, "Descending stairs");
-        put(14, "Riding a bike");
-        put(21, "Sit to stand (PR)");
-        put(22, "Knee extension (PR)");
-        put(23, "Squats (PR)");
-        put(24, "Heel raises (PR)");
-        put(25, "Bicep curls (PR)");
-        put(26, "Shoulder press (PR)");
-        put(27, "Wall push offs (PR)");
-        put(28, "Leg slides (PR)");
-        put(29, "Step ups");
-        put(30, "Driving in car or bus");
-        put(31, "Desk work");
-        put(100, "Standing");
-        put(48, "Falling on knees");
-        put(45, "Falling on the left");
-        put(46, "Falling on the right");
-        put(47, "Falling on the back");
+    public static final Map<String, Integer> SUBACTIVITY_NAME_TO_CODE_MAPPING = new HashMap<String, Integer>() {{
+        put("Normal", 0);
+        put("Coughing", 11);
+        put("Hyperventilating", 12);
+        put("Talking", 21);
+        put("Eating", 22);
+        put("Singing", 23);
+        put("Laughing", 24);
     }};
-
-
 
     public static final String PREF_USER_FIRST_TIME = "user_first_time";
 

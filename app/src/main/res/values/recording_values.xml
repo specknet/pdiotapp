@@ -7,23 +7,29 @@
 
     <string-array name="activity_type_array">
         <item>Sitting</item>
-        <item>Sitting bent forward</item>
-        <item>Sitting bent backward</item>
         <item>Standing</item>
-        <item>Lying down on back</item>
-        <item>Lying down left</item>
+        <item>Lying down on left</item>
         <item>Lying down right</item>
+        <item>Lying down back</item>
         <item>Lying down on stomach</item>
-        <item>Walking at normal speed</item>
-        <item>Running</item>
-        <item>Climbing stairs</item>
+        <item>Normal walking</item>
+        <item>Ascending stairs</item>
         <item>Descending stairs</item>
-        <item>Movement</item>
-        <item>Desk work</item>
-        <item>Falling on knees</item>
-        <item>Falling on the left</item>
-        <item>Falling on the right</item>
-        <item>Falling on the back</item>
+        <item>Shuffle walking</item>
+        <item>Running</item>
+        <item>Miscellaneous movements</item>
+
+    </string-array>
+
+    <string-array name="activity_subtype_array">
+        <item>Normal</item>
+        <item>Coughing</item>
+        <item>hyperventilating</item>
+        <item>Talking</item>
+        <item>Eating</item>
+        <item>Singing</item>
+        <item>Laughing</item>
+
     </string-array>
 
 </resources>
