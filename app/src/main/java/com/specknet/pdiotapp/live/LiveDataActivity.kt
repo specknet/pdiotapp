@@ -4,12 +4,13 @@ import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.os.Handler
 import android.os.HandlerThread
 import android.os.Looper
 import android.util.Log
+import android.widget.TextView
+import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import com.github.mikephil.charting.charts.LineChart
 import com.github.mikephil.charting.data.Entry
@@ -20,7 +21,7 @@ import com.specknet.pdiotapp.R
 import com.specknet.pdiotapp.utils.Constants
 import com.specknet.pdiotapp.utils.RESpeckLiveData
 import com.specknet.pdiotapp.utils.ThingyLiveData
-import kotlin.collections.ArrayList
+import java.util.Queue
 
 
 class LiveDataActivity : AppCompatActivity() {
@@ -51,9 +52,16 @@ class LiveDataActivity : AppCompatActivity() {
     val filterTestRespeck = IntentFilter(Constants.ACTION_RESPECK_LIVE_BROADCAST)
     val filterTestThingy = IntentFilter(Constants.ACTION_THINGY_BROADCAST)
 
+    // activity
+    lateinit var showActivityTextView : TextView
+    //lateinit var respeckData: Queue<Float>
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_live_data)
+
+        showActivityTextView = findViewById(R.id.activity_pred_text)
+        showActivityTextView.text = "DIE!!!!!!!!!!"
 
         setupCharts()
 
@@ -78,7 +86,7 @@ class LiveDataActivity : AppCompatActivity() {
 
                     time += 1
                     updateGraph("respeck", x, y, z)
-
+                    updateActivityView(time)
                 }
             }
         }
@@ -111,10 +119,11 @@ class LiveDataActivity : AppCompatActivity() {
 
                     time += 1
                     updateGraph("thingy", x, y, z)
-
                 }
             }
         }
+        System.out.println("I am peepee and poopoo")
+
 
         // register receiver on another thread
         val handlerThreadThingy = HandlerThread("bgThreadThingyLive")
@@ -217,6 +226,10 @@ class LiveDataActivity : AppCompatActivity() {
         thingyChart.invalidate()
     }
 
+    fun setupActivity() {
+        time = 0f
+    }
+
     fun updateGraph(graph: String, x: Float, y: Float, z: Float) {
         // take the first element from the queue
         // and update the graph with it
@@ -247,6 +260,13 @@ class LiveDataActivity : AppCompatActivity() {
         }
 
 
+    }
+
+    fun updateActivityView(time: Float) {
+        // Display the new value in the text view.
+        runOnUiThread {
+            showActivityTextView.text = time.toString()
+        }
     }
 
 
