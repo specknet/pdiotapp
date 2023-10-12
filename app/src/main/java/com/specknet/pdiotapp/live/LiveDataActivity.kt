@@ -54,14 +54,12 @@ class LiveDataActivity : AppCompatActivity() {
 
     // activity
     lateinit var showActivityTextView : TextView
-    //lateinit var respeckData: Queue<Float>
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_live_data)
 
         showActivityTextView = findViewById(R.id.activity_pred_text)
-        showActivityTextView.text = "DIE!!!!!!!!!!"
 
         setupCharts()
 
