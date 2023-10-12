@@ -120,8 +120,6 @@ class LiveDataActivity : AppCompatActivity() {
                 }
             }
         }
-        System.out.println("I am peepee and poopoo")
-
 
         // register receiver on another thread
         val handlerThreadThingy = HandlerThread("bgThreadThingyLive")
