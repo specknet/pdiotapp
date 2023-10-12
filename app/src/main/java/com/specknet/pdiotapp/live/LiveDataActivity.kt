@@ -21,7 +21,7 @@ import com.specknet.pdiotapp.R
 import com.specknet.pdiotapp.utils.Constants
 import com.specknet.pdiotapp.utils.RESpeckLiveData
 import com.specknet.pdiotapp.utils.ThingyLiveData
-import java.util.Queue
+import com.specknet.pdiotapp.utils.DataQueue
 
 
 class LiveDataActivity : AppCompatActivity() {
@@ -49,6 +49,15 @@ class LiveDataActivity : AppCompatActivity() {
     lateinit var looperRespeck: Looper
     lateinit var looperThingy: Looper
 
+    // Data Queue of all Respeck stats
+    lateinit var accelXDataQueue: DataQueue
+    lateinit var accelYDataQueue: DataQueue
+    lateinit var accelZDataQueue: DataQueue
+
+    lateinit var gyroXDataQueue: DataQueue
+    lateinit var gyroYDataQueue: DataQueue
+    lateinit var gyroZDataQueue: DataQueue
+
     val filterTestRespeck = IntentFilter(Constants.ACTION_RESPECK_LIVE_BROADCAST)
     val filterTestThingy = IntentFilter(Constants.ACTION_THINGY_BROADCAST)
 
@@ -62,6 +71,15 @@ class LiveDataActivity : AppCompatActivity() {
         showActivityTextView = findViewById(R.id.activity_pred_text)
 
         setupCharts()
+
+        accelXDataQueue = DataQueue(25);
+        accelYDataQueue = DataQueue(25);
+        accelZDataQueue = DataQueue(25);
+        gyroXDataQueue = DataQueue(25);
+        gyroYDataQueue = DataQueue(25);
+        gyroZDataQueue = DataQueue(25);
+
+
 
         // set up the broadcast receiver
         respeckLiveUpdateReceiver = object : BroadcastReceiver() {
@@ -78,12 +96,24 @@ class LiveDataActivity : AppCompatActivity() {
                     Log.d("Live", "onReceive: liveData = " + liveData)
 
                     // get all relevant intent contents
-                    val x = liveData.accelX
-                    val y = liveData.accelY
-                    val z = liveData.accelZ
+                    val accelX = liveData.accelX
+                    val accelY = liveData.accelY
+                    val accelZ = liveData.accelZ
+
+                    val gyroX = liveData.gyro.x
+                    val gyroY = liveData.gyro.y
+                    val gyroZ = liveData.gyro.z
+
+                    accelXDataQueue.add(accelX)
+                    accelYDataQueue.add(accelY)
+                    accelZDataQueue.add(accelZ)
+
+                    gyroXDataQueue.add(gyroX)
+                    gyroYDataQueue.add(gyroY)
+                    gyroZDataQueue.add(gyroZ)
 
                     time += 1
-                    updateGraph("respeck", x, y, z)
+                    updateGraph("respeck", accelX, accelY, accelZ)
                     updateActivityView(time)
                 }
             }
