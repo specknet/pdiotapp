@@ -290,14 +290,19 @@ class LiveDataActivity : AppCompatActivity() {
 
     fun updateActivityView(time: Float) {
         // Display the new value in the text view.
-        val metadata = String.format("time: %d - accelXMean: %f - accelXStd: %f - gyroXMean: %f- gyroXStd: %f",
-            time,
-            accelXDataQueue.getMean(),
-            accelXDataQueue.getStd(),
-            gyroXDataQueue.getMean(),
-            gyroXDataQueue.getStd());
-        runOnUiThread {
-            showActivityTextView.text = metadata
+
+        if ((time.toInt() % 25) == 0) {
+            accelXDataQueue.calculateMeanAndStd();
+            gyroXDataQueue.calculateMeanAndStd();
+            val metadata = "time: ${time} - " +
+                    "accelXMean: ${accelXDataQueue.getMean()} - " +
+                    "accelXStd: ${accelXDataQueue.getStd()} - " +
+                    "gyroXMean: ${gyroXDataQueue.getMean()} - " +
+                    "gyroXStd: ${gyroXDataQueue.getStd()}"
+
+            runOnUiThread {
+                showActivityTextView.text = metadata
+            }
         }
     }
 

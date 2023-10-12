@@ -27,11 +27,9 @@ public class DataQueue{
            float removedValue = respeckQueue.remove();
            sum -= removedValue;
         }
-        this.calculateMeanAndStd();
-
     }
 
-    private void calculateMeanAndStd(){
+    public void calculateMeanAndStd(){
         dataMean = sum/respeckQueue.size();
         float squareSum = 0;
 
