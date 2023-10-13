@@ -23,7 +23,6 @@ import com.specknet.pdiotapp.utils.RESpeckLiveData
 import com.specknet.pdiotapp.utils.ThingyLiveData
 import com.specknet.pdiotapp.utils.DataQueue
 
-
 class LiveDataActivity : AppCompatActivity() {
 
     // global graph variables
