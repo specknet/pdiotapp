@@ -72,12 +72,14 @@ class LiveDataActivity : AppCompatActivity() {
 
         setupCharts()
 
-        accelXDataQueue = DataQueue(25);
-        accelYDataQueue = DataQueue(25);
-        accelZDataQueue = DataQueue(25);
-        gyroXDataQueue = DataQueue(25);
-        gyroYDataQueue = DataQueue(25);
-        gyroZDataQueue = DataQueue(25);
+        var queueLimit = 25
+
+        accelXDataQueue = DataQueue(queueLimit);
+        accelYDataQueue = DataQueue(queueLimit);
+        accelZDataQueue = DataQueue(queueLimit);
+        gyroXDataQueue = DataQueue(queueLimit);
+        gyroYDataQueue = DataQueue(queueLimit);
+        gyroZDataQueue = DataQueue(queueLimit);
 
 
 
