@@ -19,9 +19,11 @@ import com.github.mikephil.charting.data.LineDataSet
 import com.github.mikephil.charting.interfaces.datasets.ILineDataSet
 import com.specknet.pdiotapp.R
 import com.specknet.pdiotapp.utils.Constants
+import com.specknet.pdiotapp.utils.DataQueue
+import com.specknet.pdiotapp.utils.Inference
 import com.specknet.pdiotapp.utils.RESpeckLiveData
 import com.specknet.pdiotapp.utils.ThingyLiveData
-import com.specknet.pdiotapp.utils.DataQueue
+
 
 class LiveDataActivity : AppCompatActivity() {
 
@@ -63,6 +65,8 @@ class LiveDataActivity : AppCompatActivity() {
     // activity
     lateinit var showActivityTextView : TextView
 
+    lateinit var inferenceClass : Inference
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_live_data)
@@ -80,6 +84,8 @@ class LiveDataActivity : AppCompatActivity() {
         gyroYDataQueue = DataQueue(queueLimit);
         gyroZDataQueue = DataQueue(queueLimit);
 
+        inferenceClass = Inference(this)
+        inferenceClass.loadModel();
 
 
         // set up the broadcast receiver
@@ -114,8 +120,13 @@ class LiveDataActivity : AppCompatActivity() {
                     gyroZDataQueue.add(gyroZ)
 
                     time += 1
+
                     updateGraph("respeck", accelX, accelY, accelZ)
-                    updateActivityView(time)
+
+
+                    if ((time.toInt() % 10) == 0) {
+                        updateActivityView(time)
+                    }
                 }
             }
         }
@@ -292,18 +303,36 @@ class LiveDataActivity : AppCompatActivity() {
     fun updateActivityView(time: Float) {
         // Display the new value in the text view.
 
-        if ((time.toInt() % 25) == 0) {
-            accelXDataQueue.calculateMeanAndStd();
-            gyroXDataQueue.calculateMeanAndStd();
-            val metadata = "time: ${time} - " +
-                    "accelXMean: ${accelXDataQueue.getMean()} - " +
-                    "accelXStd: ${accelXDataQueue.getStd()} - " +
-                    "gyroXMean: ${gyroXDataQueue.getMean()} - " +
-                    "gyroXStd: ${gyroXDataQueue.getStd()}"
+        accelXDataQueue.calculateMeanAndStd();
+        accelYDataQueue.calculateMeanAndStd();
+        accelZDataQueue.calculateMeanAndStd();
 
-            runOnUiThread {
-                showActivityTextView.text = metadata
-            }
+        gyroXDataQueue.calculateMeanAndStd();
+        gyroYDataQueue.calculateMeanAndStd();
+        gyroZDataQueue.calculateMeanAndStd();
+
+        val inputData: FloatArray = floatArrayOf(
+            accelXDataQueue.std,
+            accelYDataQueue.std,
+            accelZDataQueue.std,
+            gyroXDataQueue.std,
+            gyroYDataQueue.std,
+            gyroZDataQueue.std,
+
+            accelXDataQueue.mean,
+            accelYDataQueue.mean,
+            accelZDataQueue.mean,
+            gyroXDataQueue.mean,
+            gyroYDataQueue.mean,
+            gyroZDataQueue.mean
+        )
+        val outputData = inferenceClass.runInference(inputData);
+
+        val metadata = "time: $time - \n" +
+                "Prediction: $outputData"
+
+        runOnUiThread {
+            showActivityTextView.text = metadata
         }
     }
 
