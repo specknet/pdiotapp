@@ -59,5 +59,11 @@ dependencies {
     implementation 'com.squareup.retrofit2:adapter-rxjava:2.3.0'
     implementation 'org.apache.commons:commons-lang3:3.7'
 
+    //for json
+    implementation 'com.google.code.gson:gson:2.8.9'
+
+    //for post requests
+    implementation 'org.apache.httpcomponents:httpclient-android:4.5.14'
+    implementation 'org.apache.httpcomponents:httpmime:4.5.6.'
 
 }
