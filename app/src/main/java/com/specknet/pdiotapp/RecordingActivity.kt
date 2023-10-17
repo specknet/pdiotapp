@@ -15,7 +15,6 @@ import androidx.appcompat.app.AppCompatActivity
 import com.specknet.pdiotapp.utils.Constants
 import com.specknet.pdiotapp.utils.CountUpTimer
 import com.specknet.pdiotapp.utils.RESpeckLiveData
-import com.specknet.pdiotapp.utils.ThingyLiveData
 import java.io.*
 import java.lang.Exception
 import java.text.SimpleDateFormat
@@ -37,12 +36,9 @@ class RecordingActivity : AppCompatActivity() {
     lateinit var countUpTimer: CountUpTimer
 
     lateinit var respeckReceiver: BroadcastReceiver
-    lateinit var thingyReceiver: BroadcastReceiver
     lateinit var respeckLooper: Looper
-    lateinit var thingyLooper: Looper
 
     val respeckFilterTest = IntentFilter(Constants.ACTION_RESPECK_LIVE_BROADCAST)
-    val thingyFilterTest = IntentFilter(Constants.ACTION_THINGY_BROADCAST)
 
     var sensorType = ""
     var universalSubjectId = "s1234567"
@@ -51,18 +47,12 @@ class RecordingActivity : AppCompatActivity() {
     var notes = ""
 
     private var mIsRespeckRecording = false
-    private var mIsThingyRecording = false
     private lateinit var respeckOutputData: StringBuilder
-    private lateinit var thingyOutputData: StringBuilder
 
     private lateinit var respeckAccel: TextView
     private lateinit var respeckGyro: TextView
 
-    private lateinit var thingyAccel: TextView
-    private lateinit var thingyGyro: TextView
-    private lateinit var thingyMag: TextView
 
-    var thingyOn = false
     var respeckOn = false
 
 
@@ -72,7 +62,6 @@ class RecordingActivity : AppCompatActivity() {
         setContentView(R.layout.activity_recording)
 
         respeckOutputData = StringBuilder()
-        thingyOutputData = StringBuilder()
 
         setupViews()
 
@@ -110,33 +99,6 @@ class RecordingActivity : AppCompatActivity() {
         val respeckHandler = Handler(respeckLooper)
         this.registerReceiver(respeckReceiver, respeckFilterTest, null, respeckHandler)
 
-        Log.d(TAG, "onCreate: registering thingy receiver")
-        // register thingy receiver
-        thingyReceiver = object : BroadcastReceiver() {
-            override fun onReceive(context: Context, intent: Intent) {
-
-                val action = intent.action
-
-                if (action == Constants.ACTION_THINGY_BROADCAST) {
-
-                    val liveData = intent.getSerializableExtra(Constants.THINGY_LIVE_DATA) as ThingyLiveData
-                    Log.d("Live", "onReceive: thingyLiveData = " + liveData)
-
-                    updateThingyData(liveData)
-
-                    thingyOn = true
-
-                }
-
-            }
-        }
-
-        // important to set this on a background thread otherwise it will block the UI
-        val thingyHandlerThread = HandlerThread("bgProcThreadThingy")
-        thingyHandlerThread.start()
-        thingyLooper = thingyHandlerThread.looper
-        val thingyHandler = Handler(thingyLooper)
-        this.registerReceiver(thingyReceiver, thingyFilterTest, null, thingyHandler)
 
         timer = findViewById(R.id.count_up_timer_text)
         timer.visibility = View.INVISIBLE
@@ -155,10 +117,6 @@ class RecordingActivity : AppCompatActivity() {
     private fun setupViews() {
         respeckAccel = findViewById(R.id.respeck_accel)
         respeckGyro = findViewById(R.id.respeck_gyro)
-
-        thingyAccel = findViewById(R.id.thingy_accel)
-        thingyGyro = findViewById(R.id.thingy_gyro)
-        thingyMag = findViewById(R.id.thingy_mag)
     }
 
     private fun updateRespeckData(liveData: RESpeckLiveData) {
@@ -176,25 +134,6 @@ class RecordingActivity : AppCompatActivity() {
         runOnUiThread {
             respeckAccel.text = getString(R.string.respeck_accel, liveData.accelX, liveData.accelY, liveData.accelZ)
             respeckGyro.text = getString(R.string.respeck_gyro, liveData.gyro.x, liveData.gyro.y, liveData.gyro.z)
-        }
-    }
-
-    private fun updateThingyData(liveData: ThingyLiveData) {
-        if (mIsThingyRecording) {
-            val output = liveData.phoneTimestamp.toString() + "," +
-                    liveData.accelX + "," + liveData.accelY + "," + liveData.accelZ + "," +
-                    liveData.gyro.x + "," + liveData.gyro.y + "," + liveData.gyro.z + "," +
-                    liveData.mag.x + "," + liveData.mag.y + "," + liveData.mag.z + "\n"
-
-            thingyOutputData.append(output)
-            Log.d(TAG, "updateThingyData: appended to thingyOutputData = " + output)
-        }
-
-        // update UI thread
-        runOnUiThread {
-            thingyAccel.text = getString(R.string.thingy_accel, liveData.accelX, liveData.accelY, liveData.accelZ)
-            thingyGyro.text = getString(R.string.thingy_gyro, liveData.gyro.x, liveData.gyro.y, liveData.gyro.z)
-            thingyMag.text = getString(R.string.thingy_mag, liveData.mag.x, liveData.mag.y, liveData.mag.z)
         }
     }
 
@@ -281,12 +220,6 @@ class RecordingActivity : AppCompatActivity() {
                 return@setOnClickListener
             }
 
-
-            if (sensorType == "Thingy" && !thingyOn) {
-                Toast.makeText(this, "Thingy is not on! Check connection.", Toast.LENGTH_SHORT).show()
-                return@setOnClickListener
-            }
-
             Toast.makeText(this, "Starting recording", Toast.LENGTH_SHORT).show()
 
             disableView(startRecordingButton)
@@ -345,10 +278,8 @@ class RecordingActivity : AppCompatActivity() {
 
         // reset output data
         respeckOutputData = StringBuilder()
-        thingyOutputData = StringBuilder()
 
         mIsRespeckRecording = false
-        mIsThingyRecording = false
     }
 
     private fun startRecording() {
@@ -356,14 +287,7 @@ class RecordingActivity : AppCompatActivity() {
 
         countUpTimer.start()
 
-        if (sensorType.equals("Thingy")) {
-            mIsThingyRecording = true
-            mIsRespeckRecording = false
-        }
-        else {
-            mIsRespeckRecording = true
-            mIsThingyRecording = false
-        }
+        mIsRespeckRecording = !sensorType.equals("Thingy")
     }
 
     private fun stopRecording() {
@@ -375,7 +299,6 @@ class RecordingActivity : AppCompatActivity() {
         Log.d(TAG, "stopRecording")
 
         mIsRespeckRecording = false
-        mIsThingyRecording = false
 
         saveRecording()
 
@@ -414,7 +337,7 @@ class RecordingActivity : AppCompatActivity() {
                 dataWriter.append("# Subject id: $universalSubjectId").append("\n")
                 dataWriter.append("# Notes: $notes").append("\n")
 
-                if (sensorType.equals("Thingy")) {
+                if (sensorType == "Thingy") {
                     dataWriter.write(Constants.RECORDING_CSV_HEADER_THINGY)
                 }
                 else {
@@ -427,18 +350,8 @@ class RecordingActivity : AppCompatActivity() {
                 Log.d(TAG, "saveRecording: filename exists")
             }
 
-            if (sensorType.equals("Thingy")) {
-                if (thingyOutputData.isNotEmpty()) {
-                    dataWriter.write(thingyOutputData.toString())
-                    dataWriter.flush()
 
-                    Log.d(TAG, "saveRecording: thingy recording saved")
-                }
-                else {
-                    Log.d(TAG, "saveRecording: no data from thingy during recording period")
-                }
-            }
-            else {
+            if (sensorType.equals("Respeck")) {
                 if (respeckOutputData.isNotEmpty()) {
                     dataWriter.write(respeckOutputData.toString())
                     dataWriter.flush()
@@ -453,7 +366,6 @@ class RecordingActivity : AppCompatActivity() {
             dataWriter.close()
 
             respeckOutputData = StringBuilder()
-            thingyOutputData = StringBuilder()
 
             Toast.makeText(this, "Recording saved!", Toast.LENGTH_SHORT).show()
         }
@@ -475,11 +387,9 @@ class RecordingActivity : AppCompatActivity() {
 
     override fun onDestroy() {
         unregisterReceiver(respeckReceiver)
-        unregisterReceiver(thingyReceiver)
         respeckLooper.quit()
-        thingyLooper.quit()
 
-        if (mIsThingyRecording || mIsRespeckRecording) {
+        if (mIsRespeckRecording) {
             saveRecording()
         }
 
