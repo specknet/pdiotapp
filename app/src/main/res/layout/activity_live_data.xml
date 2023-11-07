@@ -51,7 +51,15 @@
 
     </LinearLayout>
 
-
+    <TextView
+        android:id="@+id/detected_activity_text"
+        android:layout_width="194dp"
+        android:layout_height="31dp"
+        android:text="Activity:"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/thingy_graphs" />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

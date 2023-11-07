@@ -4,12 +4,13 @@ import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.os.Handler
 import android.os.HandlerThread
 import android.os.Looper
 import android.util.Log
+import android.widget.TextView
+import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import com.github.mikephil.charting.charts.LineChart
 import com.github.mikephil.charting.data.Entry
@@ -19,13 +20,15 @@ import com.github.mikephil.charting.interfaces.datasets.ILineDataSet
 import com.specknet.pdiotapp.R
 import com.specknet.pdiotapp.utils.Constants
 import com.specknet.pdiotapp.utils.RESpeckLiveData
+import com.specknet.pdiotapp.utils.RespeckClassifier
 import com.specknet.pdiotapp.utils.ThingyLiveData
-import kotlin.collections.ArrayList
 
 
 class LiveDataActivity : AppCompatActivity() {
 
     // global graph variables
+    var respeckClassifier = RespeckClassifier(this)
+
     lateinit var dataSet_res_accel_x: LineDataSet
     lateinit var dataSet_res_accel_y: LineDataSet
     lateinit var dataSet_res_accel_z: LineDataSet
@@ -41,6 +44,7 @@ class LiveDataActivity : AppCompatActivity() {
 
     lateinit var respeckChart: LineChart
     lateinit var thingyChart: LineChart
+    lateinit var detectedActivity: TextView
 
     // global broadcast receiver so we can unregister it
     lateinit var respeckLiveUpdateReceiver: BroadcastReceiver
@@ -56,6 +60,7 @@ class LiveDataActivity : AppCompatActivity() {
         setContentView(R.layout.activity_live_data)
 
         setupCharts()
+        detectedActivity = findViewById(R.id.detected_activity_text)
 
         // set up the broadcast receiver
         respeckLiveUpdateReceiver = object : BroadcastReceiver() {
@@ -72,13 +77,21 @@ class LiveDataActivity : AppCompatActivity() {
                     Log.d("Live", "onReceive: liveData = " + liveData)
 
                     // get all relevant intent contents
-                    val x = liveData.accelX
-                    val y = liveData.accelY
-                    val z = liveData.accelZ
+                    val accelX = liveData.accelX
+                    val accelY = liveData.accelY
+                    val accelZ = liveData.accelZ
+                    val gyroX = liveData.gyro.x
+                    val gyroY = liveData.gyro.y
+                    val gyroZ = liveData.gyro.z
 
                     time += 1
-                    updateGraph("respeck", x, y, z)
+                    respeckClassifier.addData(accelX, accelY, accelZ, gyroX, gyroY, gyroZ)
+                    if (respeckClassifier.index == 50) {
+                        val activity = respeckClassifier.classifyData()
+                        detectedActivity.text = activity
+                    }
 
+                    updateGraph("respeck", accelX, accelY, accelZ)
                 }
             }
         }
