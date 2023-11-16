@@ -53,4 +53,6 @@ public class DataQueue{
         return dataStd;
     }
 
+    public Queue<Float> getQueue(){return respeckQueue; }
+
 }

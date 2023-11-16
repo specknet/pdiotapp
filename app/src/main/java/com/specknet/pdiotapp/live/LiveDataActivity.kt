@@ -20,6 +20,7 @@ import com.github.mikephil.charting.interfaces.datasets.ILineDataSet
 import com.specknet.pdiotapp.R
 import com.specknet.pdiotapp.utils.Constants
 import com.specknet.pdiotapp.utils.DataQueue
+import com.specknet.pdiotapp.utils.DataQueueNew
 import com.specknet.pdiotapp.utils.Inference
 import com.specknet.pdiotapp.utils.RESpeckLiveData
 import com.specknet.pdiotapp.utils.ThingyLiveData
@@ -51,6 +52,7 @@ class LiveDataActivity : AppCompatActivity() {
     lateinit var looperThingy: Looper
 
     // Data Queue of all Respeck stats
+    /////////////////////////////////////////////////////////////////////////////////////////
     lateinit var accelXDataQueue: DataQueue
     lateinit var accelYDataQueue: DataQueue
     lateinit var accelZDataQueue: DataQueue
@@ -59,13 +61,29 @@ class LiveDataActivity : AppCompatActivity() {
     lateinit var gyroYDataQueue: DataQueue
     lateinit var gyroZDataQueue: DataQueue
 
+    lateinit var inferenceClass : Inference
+    /////////////////////////////////////////////////////////////////////////////////////////
+    // New DataQueue
+    lateinit var respeckDataQueue : DataQueueNew
+
+    // update with new model inference classes
+    lateinit var motionInference : Inference
+    lateinit var stationaryInference : Inference
+    lateinit var dynamicInference : Inference
+    lateinit var breathingInference : Inference
+
+    var timeBetweenPrediction = 10;
+
+    lateinit var lastPrediction : String
+
+    /////////////////////////////////////////////////////////////////////////////////////////
+
     val filterTestRespeck = IntentFilter(Constants.ACTION_RESPECK_LIVE_BROADCAST)
     val filterTestThingy = IntentFilter(Constants.ACTION_THINGY_BROADCAST)
 
     // activity
     lateinit var showActivityTextView : TextView
 
-    lateinit var inferenceClass : Inference
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -77,6 +95,9 @@ class LiveDataActivity : AppCompatActivity() {
 
         var queueLimit = 25
 
+        /////////////////////////////////////////////////////////////////////////////////////////
+
+        // Old version
         accelXDataQueue = DataQueue(queueLimit);
         accelYDataQueue = DataQueue(queueLimit);
         accelZDataQueue = DataQueue(queueLimit);
@@ -86,6 +107,24 @@ class LiveDataActivity : AppCompatActivity() {
 
         inferenceClass = Inference(this)
         inferenceClass.loadModel();
+
+        /////////////////////////////////////////////////////////////////////////////////////////
+        // new version
+        respeckDataQueue = DataQueueNew(queueLimit)
+
+        motionInference = Inference(this)
+        motionInference.loadModel();
+
+        stationaryInference = Inference(this)
+        stationaryInference.loadModel();
+
+        dynamicInference = Inference(this)
+        dynamicInference.loadModel();
+
+        breathingInference = Inference(this)
+        breathingInference.loadModel();
+
+        /////////////////////////////////////////////////////////////////////////////////////////
 
 
         // set up the broadcast receiver
@@ -111,6 +150,8 @@ class LiveDataActivity : AppCompatActivity() {
                     val gyroY = liveData.gyro.y
                     val gyroZ = liveData.gyro.z
 
+                    /////////////////////////////////////////////////////////////////////////////////////////
+                    // old version
                     accelXDataQueue.add(accelX)
                     accelYDataQueue.add(accelY)
                     accelZDataQueue.add(accelZ)
@@ -123,13 +164,29 @@ class LiveDataActivity : AppCompatActivity() {
 
                     updateGraph("respeck", accelX, accelY, accelZ)
 
-
-                    if ((time.toInt() % 10) == 0) {
+                    if ((time.toInt() % timeBetweenPrediction) == 0) {
                         updateActivityView(time)
                     }
+                    /////////////////////////////////////////////////////////////////////////////////////////
+                    // new version
+
+                    respeckDataQueue.add(
+                        accelX, accelY, accelZ,
+                        gyroX, gyroY, gyroZ)
+
+                    time += 1
+
+                    updateGraph("respeck", accelX, accelY, accelZ)
+
+                    if ((time.toInt() % timeBetweenPrediction) == 0) {
+                        updateActivityView(time)
+                    }
+
+                    /////////////////////////////////////////////////////////////////////////////////////////
                 }
             }
         }
+
 
         // register receiver on another thread
         val handlerThreadRespeck = HandlerThread("bgThreadRespeckLive")
@@ -299,7 +356,8 @@ class LiveDataActivity : AppCompatActivity() {
 
 
     }
-
+    //////////////////////////////////////////////////////////////////////////////////////////////////////
+    //////////////////////////////////////////////////////////////////////////////////////////////////////
     fun updateActivityView(time: Float) {
         // Display the new value in the text view.
 
@@ -336,6 +394,29 @@ class LiveDataActivity : AppCompatActivity() {
         }
     }
 
+    fun updateActivityViewNew(time: Float) {
+        // Display the new value in the text view.
+
+        val motionOutput = motionInference.runInference(respeckDataQueue.respeckQueue);
+        if (motionOutput=="Stationary"){
+            val stationaryOutput = stationaryInference.runInference(respeckDataQueue.respeckQueue);
+            val breathingOutput = breathingInference.runInference(respeckDataQueue.respeckQueue);
+
+            lastPrediction = "$stationaryOutput $breathingOutput"
+        }
+        else {
+            val dynamicOutput = dynamicInference.runInference((respeckDataQueue.respeckQueue))
+
+            lastPrediction = "$dynamicOutput"
+        }
+
+        runOnUiThread {
+            showActivityTextView.text = lastPrediction
+        }
+    }
+
+//////////////////////////////////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////////////////////////////
 
     override fun onDestroy() {
         super.onDestroy()
