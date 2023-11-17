@@ -59,8 +59,6 @@ public class BreathingInference {
     public String runInference(float[][][] inputData) {
         float[][] outputBreathing = new float[1][4];
 
-        breathing_model.tensor
-
         Log.e("BREATHING", "Before Model Run");
         breathing_model.run(inputData, outputBreathing);
         Log.e("BREATHING", "After Model Run");
