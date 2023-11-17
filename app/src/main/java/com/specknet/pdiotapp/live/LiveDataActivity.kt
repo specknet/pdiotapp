@@ -410,10 +410,10 @@ class LiveDataActivity : AppCompatActivity() {
         if (motionOutput=="Static"){
             val staticOutput = staticInference.runInference(respeckDataQueue.list);
 
-//            runOnUiThread {
-//                showActivityTextView.text = "$motionOutput $staticOutput"
-//            }
-//            return
+            runOnUiThread {
+                showActivityTextView.text = "$motionOutput $staticOutput"
+            }
+            return
 
             val breathingOutput = breathingInference.runInference(respeckDataQueue.list);
             lastPrediction = "$motionOutput $staticOutput $breathingOutput"
