@@ -32,9 +32,20 @@ public class DataQueue {
     }
 
     public float[][][] getList(){
-        float[][][] formatedList = new float[1][15][6];
-        formatedList[0] = respeckQueue.toArray(new float[queueLimit][6]);
-        return formatedList;
+        float[][][] formattedList = new float[1][queueLimit][6];
+        formattedList[0] = respeckQueue.toArray(new float[queueLimit][6]);
+        return formattedList;
+    }
+
+    public float[][][] getSpecificList(int size){
+        float[][] fullList = new float[queueLimit][6];
+        float[][][] specificList = new float[1][size][6];
+        fullList = respeckQueue.toArray(new float[queueLimit][6]);
+
+        for (int i = 0; i<size; i++){
+            specificList[0][i] = fullList[i+queueLimit-size];
+        }
+        return specificList;
     }
 
     public int getLength(){return respeckQueue.size();}

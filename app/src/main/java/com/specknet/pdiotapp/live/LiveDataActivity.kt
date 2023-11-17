@@ -63,10 +63,10 @@ class LiveDataActivity : AppCompatActivity() {
     lateinit var dynamicInference : DynamicInference
     lateinit var breathingInference : BreathingInference
 
-    var timeBetweenPrediction = 10;
+    var timeBetweenPrediction = 25;
     lateinit var lastPrediction : String
 
-    var queueLimit =15
+    var queueLimit =25
 
 
     /////////////////////////////////////////////////////////////////////////////////////////
@@ -322,17 +322,17 @@ class LiveDataActivity : AppCompatActivity() {
             return
         }
 
-        val motionOutput = motionInference.runInference(respeckDataQueue.list);
+        val motionOutput = motionInference.runInference(respeckDataQueue.getSpecificList(15));
 
         // if static, infers static position and breathing type
         if (motionOutput=="Static"){
             val staticOutput = staticInference.runInference(respeckDataQueue.list);
-            val breathingOutput = breathingInference.runInference(respeckDataQueue.list);
+            val breathingOutput = breathingInference.runInference(respeckDataQueue.getSpecificList(15));
             lastPrediction = "$motionOutput $staticOutput $breathingOutput"
         }
         // if dynamic, infers dynamic motion
         else {
-            val dynamicOutput = dynamicInference.runInference((respeckDataQueue.list))
+            val dynamicOutput = dynamicInference.runInference(respeckDataQueue.getSpecificList(15))
             lastPrediction = "$motionOutput $dynamicOutput"
         }
 

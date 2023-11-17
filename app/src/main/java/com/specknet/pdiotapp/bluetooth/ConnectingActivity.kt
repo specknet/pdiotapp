@@ -59,7 +59,7 @@ class ConnectingActivity : AppCompatActivity() {
         connectSensorsButton = findViewById(R.id.connect_sensors_button)
         restartConnectionButton = findViewById(R.id.restart_service_button)
 
-        thingyID = findViewById(R.id.thingy_code)
+        thingyID = findViewById(R.id.respeck_code)
 
         scanRespeckButton.setOnClickListener {
             val barcodeScanner = Intent(this, BarcodeActivity::class.java)
@@ -109,12 +109,12 @@ class ConnectingActivity : AppCompatActivity() {
         if (sharedPreferences.contains(Constants.THINGY_MAC_ADDRESS_PREF)) {
             Log.i("sharedpref", "Already saw a thingy ID")
 
-            thingy_code.setText(
-                sharedPreferences.getString(
-                    Constants.THINGY_MAC_ADDRESS_PREF,
-                    ""
-                )
-            )
+//            thingy_code.setText(
+//                sharedPreferences.getString(
+//                    Constants.THINGY_MAC_ADDRESS_PREF,
+//                    ""
+//                )
+//            )
         }
 
         respeckID.addTextChangedListener(object : TextWatcher {

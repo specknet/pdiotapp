@@ -33,7 +33,7 @@ public class MotionInference {
 
         try {
             AssetManager assetManager = context.getAssets();
-            AssetFileDescriptor modelFileDescriptor = assetManager.openFd("motion_model.tflite");
+            AssetFileDescriptor modelFileDescriptor = assetManager.openFd("motion_model_mlp.tflite");
             FileInputStream inputStream = new FileInputStream(modelFileDescriptor.getFileDescriptor());
             FileChannel fileChannel = inputStream.getChannel();
             long startOffset = modelFileDescriptor.getStartOffset();

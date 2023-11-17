@@ -35,7 +35,7 @@ public class StaticInference {
 
         try {
             AssetManager assetManager = context.getAssets();
-            AssetFileDescriptor modelFileDescriptor = assetManager.openFd("static_model.tflite");
+            AssetFileDescriptor modelFileDescriptor = assetManager.openFd("static_model_25_6.tflite");
             FileInputStream inputStream = new FileInputStream(modelFileDescriptor.getFileDescriptor());
             FileChannel fileChannel = inputStream.getChannel();
             long startOffset = modelFileDescriptor.getStartOffset();
@@ -60,7 +60,7 @@ public class StaticInference {
     public String runInference(float[][][] inputData) {
         float[][] outputStatic = new float[1][5];
 
-        Log.e("STATIC", "Before Model Run");
+        Log.e("STATIC", "Before Model Run" + String.valueOf(inputData[0].length));
         static_model.run(inputData, outputStatic);
         Log.e("STATIC", "After Model Run");
 

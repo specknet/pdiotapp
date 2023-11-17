@@ -92,58 +92,6 @@
             </LinearLayout>
 
             <LinearLayout
-                android:gravity="left"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="vertical"
-                android:padding="20dp">
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Thingy"
-                    android:textSize="30dp"/>
-
-                <TextView
-                    android:id="@+id/textView4"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="If your phone supports NFC, tap it against the top of the Thingy to obtain the ID.\nThe Thingy ID is also written on a label under the black rubber case."
-                    android:layout_marginTop="20dp"/>
-
-
-
-                <TextView
-                    android:id="@+id/title_thingy"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Thingy ID"
-                    android:layout_marginTop="30dp"/>
-
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="horizontal">
-
-                    <EditText
-                        android:id="@+id/thingy_code"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:ems="10"
-                        android:inputType="textPersonName"
-                        android:hint="Enter Thingy ID"/>
-
-                </LinearLayout>
-
-            </LinearLayout>
-
-            <TextView
-                android:paddingLeft="30dp"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Try to always connect both sensors."/>
-
-            <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal"
