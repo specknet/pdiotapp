@@ -20,8 +20,6 @@ import com.github.mikephil.charting.interfaces.datasets.ILineDataSet
 import com.specknet.pdiotapp.R
 import com.specknet.pdiotapp.utils.Constants
 import com.specknet.pdiotapp.utils.DataQueue
-import com.specknet.pdiotapp.utils.DataQueueNew
-import com.specknet.pdiotapp.utils.Inference
 import com.specknet.pdiotapp.utils.MotionInference
 import com.specknet.pdiotapp.utils.StaticInference
 import com.specknet.pdiotapp.utils.DynamicInference
@@ -55,29 +53,17 @@ class LiveDataActivity : AppCompatActivity() {
     lateinit var looperRespeck: Looper
     lateinit var looperThingy: Looper
 
+    /////////////////////////////////////////////////////////////////////////////////////////
     // Data Queue of all Respeck stats
-    /////////////////////////////////////////////////////////////////////////////////////////
-    lateinit var accelXDataQueue: DataQueue
-    lateinit var accelYDataQueue: DataQueue
-    lateinit var accelZDataQueue: DataQueue
+    lateinit var respeckDataQueue : DataQueue
 
-    lateinit var gyroXDataQueue: DataQueue
-    lateinit var gyroYDataQueue: DataQueue
-    lateinit var gyroZDataQueue: DataQueue
-
-    lateinit var inferenceClass : Inference
-    /////////////////////////////////////////////////////////////////////////////////////////
-    // New DataQueue
-    lateinit var respeckDataQueue : DataQueueNew
-
-    // update with new model inference classes
+    // Inference classes for each model
     lateinit var motionInference : MotionInference
     lateinit var staticInference : StaticInference
     lateinit var dynamicInference : DynamicInference
     lateinit var breathingInference : BreathingInference
 
     var timeBetweenPrediction = 10;
-
     lateinit var lastPrediction : String
 
     var queueLimit =15
@@ -99,23 +85,8 @@ class LiveDataActivity : AppCompatActivity() {
         showActivityTextView = findViewById(R.id.activity_pred_text)
 
         setupCharts()
-
         /////////////////////////////////////////////////////////////////////////////////////////
-
-        // Old version
-        //accelXDataQueue = DataQueue(queueLimit);
-        //accelYDataQueue = DataQueue(queueLimit);
-        //accelZDataQueue = DataQueue(queueLimit);
-        //gyroXDataQueue = DataQueue(queueLimit);
-        //gyroYDataQueue = DataQueue(queueLimit);
-        //gyroZDataQueue = DataQueue(queueLimit);
-
-        //inferenceClass = Inference(this)
-        //inferenceClass.loadModel();
-
-        /////////////////////////////////////////////////////////////////////////////////////////
-        // new version
-        respeckDataQueue = DataQueueNew(queueLimit)
+        respeckDataQueue = DataQueue(queueLimit)
 
         motionInference = MotionInference(this)
         motionInference.loadModel();
@@ -155,33 +126,15 @@ class LiveDataActivity : AppCompatActivity() {
                     val gyroY = liveData.gyro.y
                     val gyroZ = liveData.gyro.z
 
-                    /////////////////////////////////////////////////////////////////////////////////////////
-                    // old version
-//                    accelXDataQueue.add(accelX)
-//                    accelYDataQueue.add(accelY)
-//                    accelZDataQueue.add(accelZ)
-//
-//                    gyroXDataQueue.add(gyroX)
-//                    gyroYDataQueue.add(gyroY)
-//                    gyroZDataQueue.add(gyroZ)
-
-                    //updateGraph("respeck", accelX, accelY, accelZ)
-
-//                    if ((time.toInt() % timeBetweenPrediction) == 0) {
-//                        updateActivityView(time)
-//                    }
-//                    ///////////////////////////////////////////////////////////////////////////////////////
-                     //new version
-
                     respeckDataQueue.add(
                         accelX, accelY, accelZ,
                         gyroX, gyroY, gyroZ)
-//
+
                     time+=1
                     updateGraph("respeck", accelX, accelY, accelZ)
-//
+
                     if ((time.toInt() % timeBetweenPrediction) == 0) {
-                        updateActivityViewNew()
+                        updateActivityView()
                     }
 
                     /////////////////////////////////////////////////////////////////////////////////////////
@@ -217,7 +170,8 @@ class LiveDataActivity : AppCompatActivity() {
                     val z = liveData.accelZ
 
                     time += 1
-                    updateGraph("thingy", x, y, z)
+                    //updateGraph("thingy", x, y, z)
+                return
                 }
             }
         }
@@ -231,10 +185,9 @@ class LiveDataActivity : AppCompatActivity() {
 
     }
 
-
     fun setupCharts() {
         respeckChart = findViewById(R.id.respeck_chart)
-        thingyChart = findViewById(R.id.thingy_chart)
+//        thingyChart = findViewById(R.id.thingy_chart)
 
         // Respeck
 
@@ -281,46 +234,46 @@ class LiveDataActivity : AppCompatActivity() {
 
         // Thingy
 
-        time = 0f
-        val entries_thingy_accel_x = ArrayList<Entry>()
-        val entries_thingy_accel_y = ArrayList<Entry>()
-        val entries_thingy_accel_z = ArrayList<Entry>()
-
-        dataSet_thingy_accel_x = LineDataSet(entries_thingy_accel_x, "Accel X")
-        dataSet_thingy_accel_y = LineDataSet(entries_thingy_accel_y, "Accel Y")
-        dataSet_thingy_accel_z = LineDataSet(entries_thingy_accel_z, "Accel Z")
-
-        dataSet_thingy_accel_x.setDrawCircles(false)
-        dataSet_thingy_accel_y.setDrawCircles(false)
-        dataSet_thingy_accel_z.setDrawCircles(false)
-
-        dataSet_thingy_accel_x.setColor(
-            ContextCompat.getColor(
-                this,
-                R.color.red
-            )
-        )
-        dataSet_thingy_accel_y.setColor(
-            ContextCompat.getColor(
-                this,
-                R.color.green
-            )
-        )
-        dataSet_thingy_accel_z.setColor(
-            ContextCompat.getColor(
-                this,
-                R.color.blue
-            )
-        )
-
-        val dataSetsThingy = ArrayList<ILineDataSet>()
-        dataSetsThingy.add(dataSet_thingy_accel_x)
-        dataSetsThingy.add(dataSet_thingy_accel_y)
-        dataSetsThingy.add(dataSet_thingy_accel_z)
-
-        allThingyData = LineData(dataSetsThingy)
-        thingyChart.data = allThingyData
-        thingyChart.invalidate()
+//        time = 0f
+//        val entries_thingy_accel_x = ArrayList<Entry>()
+//        val entries_thingy_accel_y = ArrayList<Entry>()
+//        val entries_thingy_accel_z = ArrayList<Entry>()
+//
+//        dataSet_thingy_accel_x = LineDataSet(entries_thingy_accel_x, "Accel X")
+//        dataSet_thingy_accel_y = LineDataSet(entries_thingy_accel_y, "Accel Y")
+//        dataSet_thingy_accel_z = LineDataSet(entries_thingy_accel_z, "Accel Z")
+//
+//        dataSet_thingy_accel_x.setDrawCircles(false)
+//        dataSet_thingy_accel_y.setDrawCircles(false)
+//        dataSet_thingy_accel_z.setDrawCircles(false)
+//
+//        dataSet_thingy_accel_x.setColor(
+//            ContextCompat.getColor(
+//                this,
+//                R.color.red
+//            )
+//        )
+//        dataSet_thingy_accel_y.setColor(
+//            ContextCompat.getColor(
+//                this,
+//                R.color.green
+//            )
+//        )
+//        dataSet_thingy_accel_z.setColor(
+//            ContextCompat.getColor(
+//                this,
+//                R.color.blue
+//            )
+//        )
+//
+//        val dataSetsThingy = ArrayList<ILineDataSet>()
+//        dataSetsThingy.add(dataSet_thingy_accel_x)
+//        dataSetsThingy.add(dataSet_thingy_accel_y)
+//        dataSetsThingy.add(dataSet_thingy_accel_z)
+//
+//        allThingyData = LineData(dataSetsThingy)
+//        thingyChart.data = allThingyData
+//        thingyChart.invalidate()
     }
 
     fun setupActivity() {
@@ -343,91 +296,47 @@ class LiveDataActivity : AppCompatActivity() {
                 respeckChart.moveViewToX(respeckChart.lowestVisibleX + 40)
             }
         } else if (graph == "thingy") {
-            dataSet_thingy_accel_x.addEntry(Entry(time, x))
-            dataSet_thingy_accel_y.addEntry(Entry(time, y))
-            dataSet_thingy_accel_z.addEntry(Entry(time, z))
-
-            runOnUiThread {
-                allThingyData.notifyDataChanged()
-                thingyChart.notifyDataSetChanged()
-                thingyChart.invalidate()
-                thingyChart.setVisibleXRangeMaximum(150f)
-                thingyChart.moveViewToX(thingyChart.lowestVisibleX + 40)
-            }
+//            dataSet_thingy_accel_x.addEntry(Entry(time, x))
+//            dataSet_thingy_accel_y.addEntry(Entry(time, y))
+//            dataSet_thingy_accel_z.addEntry(Entry(time, z))
+//
+//            runOnUiThread {
+//                allThingyData.notifyDataChanged()
+//                thingyChart.notifyDataSetChanged()
+//                thingyChart.invalidate()
+//                thingyChart.setVisibleXRangeMaximum(150f)
+//                thingyChart.moveViewToX(thingyChart.lowestVisibleX + 40)
+//            }
         }
 
 
     }
     //////////////////////////////////////////////////////////////////////////////////////////////////////
     //////////////////////////////////////////////////////////////////////////////////////////////////////
-    fun updateActivityView(time: Float) {
-        // Display the new value in the text view.
-
-        accelXDataQueue.calculateMeanAndStd();
-        accelYDataQueue.calculateMeanAndStd();
-        accelZDataQueue.calculateMeanAndStd();
-
-        gyroXDataQueue.calculateMeanAndStd();
-        gyroYDataQueue.calculateMeanAndStd();
-        gyroZDataQueue.calculateMeanAndStd();
-
-        val inputData: FloatArray = floatArrayOf(
-            accelXDataQueue.std,
-            accelYDataQueue.std,
-            accelZDataQueue.std,
-            gyroXDataQueue.std,
-            gyroYDataQueue.std,
-            gyroZDataQueue.std,
-
-            accelXDataQueue.mean,
-            accelYDataQueue.mean,
-            accelZDataQueue.mean,
-            gyroXDataQueue.mean,
-            gyroYDataQueue.mean,
-            gyroZDataQueue.mean
-        )
-        val outputData = inferenceClass.runInference(inputData);
-
-        val metadata = "time: $time - \n" +
-                "Prediction: $outputData"
-
-        runOnUiThread {
-            showActivityTextView.text = metadata
-        }
-    }
-
-    fun updateActivityViewNew() {
-        // Display the new value in the text view.
-
+    fun updateActivityView() {
+        // Doesnt do anything if queue isn't of correct length
         if (respeckDataQueue.length<queueLimit){
             runOnUiThread {
                 showActivityTextView.text = ""
             }
             return
         }
+
         val motionOutput = motionInference.runInference(respeckDataQueue.list);
 
+        // if static, infers static position and breathing type
         if (motionOutput=="Static"){
             val staticOutput = staticInference.runInference(respeckDataQueue.list);
-
-            runOnUiThread {
-                showActivityTextView.text = "$motionOutput $staticOutput"
-            }
-            return
-
             val breathingOutput = breathingInference.runInference(respeckDataQueue.list);
             lastPrediction = "$motionOutput $staticOutput $breathingOutput"
         }
+        // if dynamic, infers dynamic motion
         else {
-//            runOnUiThread {
-//                showActivityTextView.text = "$motionOutput"
-//            }
-//            return
-
             val dynamicOutput = dynamicInference.runInference((respeckDataQueue.list))
             lastPrediction = "$motionOutput $dynamicOutput"
         }
 
+        // displays full prediction
         runOnUiThread {
             showActivityTextView.text = lastPrediction
         }

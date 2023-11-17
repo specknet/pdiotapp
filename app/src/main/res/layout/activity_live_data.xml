@@ -13,6 +13,7 @@
         android:orientation="vertical"
         app:layout_constraintBottom_toTopOf="@id/thingy_graphs"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/activity_pred_text">
 
@@ -35,21 +36,9 @@
         android:orientation="vertical"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/respeck_graphs">
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Thingy Live Data" />
-
-        <com.github.mikephil.charting.charts.LineChart
-            android:id="@+id/thingy_chart"
-            android:layout_width="match_parent"
-            android:layout_height="200dp" />
-
-
-    </LinearLayout>
+        app:layout_constraintTop_toBottomOf="@id/respeck_graphs" />
 
     <TextView
         android:id="@+id/activity_pred_text"
@@ -58,7 +47,6 @@
         android:text="@string/activity_pred_text"
         app:layout_constraintBottom_toTopOf="@+id/respeck_graphs"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/activity_header_text"
         app:layout_constraintVertical_bias="0.5" />
