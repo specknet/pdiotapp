@@ -22,6 +22,10 @@ import com.specknet.pdiotapp.utils.Constants
 import com.specknet.pdiotapp.utils.DataQueue
 import com.specknet.pdiotapp.utils.DataQueueNew
 import com.specknet.pdiotapp.utils.Inference
+import com.specknet.pdiotapp.utils.MotionInference
+import com.specknet.pdiotapp.utils.StaticInference
+import com.specknet.pdiotapp.utils.DynamicInference
+import com.specknet.pdiotapp.utils.BreathingInference
 import com.specknet.pdiotapp.utils.RESpeckLiveData
 import com.specknet.pdiotapp.utils.ThingyLiveData
 
@@ -67,14 +71,17 @@ class LiveDataActivity : AppCompatActivity() {
     lateinit var respeckDataQueue : DataQueueNew
 
     // update with new model inference classes
-    lateinit var motionInference : Inference
-    lateinit var stationaryInference : Inference
-    lateinit var dynamicInference : Inference
-    lateinit var breathingInference : Inference
+    lateinit var motionInference : MotionInference
+    lateinit var staticInference : StaticInference
+    lateinit var dynamicInference : DynamicInference
+    lateinit var breathingInference : BreathingInference
 
     var timeBetweenPrediction = 10;
 
     lateinit var lastPrediction : String
+
+    var queueLimit =15
+
 
     /////////////////////////////////////////////////////////////////////////////////////////
 
@@ -93,35 +100,33 @@ class LiveDataActivity : AppCompatActivity() {
 
         setupCharts()
 
-        var queueLimit = 25
-
         /////////////////////////////////////////////////////////////////////////////////////////
 
         // Old version
-        accelXDataQueue = DataQueue(queueLimit);
-        accelYDataQueue = DataQueue(queueLimit);
-        accelZDataQueue = DataQueue(queueLimit);
-        gyroXDataQueue = DataQueue(queueLimit);
-        gyroYDataQueue = DataQueue(queueLimit);
-        gyroZDataQueue = DataQueue(queueLimit);
+        //accelXDataQueue = DataQueue(queueLimit);
+        //accelYDataQueue = DataQueue(queueLimit);
+        //accelZDataQueue = DataQueue(queueLimit);
+        //gyroXDataQueue = DataQueue(queueLimit);
+        //gyroYDataQueue = DataQueue(queueLimit);
+        //gyroZDataQueue = DataQueue(queueLimit);
 
-        inferenceClass = Inference(this)
-        inferenceClass.loadModel();
+        //inferenceClass = Inference(this)
+        //inferenceClass.loadModel();
 
         /////////////////////////////////////////////////////////////////////////////////////////
         // new version
         respeckDataQueue = DataQueueNew(queueLimit)
 
-        motionInference = Inference(this)
+        motionInference = MotionInference(this)
         motionInference.loadModel();
 
-        stationaryInference = Inference(this)
-        stationaryInference.loadModel();
+        staticInference = StaticInference(this)
+        staticInference.loadModel();
 
-        dynamicInference = Inference(this)
+        dynamicInference = DynamicInference(this)
         dynamicInference.loadModel();
 
-        breathingInference = Inference(this)
+        breathingInference = BreathingInference(this)
         breathingInference.loadModel();
 
         /////////////////////////////////////////////////////////////////////////////////////////
@@ -152,34 +157,31 @@ class LiveDataActivity : AppCompatActivity() {
 
                     /////////////////////////////////////////////////////////////////////////////////////////
                     // old version
-                    accelXDataQueue.add(accelX)
-                    accelYDataQueue.add(accelY)
-                    accelZDataQueue.add(accelZ)
+//                    accelXDataQueue.add(accelX)
+//                    accelYDataQueue.add(accelY)
+//                    accelZDataQueue.add(accelZ)
+//
+//                    gyroXDataQueue.add(gyroX)
+//                    gyroYDataQueue.add(gyroY)
+//                    gyroZDataQueue.add(gyroZ)
 
-                    gyroXDataQueue.add(gyroX)
-                    gyroYDataQueue.add(gyroY)
-                    gyroZDataQueue.add(gyroZ)
+                    //updateGraph("respeck", accelX, accelY, accelZ)
 
-                    time += 1
-
-                    updateGraph("respeck", accelX, accelY, accelZ)
-
-                    if ((time.toInt() % timeBetweenPrediction) == 0) {
-                        updateActivityView(time)
-                    }
-                    /////////////////////////////////////////////////////////////////////////////////////////
-                    // new version
+//                    if ((time.toInt() % timeBetweenPrediction) == 0) {
+//                        updateActivityView(time)
+//                    }
+//                    ///////////////////////////////////////////////////////////////////////////////////////
+                     //new version
 
                     respeckDataQueue.add(
                         accelX, accelY, accelZ,
                         gyroX, gyroY, gyroZ)
-
-                    time += 1
-
+//
+                    time+=1
                     updateGraph("respeck", accelX, accelY, accelZ)
-
+//
                     if ((time.toInt() % timeBetweenPrediction) == 0) {
-                        updateActivityView(time)
+                        updateActivityViewNew()
                     }
 
                     /////////////////////////////////////////////////////////////////////////////////////////
@@ -394,20 +396,36 @@ class LiveDataActivity : AppCompatActivity() {
         }
     }
 
-    fun updateActivityViewNew(time: Float) {
+    fun updateActivityViewNew() {
         // Display the new value in the text view.
 
-        val motionOutput = motionInference.runInference(respeckDataQueue.respeckQueue);
-        if (motionOutput=="Stationary"){
-            val stationaryOutput = stationaryInference.runInference(respeckDataQueue.respeckQueue);
-            val breathingOutput = breathingInference.runInference(respeckDataQueue.respeckQueue);
+        if (respeckDataQueue.length<queueLimit){
+            runOnUiThread {
+                showActivityTextView.text = ""
+            }
+            return
+        }
+        val motionOutput = motionInference.runInference(respeckDataQueue.list);
 
-            lastPrediction = "$stationaryOutput $breathingOutput"
+        if (motionOutput=="Static"){
+            val staticOutput = staticInference.runInference(respeckDataQueue.list);
+
+//            runOnUiThread {
+//                showActivityTextView.text = "$motionOutput $staticOutput"
+//            }
+//            return
+
+            val breathingOutput = breathingInference.runInference(respeckDataQueue.list);
+            lastPrediction = "$motionOutput $staticOutput $breathingOutput"
         }
         else {
-            val dynamicOutput = dynamicInference.runInference((respeckDataQueue.respeckQueue))
+//            runOnUiThread {
+//                showActivityTextView.text = "$motionOutput"
+//            }
+//            return
 
-            lastPrediction = "$dynamicOutput"
+            val dynamicOutput = dynamicInference.runInference((respeckDataQueue.list))
+            lastPrediction = "$motionOutput $dynamicOutput"
         }
 
         runOnUiThread {

@@ -12,6 +12,7 @@ import java.io.IOException;
 import java.nio.channels.FileChannel;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Queue;
 
 public class Inference {
     private Context context;
@@ -19,6 +20,10 @@ public class Inference {
     private Interpreter activity_model;
     private Map<Integer, String> breathingTypes;
     private Map<Integer, String> activityTypes;
+
+    private Map<Integer, String> dynamicTypes;
+
+    private Map<Integer, String> staticTypes;
 
     public Inference(Context context) {
         breathingTypes = new HashMap<>();
@@ -45,20 +50,43 @@ public class Inference {
         activityTypes.put(11, "Miscellaneous movements");
 
         this.context = context.getApplicationContext();
+
+        ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        //New Hash maps
+        breathingTypes = new HashMap<>();
+        breathingTypes.put(0, "breathingNormal");
+        breathingTypes.put(1, "coughing");
+        breathingTypes.put(2, "hyperventilating");
+        breathingTypes.put(3, "other");
+
+        staticTypes = new HashMap<>();
+        staticTypes.put(0, "sitting/standing");
+        staticTypes.put(1, "lyingLeft");
+        staticTypes.put(2, "lyingRight");
+        staticTypes.put(3, "lyingBack");
+        staticTypes.put(4, "lyingStomach");
+
+        dynamicTypes = new HashMap<>();
+        dynamicTypes.put(0, "normalWalking");
+        dynamicTypes.put(1, "running");
+        dynamicTypes.put(2, "descending");
+        dynamicTypes.put(3, "ascending");
+        dynamicTypes.put(4, "shuffleWalking");
+        dynamicTypes.put(5, "miscMovement");
     }
 
     public void loadModel() {
 
         try {
             AssetManager assetManager = context.getAssets();
-            AssetFileDescriptor modelFileDescriptor = assetManager.openFd("breathing_model.tflite");
+            AssetFileDescriptor modelFileDescriptor = assetManager.openFd("breathing_model_previous.tflite");
             FileInputStream inputStream = new FileInputStream(modelFileDescriptor.getFileDescriptor());
             FileChannel fileChannel = inputStream.getChannel();
             long startOffset = modelFileDescriptor.getStartOffset();
             long declaredLength = modelFileDescriptor.getDeclaredLength();
             breathing_model = new Interpreter(fileChannel.map(FileChannel.MapMode.READ_ONLY, startOffset, declaredLength));
 
-            modelFileDescriptor = assetManager.openFd("activity_model.tflite");
+            modelFileDescriptor = assetManager.openFd("activity_model_previous.tflite");
             inputStream = new FileInputStream(modelFileDescriptor.getFileDescriptor());
             fileChannel = inputStream.getChannel();
             startOffset = modelFileDescriptor.getStartOffset();

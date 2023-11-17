@@ -17,16 +17,25 @@ public class DataQueueNew {
             float gyroX, float gyroY, float gyroZ){
         // Need to make sure that array is of right size
 
-        respeckQueue.add(
-                new float[]{accelX, accelY, accelZ,
-                        gyroX, gyroY, gyroZ
-                });
+        float[] data = new float[]{accelX, accelY, accelZ,
+                gyroX, gyroY, gyroZ};
+
+        if (data==null){
+            int x=5+5;
+        }
+
+        respeckQueue.add(data);
 
         if (respeckQueue.size()>queueLimit){
            respeckQueue.remove();
         }
     }
 
-    public Queue<float[]> getQueue(){return respeckQueue; }
+    public float[][][] getList(){
+        float[][][] formatedList = new float[1][15][6];
+        formatedList[0] = respeckQueue.toArray(new float[queueLimit][6]);
+        return formatedList;
+    }
 
+    public int getLength(){return respeckQueue.size();}
 }
