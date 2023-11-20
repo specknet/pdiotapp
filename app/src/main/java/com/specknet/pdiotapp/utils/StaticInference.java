@@ -24,18 +24,18 @@ public class StaticInference {
         this.context = context.getApplicationContext();
 
         staticTypes = new HashMap<>();
-        staticTypes.put(0, "sitting/standing");
-        staticTypes.put(1, "lyingLeft");
-        staticTypes.put(2, "lyingRight");
-        staticTypes.put(3, "lyingBack");
-        staticTypes.put(4, "lyingStomach");
+        staticTypes.put(0, "Sitting/Standing");
+        staticTypes.put(1, "Lying Down on Left");
+        staticTypes.put(2, "Lying Down on Right");
+        staticTypes.put(3, "Lying Down on Back");
+        staticTypes.put(4, "Lying Down on Stomach");
     }
 
     public void loadModel() {
 
         try {
             AssetManager assetManager = context.getAssets();
-            AssetFileDescriptor modelFileDescriptor = assetManager.openFd("static_model_25_6.tflite");
+            AssetFileDescriptor modelFileDescriptor = assetManager.openFd("new_static_model.tflite");
             FileInputStream inputStream = new FileInputStream(modelFileDescriptor.getFileDescriptor());
             FileChannel fileChannel = inputStream.getChannel();
             long startOffset = modelFileDescriptor.getStartOffset();

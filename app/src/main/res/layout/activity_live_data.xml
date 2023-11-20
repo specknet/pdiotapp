@@ -25,7 +25,12 @@
         <com.github.mikephil.charting.charts.LineChart
             android:id="@+id/respeck_chart"
             android:layout_width="match_parent"
-            android:layout_height="200dp" />
+            android:layout_height="100dp" />
+
+        <com.github.mikephil.charting.charts.LineChart
+            android:id="@+id/respeck_chart_gyro"
+            android:layout_width="match_parent"
+            android:layout_height="100dp" />
 
     </LinearLayout>
 
@@ -45,7 +50,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/activity_pred_text"
-        android:textSize="30dp"
+        android:textSize="20dp"
         app:layout_constraintBottom_toTopOf="@+id/respeck_graphs"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -57,13 +62,69 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/activity_header_text"
-        android:textSize="30dp"
+        android:textSize="20dp"
         app:layout_constraintBottom_toTopOf="@+id/activity_pred_text"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="0.5" />
+
+    <!-- Your existing layout elements -->
+
+    <LinearLayout
+        android:id="@+id/buttonLayout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:orientation="horizontal"
+        app:layout_constraintBottom_toBottomOf="@+id/thingy_graphs"
+        tools:ignore="MissingConstraints">
+
+        <Button
+            android:id="@+id/btnPlay"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="Play" />
+
+        <Button
+            android:id="@+id/btnPause"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="Pause" />
+
+        <Button
+            android:id="@+id/btnReset"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="Reset" />
+    </LinearLayout>
+
+    <!-- Constraint to place the button layout at the bottom -->
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/bottomContainer"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent">
+
+        <!-- This constraint is needed to make the LinearLayout fill the width -->
+        <LinearLayout
+            android:id="@+id/buttonContainer"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center"
+            tools:ignore="MissingConstraints">
+
+            <!-- Buttons are placed inside this LinearLayout -->
+
+        </LinearLayout>
+    </androidx.constraintlayout.widget.ConstraintLayout>
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

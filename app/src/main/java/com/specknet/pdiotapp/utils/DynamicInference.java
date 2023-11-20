@@ -24,19 +24,19 @@ public class DynamicInference {
         this.context = context.getApplicationContext();
 
         dynamicTypes = new HashMap<>();
-        dynamicTypes.put(0, "normalWalking");
-        dynamicTypes.put(1, "running");
-        dynamicTypes.put(2, "descending");
-        dynamicTypes.put(3, "ascending");
-        dynamicTypes.put(4, "shuffleWalking");
-        dynamicTypes.put(5, "miscMovement");
+        dynamicTypes.put(0, "Walking");
+        dynamicTypes.put(1, "Running");
+        dynamicTypes.put(2, "Descending Stairs");
+        dynamicTypes.put(3, "Ascending Stairs");
+        dynamicTypes.put(4, "Shuffle Walking");
+        dynamicTypes.put(5, "Miscellaneous Movements");
     }
 
     public void loadModel() {
 
         try {
             AssetManager assetManager = context.getAssets();
-            AssetFileDescriptor modelFileDescriptor = assetManager.openFd("dynamic_model.tflite");
+            AssetFileDescriptor modelFileDescriptor = assetManager.openFd("new_dynamic_model.tflite");
             FileInputStream inputStream = new FileInputStream(modelFileDescriptor.getFileDescriptor());
             FileChannel fileChannel = inputStream.getChannel();
             long startOffset = modelFileDescriptor.getStartOffset();

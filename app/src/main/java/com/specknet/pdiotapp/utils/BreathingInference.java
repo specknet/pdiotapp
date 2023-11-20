@@ -24,17 +24,17 @@ public class BreathingInference {
         this.context = context.getApplicationContext();
 
         breathingTypes = new HashMap<>();
-        breathingTypes.put(0, "breathingNormal");
-        breathingTypes.put(1, "coughing");
-        breathingTypes.put(2, "hyperventilating");
-        breathingTypes.put(3, "other");
+        breathingTypes.put(0, "Breathing Normally");
+        breathingTypes.put(1, "Coughing");
+        breathingTypes.put(2, "Hyperventilating");
+        breathingTypes.put(3, "Other");
     }
 
     public void loadModel() {
 
         try {
             AssetManager assetManager = context.getAssets();
-            AssetFileDescriptor modelFileDescriptor = assetManager.openFd("breathing_model.tflite");
+            AssetFileDescriptor modelFileDescriptor = assetManager.openFd("new_breathing_model.tflite");
             FileInputStream inputStream = new FileInputStream(modelFileDescriptor.getFileDescriptor());
             FileChannel fileChannel = inputStream.getChannel();
             long startOffset = modelFileDescriptor.getStartOffset();

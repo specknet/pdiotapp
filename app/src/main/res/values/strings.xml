@@ -52,6 +52,6 @@
     <string name="thingy_accel">Accel = (%1$.3f, %2$.3f, %3$.3f)</string>
     <string name="thingy_gyro">Gyro = (%1$.3f, %2$.3f, %3$.3f)</string>
     <string name="thingy_mag">Mag = (%1$.3f, %2$.3f, %3$.3f)</string>
-    <string name="activity_pred_text">N/A</string>
-    <string name="activity_header_text">Predicted Activity:</string>
+    <string name="activity_pred_text">-</string>
+    <string name="activity_header_text">Activity:</string>
 </resources>
