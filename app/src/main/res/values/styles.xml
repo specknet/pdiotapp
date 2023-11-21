@@ -7,4 +7,8 @@
         <item name="colorAccent">@color/colorAccent</item>
     </style>
 
+    <style name="MySpinnerStyle" parent="Base.Widget.AppCompat.Spinner">
+        <item name="android:background">#FFFFFF</item>
+    </style>
+
 </resources>

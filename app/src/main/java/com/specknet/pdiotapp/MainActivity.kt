@@ -17,6 +17,7 @@ import androidx.core.app.ActivityCompat
 import com.google.android.material.snackbar.Snackbar
 import com.specknet.pdiotapp.bluetooth.BluetoothSpeckService
 import com.specknet.pdiotapp.bluetooth.ConnectingActivity
+import com.specknet.pdiotapp.detect.DetectActivity
 import com.specknet.pdiotapp.live.LiveDataActivity
 import com.specknet.pdiotapp.onboarding.OnBoardingActivity
 import com.specknet.pdiotapp.utils.Constants
@@ -98,8 +99,8 @@ class MainActivity : AppCompatActivity() {
         }
 
         detectButton.setOnClickListener {
-//            val intent = Intent(this, DetectActivity::class.java)
-//            startActivity(intent)
+            val intent = Intent(this, DetectActivity::class.java)
+            startActivity(intent)
         }
     }
 
