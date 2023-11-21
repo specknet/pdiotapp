@@ -22,14 +22,13 @@ import com.github.mikephil.charting.data.LineData
 import com.github.mikephil.charting.data.LineDataSet
 import com.github.mikephil.charting.interfaces.datasets.ILineDataSet
 import com.specknet.pdiotapp.R
-import com.specknet.pdiotapp.detect.Classifier
 import com.specknet.pdiotapp.utils.Constants
 import com.specknet.pdiotapp.utils.RESpeckLiveData
 
 
 class DetectActivity : AppCompatActivity() {
 
-    val TASK1_LIST = listOf(
+    val GENERAL_ACTIVITIES = listOf(
         "Sitting/Standing",
         "Lying down on left",
         "Lying down on right",
@@ -43,12 +42,12 @@ class DetectActivity : AppCompatActivity() {
         "Miscellaneous movements"
     )
 
-    val TASK2_LIST = listOf(
+    val STATIONARY_ACTIVITIES = listOf(
         "Sitting/standing and breathing normally",
         "Lying down left and breathing normally",
         "Lying down right and breathing normally",
         "Lying down on back and breathing normally",
-        "Lying down on stomac and breathing normally",
+        "Lying down on stomach and breathing normally",
         "Sitting/standing and coughing",
         "Lying down on left and coughing",
         "Lying down on right and coughing",
@@ -56,34 +55,34 @@ class DetectActivity : AppCompatActivity() {
         "Lying down on stomach and coughing",
         "Sitting/standing and hyperventilating",
         "Lying down on left and hyperventilating",
-        "Lying down on right and jhyperventilating",
+        "Lying down on right and hyperventilating",
         "Lying down on back and hyperventilating",
         "Lyging down on stomach and hyperventilating"
     )
 
 
     // global graph variables
-    val TASK1_CLASSIFIER = Classifier(
+    val GENERAL_CLASSIFIER = Classifier(
         this,
         "ten_sec.tflite",
         50,
         3,
         10,
         11,
-        TASK1_LIST
+        GENERAL_ACTIVITIES
     )
 
-    val TASK2_CLASSIFIER = Classifier(
+    val STATIONARY_CLASSIFIER = Classifier(
         this,
         "conv_model_task2_50_3.tflite",
         50,
         3,
         10,
         15,
-        TASK2_LIST
+        STATIONARY_ACTIVITIES
     )
 
-    var currentClassifier = TASK1_CLASSIFIER
+    var currentClassifier = GENERAL_CLASSIFIER
 
     lateinit var dataSet_res_accel_x: LineDataSet
     lateinit var dataSet_res_accel_y: LineDataSet
@@ -175,17 +174,18 @@ class DetectActivity : AppCompatActivity() {
                 id: Long
             ) {
                 val selectedItem = parent.getItemAtPosition(position).toString()
-                if (selectedItem == "General activities" && currentClassifier != TASK1_CLASSIFIER) {
+                if (selectedItem == "General activities" && currentClassifier != GENERAL_CLASSIFIER) {
                     currentClassifier.clearInputBuffer()
-                    currentClassifier = TASK1_CLASSIFIER
-                } else if (selectedItem == "Stationary activities" && currentClassifier != TASK2_CLASSIFIER) {
+                    currentClassifier = GENERAL_CLASSIFIER
+                } else if (selectedItem == "Stationary activities" && currentClassifier != STATIONARY_CLASSIFIER) {
                     currentClassifier.clearInputBuffer()
-                    currentClassifier = TASK2_CLASSIFIER
+                    currentClassifier = STATIONARY_CLASSIFIER
                 }
             }
 
             override fun onNothingSelected(parent: AdapterView<*>) {
-                // Another interface callback
+                classifierSpinner.setSelection(0, false)
+                currentClassifier = GENERAL_CLASSIFIER
             }
         }
 

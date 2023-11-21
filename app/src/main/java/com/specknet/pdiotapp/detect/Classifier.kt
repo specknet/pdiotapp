@@ -49,12 +49,10 @@ class Classifier(
 
     fun classifyData(): String {
         val assetManager = context.assets
-//        val modelFileName = "cnn_model_1_50_3.tflite"
 
         val outputBuffer = ByteBuffer.allocateDirect(bufferSize * 1 * outputSize)
         outputBuffer.order(ByteOrder.nativeOrder())
 
-//        Log.d("LOADING", "Loading the Model")
         val fileDescriptor = assetManager.openFd(modelPath)
         val inputStream = fileDescriptor.createInputStream()
         val fileChannel = inputStream.channel
@@ -62,19 +60,15 @@ class Classifier(
         val declaredLength = fileDescriptor.declaredLength
         val tfliteModel: ByteBuffer = fileChannel.map(FileChannel.MapMode.READ_ONLY, startOffset, declaredLength)
 
-//        Log.d("LOADING", "Loaded the Interpreter")
         val interpreter = Interpreter(tfliteModel)
 
-//        Log.d("CLASSIFYING", "Classifying the data")
         interpreter.run(inputBuffer, outputBuffer)
 
-//        Log.d("DECODING OUTPUT", "Decoding the Output Buffer")
         val outputArray = FloatArray(bufferSize * 1 * outputSize)
         for (i in 0 until outputSize) {
             outputArray[i] = outputBuffer.getFloat(i * bufferSize)
         }
 
-//        Log.d("RETURNING OUTPUT", "Returning the Prediction")
         val maxIndex = outputArray.indices.maxByOrNull { outputArray[it] }
         return activityList[maxIndex!!]
     }

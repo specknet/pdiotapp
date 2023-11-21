@@ -16,7 +16,15 @@ class SignUp : AppCompatActivity() {
         registerButton = findViewById(R.id.signupbutton)
         goToLoginButton = findViewById(R.id.loginLink)
 
+    }
+
+    fun setUpClickListeners() {
         registerButton.setOnClickListener {
+            val intent = Intent(this, MainActivity::class.java)
+            startActivity(intent)
+        }
+
+        goToLoginButton.setOnClickListener {
             val intent = Intent(this, LoginActivity::class.java)
             startActivity(intent)
         }
