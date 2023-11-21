@@ -82,6 +82,14 @@ class MainActivity : AppCompatActivity() {
 
     }
 
+    override fun onBackPressed() {
+        val intent = Intent(Intent.ACTION_MAIN)
+        intent.addCategory(Intent.CATEGORY_HOME)
+        startActivity(intent)
+    }
+
+
+
     fun setupClickListeners() {
         liveProcessingButton.setOnClickListener {
             val intent = Intent(this, LiveDataActivity::class.java)
