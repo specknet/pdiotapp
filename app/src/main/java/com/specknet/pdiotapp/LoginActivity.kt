@@ -2,7 +2,6 @@ package com.specknet.pdiotapp
 
 import android.content.Intent
 import android.os.Bundle
-import android.view.View
 import android.widget.Button
 import android.widget.EditText
 import android.widget.TextView
@@ -11,8 +10,6 @@ import androidx.appcompat.app.AppCompatActivity
 import com.specknet.pdiotapp.sql.DBHelper
 
 class LoginActivity : AppCompatActivity() {
-
-    private val activity = this@LoginActivity
 
     private lateinit var username: EditText
     private lateinit var password: EditText
