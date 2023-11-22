@@ -56,6 +56,7 @@
     <string-array name="respeckClassifiers">
         <item>General activities</item>
         <item>Stationary activities</item>
+        <item>Stationary activities + other behaviours</item>
     </string-array>
 
     <string name="text_accounts">All Accounts</string>

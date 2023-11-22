@@ -63,6 +63,7 @@
         android:text="Detected Activity: "
         android:textColor="#fff"
         android:textSize="20sp"
+        android:layout_marginHorizontal="1dp"
         android:textStyle="bold"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"

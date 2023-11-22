@@ -60,6 +60,40 @@ class DetectActivity : AppCompatActivity() {
         "Lyging down on stomach and hyperventilating"
     )
 
+    val TASK3_ACTIVITIES = listOf(
+        "sitting_standing breathingNormal",
+        "lyingLeft breathingNormal",
+        "lyingRight breathingNormal",
+        "lyingBack breathingNormal",
+        "lyingStomach breathingNormal",
+        "sitting_standing coughing",
+        "lyingLeft coughing",
+        "lyingRight coughing",
+        "lyingBack coughing",
+        "lyingStomach coughing",
+        "sitting_standing hyperventilating",
+        "lyingLeft hyperventilating",
+        "lyingRight hyperventilating",
+        "lyingBack hyperventilating",
+        "lyingStomach hyperventilating",
+        "sitting_standing singing",
+        "lyingLeft singing",
+        "lyingRight singing",
+        "lyingBack singing",
+        "lyingStomach singing",
+        "sitting_standing laughing",
+        "lyingLeft laughing",
+        "lyingRight laughing",
+        "lyingBack laughing",
+        "lyingStomach laughing",
+        "sitting_standing talking",
+        "lyingLeft talking",
+        "lyingRight talking",
+        "lyingBack talking",
+        "lyingStomach talking",
+        "sitting/standing eating",
+    )
+
 
     // global graph variables
     val GENERAL_CLASSIFIER = Classifier(
@@ -80,6 +114,16 @@ class DetectActivity : AppCompatActivity() {
         10,
         15,
         STATIONARY_ACTIVITIES
+    )
+
+    val TASK3_CLASSIFIER = Classifier(
+        this,
+        "cnn_model_task3_100_20.tflite",
+        100,
+        3,
+        20,
+        TASK3_ACTIVITIES.size,
+        TASK3_ACTIVITIES
     )
 
     var currentClassifier = GENERAL_CLASSIFIER
@@ -122,7 +166,7 @@ class DetectActivity : AppCompatActivity() {
 
                     val liveData =
                         intent.getSerializableExtra(Constants.RESPECK_LIVE_DATA) as RESpeckLiveData
-                    Log.d("Live", "onReceive: liveData = " + liveData)
+                    Log.d("Live", "onReceive: liveData = $liveData")
 
                     // get all relevant intent contents
                     val accelX = liveData.accelX
@@ -173,14 +217,18 @@ class DetectActivity : AppCompatActivity() {
                 position: Int,
                 id: Long
             ) {
-                val selectedItem = parent.getItemAtPosition(position).toString()
-                if (selectedItem == "General activities" && currentClassifier != GENERAL_CLASSIFIER) {
-                    currentClassifier.clearInputBuffer()
-                    currentClassifier = GENERAL_CLASSIFIER
-                } else if (selectedItem == "Stationary activities" && currentClassifier != STATIONARY_CLASSIFIER) {
-                    currentClassifier.clearInputBuffer()
-                    currentClassifier = STATIONARY_CLASSIFIER
+
+                val newClassifier = when (parent.getItemAtPosition(position).toString()) {
+                    "General activities" -> GENERAL_CLASSIFIER
+                    "Stationary activities" -> STATIONARY_CLASSIFIER
+                    else -> TASK3_CLASSIFIER
                 }
+
+                if (newClassifier != currentClassifier) {
+                    currentClassifier.clearInputBuffer()
+                    currentClassifier = newClassifier
+                }
+
             }
 
             override fun onNothingSelected(parent: AdapterView<*>) {
