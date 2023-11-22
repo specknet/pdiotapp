@@ -207,7 +207,6 @@ class LiveDataActivity : AppCompatActivity() {
                     val z = liveData.accelZ
 
                     time += 1
-                    //updateGraph("thingy", x, y, z)
                 return
                 }
             }
@@ -225,6 +224,9 @@ class LiveDataActivity : AppCompatActivity() {
     fun setupCharts() {
         respeckChart = findViewById(R.id.respeck_chart)
         respeckGyroChart = findViewById(R.id.respeck_chart_gyro)
+
+        respeckChart.description.isEnabled = false
+        respeckGyroChart.description.isEnabled = false
 
         // Respeck
 

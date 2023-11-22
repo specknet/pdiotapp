@@ -17,11 +17,9 @@
     <string name="title_activity_tab_animation">Tabs Animation</string>
     <string name="title_activity_sticky_view">StickyViewActivity</string>
 
-    <string name="section_bluetooth">Welcome to the PDIoT App. Use it to connect to your Respeck or Thingy devices.</string>
-    <string name="section_record">You can record data from the sensors in a locally stored csv file.</string>
-    <string name="section_live">You can also view the live data once the sensors are connected.</string>
+    <string name="section_bluetooth">Welcome to Group A1\'s Activity Classification App. You can connect to your Respeck device on the Connect Sensors Screen.</string>
+    <string name="section_live">You can view the predicted movement and graphs showing accelerometer and gyroscope data on the Live Activity Prediction Screen.</string>
     <string name="section_bluetooth_title">Connect</string>
-    <string name="section_record_title">Record</string>
     <string name="section_live_title">View</string>
 
     <!-- TODO: Remove or change this placeholder text -->

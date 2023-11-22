@@ -34,7 +34,7 @@ public class BreathingInference {
 
         try {
             AssetManager assetManager = context.getAssets();
-            AssetFileDescriptor modelFileDescriptor = assetManager.openFd("new_breathing_model.tflite");
+            AssetFileDescriptor modelFileDescriptor = assetManager.openFd("breathing_model.tflite");
             FileInputStream inputStream = new FileInputStream(modelFileDescriptor.getFileDescriptor());
             FileChannel fileChannel = inputStream.getChannel();
             long startOffset = modelFileDescriptor.getStartOffset();

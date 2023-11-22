@@ -35,7 +35,7 @@ public class StaticInference {
 
         try {
             AssetManager assetManager = context.getAssets();
-            AssetFileDescriptor modelFileDescriptor = assetManager.openFd("new_static_model.tflite");
+            AssetFileDescriptor modelFileDescriptor = assetManager.openFd("static_model.tflite");
             FileInputStream inputStream = new FileInputStream(modelFileDescriptor.getFileDescriptor());
             FileChannel fileChannel = inputStream.getChannel();
             long startOffset = modelFileDescriptor.getStartOffset();

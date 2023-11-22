@@ -13,7 +13,6 @@ import java.nio.channels.FileChannel;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Queue;
 
 public class MotionInference {
     private Context context;
@@ -33,7 +32,7 @@ public class MotionInference {
 
         try {
             AssetManager assetManager = context.getAssets();
-            AssetFileDescriptor modelFileDescriptor = assetManager.openFd("new_motion_model.tflite");
+            AssetFileDescriptor modelFileDescriptor = assetManager.openFd("motion_model.tflite");
             FileInputStream inputStream = new FileInputStream(modelFileDescriptor.getFileDescriptor());
             FileChannel fileChannel = inputStream.getChannel();
             long startOffset = modelFileDescriptor.getStartOffset();
@@ -60,7 +59,6 @@ public class MotionInference {
         Log.e("MOTION", "Before Model Run");
         motion_model.run(inputData, outputMotion);
         Log.e("MOTION", "After Model Run");
-
 
         String classification = motionTypes.get(getArgmax(outputMotion[0]));
 

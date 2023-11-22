@@ -36,7 +36,7 @@ public class DynamicInference {
 
         try {
             AssetManager assetManager = context.getAssets();
-            AssetFileDescriptor modelFileDescriptor = assetManager.openFd("new_dynamic_model.tflite");
+            AssetFileDescriptor modelFileDescriptor = assetManager.openFd("dynamic_model.tflite");
             FileInputStream inputStream = new FileInputStream(modelFileDescriptor.getFileDescriptor());
             FileChannel fileChannel = inputStream.getChannel();
             long startOffset = modelFileDescriptor.getStartOffset();
