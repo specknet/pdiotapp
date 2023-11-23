@@ -1,87 +1,32 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/coordinatorLayout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:id="@+id/coordinatorLayout"
     tools:context=".MainActivity">
 
-    <androidx.constraintlayout.widget.ConstraintLayout
-        android:id="@+id/constraintLayout"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:background="#023047">
 
-        <TextView
-            android:id="@+id/textView2"
-            android:layout_width="219dp"
-            android:layout_height="74dp"
-            android:text="Hello, what would you like to do today?"
-            android:textColor="#fff"
-            android:textSize="20sp"
-            android:textStyle="bold"
-            app:layout_constraintBottom_toTopOf="@+id/record_button"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+    <FrameLayout
+        android:id="@+id/frameLayout"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        app:layout_constraintBottom_toTopOf="@+id/bottomNavigationView"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
 
+    </FrameLayout>
 
-        <Button
-            android:id="@+id/record_button"
-            android:layout_width="550px"
-            android:layout_height="wrap_content"
-            android:background="#03A9F4"
-            android:text="Record data"
-            android:textColor="#FFFFFF"
-            app:layout_constraintBottom_toTopOf="@+id/ble_button"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.497"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/textView2"
-            app:layout_constraintTop_toTopOf="parent" />
-
-        <Button
-            android:id="@+id/ble_button"
-            android:layout_width="550px"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="216dp"
-            android:background="#03A9F4"
-            android:text="Connect sensors"
-            android:textColor="#FFFFFF"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.497"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/live_button"
-            app:layout_constraintVertical_bias="0.734" />
-
-        <Button
-            android:id="@+id/detect_button"
-            android:layout_width="550px"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="100px"
-            android:background="#03A9F4"
-            android:text="Detect Activity"
-            android:textColor="#FFFFFF"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.497"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/ble_button"
-            app:layout_constraintVertical_bias="0.456" />
-
-    </androidx.constraintlayout.widget.ConstraintLayout>
-
-    <Button
-        android:id="@+id/live_button"
-        android:layout_width="550px"
+    <com.google.android.material.bottomnavigation.BottomNavigationView
+        android:id="@+id/bottomNavigationView"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:background="#03A9F4"
-        android:text="Watch live processing"
-        android:textColor="#FFFFFF"
-        app:layout_anchor="@+id/constraintLayout"
-        app:layout_anchorGravity="center" />
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:menu="@menu/bottom_menu"
+        android:background="@drawable/bottom_background" />
 
-
-</androidx.coordinatorlayout.widget.CoordinatorLayout>
+</androidx.constraintlayout.widget.ConstraintLayout>
