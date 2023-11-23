@@ -97,7 +97,6 @@ class DetectActivity : AppCompatActivity() {
 
     // global graph variables
     val GENERAL_CLASSIFIER = Classifier(
-        this,
         "ten_sec.tflite",
         50,
         3,
@@ -107,7 +106,6 @@ class DetectActivity : AppCompatActivity() {
     )
 
     val STATIONARY_CLASSIFIER = Classifier(
-        this,
         "conv_model_task2_50_3.tflite",
         50,
         3,
@@ -117,7 +115,6 @@ class DetectActivity : AppCompatActivity() {
     )
 
     val TASK3_CLASSIFIER = Classifier(
-        this,
         "cnn_model_task3_100_20.tflite",
         100,
         3,
@@ -180,7 +177,7 @@ class DetectActivity : AppCompatActivity() {
 
                     currentClassifier.addData(accelX, accelY, accelZ, gyroX, gyroY, gyroZ)
                     if (currentClassifier.index == currentClassifier.windowSize) {
-                        val activity = currentClassifier.classifyData()
+                        val activity = currentClassifier.classifyData(context)
                         runOnUiThread {
                             val activityText = "Detected activity: $activity"
                             detectedActivity.text = activityText

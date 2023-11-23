@@ -18,6 +18,7 @@ import com.google.android.material.snackbar.Snackbar
 import com.specknet.pdiotapp.bluetooth.BluetoothSpeckService
 import com.specknet.pdiotapp.bluetooth.ConnectingFragment
 import com.specknet.pdiotapp.databinding.ActivityMainBinding
+import com.specknet.pdiotapp.detect.Classifier
 import com.specknet.pdiotapp.detect.DetectFragment
 import com.specknet.pdiotapp.onboarding.OnBoardingActivity
 import com.specknet.pdiotapp.utils.Constants
@@ -25,7 +26,6 @@ import com.specknet.pdiotapp.utils.Utils
 import kotlinx.android.synthetic.main.activity_main.*
 
 class MainActivity : AppCompatActivity() {
-
 
     // permissions
     lateinit var permissionAlertDialog: AlertDialog.Builder

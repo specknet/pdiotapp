@@ -8,7 +8,6 @@ import java.nio.ByteOrder
 import java.nio.channels.FileChannel
 
 class Classifier(
-    val context: Context,
     val modelPath: String,
     val windowSize: Int,
     val numFeatures: Int = 3,
@@ -47,7 +46,7 @@ class Classifier(
     }
 
 
-    fun classifyData(): String {
+    fun classifyData(context: Context): String {
         val assetManager = context.assets
 
         val outputBuffer = ByteBuffer.allocateDirect(bufferSize * 1 * outputSize)
