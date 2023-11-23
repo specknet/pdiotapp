@@ -60,10 +60,10 @@
         android:id="@+id/detected_activity_text"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginHorizontal="1dp"
         android:text="Detected Activity: "
         android:textColor="#fff"
         android:textSize="20sp"
-        android:layout_marginHorizontal="1dp"
         android:textStyle="bold"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
@@ -83,12 +83,11 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Select Classifier:"
-            app:layout_constraintEnd_toStartOf="@+id/classifierSpinner"
-            app:layout_constraintHorizontal_bias="1.0"
-            app:layout_constraintStart_toStartOf="parent"
             android:textColor="#fff"
             android:textSize="20sp"
-            />
+            app:layout_constraintEnd_toStartOf="@+id/classifierSpinner"
+            app:layout_constraintHorizontal_bias="1.0"
+            app:layout_constraintStart_toStartOf="parent" />
 
         <Spinner
             android:id="@+id/classifierSpinner"
