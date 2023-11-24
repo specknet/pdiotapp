@@ -1,59 +1,120 @@
 package com.specknet.pdiotapp
 
+import android.os.Build
 import android.os.Bundle
+import android.text.method.ScrollingMovementMethod
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Button
+import android.widget.DatePicker
+import android.widget.TextView
+import android.widget.Toast
+import androidx.annotation.RequiresApi
+import com.specknet.pdiotapp.sql.DBHelper
+import java.lang.StringBuilder
+import java.util.Calendar
 
-// TODO: Rename parameter arguments, choose names that match
-// the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-private const val ARG_PARAM1 = "param1"
-private const val ARG_PARAM2 = "param2"
-
-/**
- * A simple [Fragment] subclass.
- * Use the [ProfileFragment.newInstance] factory method to
- * create an instance of this fragment.
- */
 class ProfileFragment : Fragment() {
-    // TODO: Rename and change types of parameters
-    private var param1: String? = null
-    private var param2: String? = null
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        arguments?.let {
-            param1 = it.getString(ARG_PARAM1)
-            param2 = it.getString(ARG_PARAM2)
-        }
-    }
+    lateinit var usernameTextView: TextView
+    lateinit var datePicker: DatePicker
+    lateinit var viewActivitiesButton: Button
+    lateinit var detectedActivitiesHeader: TextView
+    lateinit var detectedActivitiesListText: TextView
+    lateinit var username: String
+    private lateinit var dbHelper: DBHelper
+    private lateinit var today: Calendar
 
+    var savedDay = 0
+    var savedMonth = 0
+    var savedYear = 0
+
+    @RequiresApi(Build.VERSION_CODES.O)
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_profile, container, false)
+        var view: View = inflater.inflate(R.layout.fragment_profile, container, false)
+        usernameTextView = view.findViewById(R.id.profileHead)
+        datePicker = view.findViewById(R.id.datePicker)
+        viewActivitiesButton = view.findViewById(R.id.viewActivitiesButton)
+        detectedActivitiesHeader = view.findViewById(R.id.detectedActivitiesHead)
+        detectedActivitiesListText = view.findViewById(R.id.detectedActivitiesListText)
+        detectedActivitiesListText.movementMethod = ScrollingMovementMethod()
+
+        dbHelper = DBHelper(requireContext())
+
+
+        username = arguments?.getString("username").toString()
+        val profileText = "Welcome, $username!"
+        usernameTextView.text = profileText
+
+        initialiseDatePicker()
+        initialiseActivitiesButton()
+
+        return view
     }
 
+
+    private fun initialiseActivitiesButton() {
+        viewActivitiesButton.setOnClickListener {
+            val date = "$savedYear-${savedMonth+1}-$savedDay"
+            val activities = dbHelper.getDayActivities(username, date)
+            detectedActivitiesHeader.visibility = View.VISIBLE
+            detectedActivitiesListText.visibility = View.VISIBLE
+            detectedActivitiesHeader.text = "Activities on $date"
+            detectedActivitiesListText.text = getActivitiesString(activities)
+        }
+    }
+
+
+    private fun getActivitiesString(activities: List<String>): String {
+        var activitiesString = StringBuilder()
+        for (activity in activities) {
+            activitiesString.append(activity)
+            activitiesString.append("\n")
+        }
+        return activitiesString.toString()
+    }
+
+
+    @RequiresApi(Build.VERSION_CODES.O)
+    private fun initialiseDatePicker() {
+        today = Calendar.getInstance()
+        savedDay = today.get(Calendar.DAY_OF_MONTH)
+        savedMonth = today.get(Calendar.MONTH)
+        savedYear = today.get(Calendar.YEAR)
+        datePicker.init(
+            today.get(Calendar.YEAR), today.get(Calendar.MONTH),
+            today.get(Calendar.DAY_OF_MONTH)
+        ) { view, year, month, day ->
+            savedDay = day
+            savedMonth = month
+            savedYear = year
+            Toast.makeText(
+                activity,
+                "Selected date: " + datePicker.dayOfMonth + "/" + datePicker.month + "/" + datePicker.year,
+                Toast.LENGTH_SHORT
+            ).show()
+
+        }
+
+        // set date picker listener
+        datePicker.setOnDateChangedListener { view, year, monthOfYear, dayOfMonth ->
+            savedDay = dayOfMonth
+            savedMonth = monthOfYear
+            savedYear = year
+            Toast.makeText(
+                activity,
+                "Selected date: " + datePicker.dayOfMonth + "/" + datePicker.month + "/" + datePicker.year,
+                Toast.LENGTH_SHORT
+            ).show()
+        }
+    }
+
+
     companion object {
-        /**
-         * Use this factory method to create a new instance of
-         * this fragment using the provided parameters.
-         *
-         * @param param1 Parameter 1.
-         * @param param2 Parameter 2.
-         * @return A new instance of fragment ProfileFragment.
-         */
-        // TODO: Rename and change types and number of parameters
-        @JvmStatic
-        fun newInstance(param1: String, param2: String) =
-            ProfileFragment().apply {
-                arguments = Bundle().apply {
-                    putString(ARG_PARAM1, param1)
-                    putString(ARG_PARAM2, param2)
-                }
-            }
     }
 }

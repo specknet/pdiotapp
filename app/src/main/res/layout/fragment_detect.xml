@@ -12,8 +12,6 @@
         android:background="#023047"
         android:textColor="#fff"
         tools:context=".detect.DetectActivity">
-        >
-
 
         <LinearLayout
             android:id="@+id/respeck_graphs_detect"
@@ -22,7 +20,7 @@
             android:orientation="vertical"
             app:layout_constraintBottom_toTopOf="@+id/respeck_chart_detect"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="1.0"
+            app:layout_constraintHorizontal_bias="0.0"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintVertical_bias="1.0">
@@ -36,7 +34,6 @@
 
         </LinearLayout>
 
-
         <com.github.mikephil.charting.charts.LineChart
             android:id="@+id/respeck_chart_detect"
             android:layout_width="match_parent"
@@ -44,7 +41,7 @@
             android:background="#fff"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_bias="0.352"
+            app:layout_constraintVertical_bias="0.133"
             tools:layout_editor_absoluteX="0dp" />
 
         <LinearLayout
@@ -65,18 +62,20 @@
             android:id="@+id/detected_activity_text"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginHorizontal="1dp"
+            android:layout_marginHorizontal="2dp"
+            android:layout_marginVertical="1dp"
             android:text="Detected Activity: "
             android:textColor="#fff"
             android:textSize="20sp"
             android:textStyle="bold"
-            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintBottom_toTopOf="@+id/buttons_container"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/respeck_chart_detect" />
 
         <androidx.constraintlayout.widget.ConstraintLayout
-            android:layout_width="wrap_content"
+            android:id="@+id/constraintLayout"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             app:layout_constraintBottom_toTopOf="@+id/detected_activity_text"
             app:layout_constraintEnd_toEndOf="parent"
@@ -94,23 +93,81 @@
                 android:textSize="20sp"
                 app:layout_constraintEnd_toStartOf="@+id/classifierSpinner"
                 app:layout_constraintHorizontal_bias="1.0"
-                app:layout_constraintStart_toStartOf="parent" />
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
 
             <Spinner
                 android:id="@+id/classifierSpinner"
                 style="@style/MySpinnerStyle"
-
                 android:layout_width="170dp"
                 android:layout_height="wrap_content"
                 android:paddingVertical="5dp"
-                app:layout_constraintBottom_toTopOf="@+id/detected_activity_text"
+                android:spinnerMode="dropdown"
+                app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintHorizontal_bias="0.758"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/respeck_chart_detect"
+                app:layout_constraintStart_toEndOf="@+id/classfierText"
+                app:layout_constraintTop_toTopOf="parent"
                 app:layout_constraintVertical_bias="0.496" />
 
         </androidx.constraintlayout.widget.ConstraintLayout>
+
+        <LinearLayout
+            android:id="@+id/buttons_container"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:orientation="horizontal"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/detected_activity_text">
+
+            <Button
+                android:id="@+id/start_rec_detect_button"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="10dp"
+                android:layout_weight="1"
+                android:text="Start recording" />
+
+            <Button
+                android:id="@+id/cancel_rec_detect_button"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="10dp"
+                android:layout_weight="1"
+                android:text="Cancel recording" />
+
+            <Button
+                android:id="@+id/stop_rec_detect_button"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="10dp"
+                android:layout_weight="1"
+                android:text="Stop recording" />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/counter_container"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:orientation="horizontal"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.0"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/buttons_container"
+            app:layout_constraintVertical_bias="0.291">
+
+            <TextView
+                android:id="@+id/time_elapsed_text"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Time elapsed: 00:00"
+                android:textColor="#fff" />
+        </LinearLayout>
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 

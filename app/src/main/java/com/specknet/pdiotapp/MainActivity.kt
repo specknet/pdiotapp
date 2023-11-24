@@ -5,27 +5,28 @@ import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
 import android.content.pm.PackageManager
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.provider.Settings
 import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
 import androidx.appcompat.app.AlertDialog
+import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.fragment.app.Fragment
 import com.google.android.material.snackbar.Snackbar
 import com.specknet.pdiotapp.bluetooth.BluetoothSpeckService
 import com.specknet.pdiotapp.bluetooth.ConnectingFragment
 import com.specknet.pdiotapp.databinding.ActivityMainBinding
-import com.specknet.pdiotapp.detect.Classifier
 import com.specknet.pdiotapp.detect.DetectFragment
 import com.specknet.pdiotapp.onboarding.OnBoardingActivity
 import com.specknet.pdiotapp.utils.Constants
 import com.specknet.pdiotapp.utils.Utils
-import kotlinx.android.synthetic.main.activity_main.*
+import kotlinx.android.synthetic.main.activity_main.coordinatorLayout
 
 class MainActivity : AppCompatActivity() {
+
+    lateinit var username: String
 
     // permissions
     lateinit var permissionAlertDialog: AlertDialog.Builder
@@ -48,14 +49,16 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
+        username = intent.getStringExtra("username").toString()
 
-        replaceFragment(ProfileFragment())
+        replaceFragment(addUsernameToFragment(ProfileFragment()))
+
 
         binding.bottomNavigationView.setOnNavigationItemSelectedListener {
-            when(it.itemId) {
-                R.id.bottom_profile -> replaceFragment(ProfileFragment())
-                R.id.bottom_connect -> replaceFragment(ConnectingFragment())
-                R.id.bottom_detect -> replaceFragment(DetectFragment())
+            when (it.itemId) {
+                R.id.bottom_profile -> replaceFragment(addUsernameToFragment(ProfileFragment()))
+                R.id.bottom_connect -> replaceFragment((ConnectingFragment()))
+                R.id.bottom_detect -> replaceFragment(addUsernameToFragment(DetectFragment()))
                 else -> false
             }
             true
@@ -73,7 +76,6 @@ class MainActivity : AppCompatActivity() {
             startActivity(introIntent)
         }
 
-
         permissionAlertDialog = AlertDialog.Builder(this)
 
         setupPermissions()
@@ -86,6 +88,12 @@ class MainActivity : AppCompatActivity() {
 
     }
 
+    private fun addUsernameToFragment(fragment: Fragment): Fragment {
+        val args = Bundle()
+        args.putString("username", username)
+        fragment.arguments = args
+        return fragment
+    }
 
     private fun replaceFragment(fragment: Fragment) {
         val fragmentManager = supportFragmentManager
@@ -94,18 +102,12 @@ class MainActivity : AppCompatActivity() {
         fragmentTransaction.commit()
     }
 
-    override fun onBackPressed() {
-        val intent = Intent(Intent.ACTION_MAIN)
-        intent.addCategory(Intent.CATEGORY_HOME)
-        startActivity(intent)
-    }
-
 
     fun setupPermissions() {
         // request permissions
 
         // location permission
-        Log.i("Permissions", "Location permission = " + locationPermissionGranted)
+        Log.i("Permissions", "Location permission = $locationPermissionGranted")
         if (ActivityCompat.checkSelfPermission(
                 applicationContext,
                 Manifest.permission.ACCESS_FINE_LOCATION
@@ -118,7 +120,7 @@ class MainActivity : AppCompatActivity() {
         }
 
         // camera permission
-        Log.i("Permissions", "Camera permission = " + cameraPermissionGranted)
+        Log.i("Permissions", "Camera permission = $cameraPermissionGranted")
         if (ActivityCompat.checkSelfPermission(
                 applicationContext,
                 Manifest.permission.CAMERA

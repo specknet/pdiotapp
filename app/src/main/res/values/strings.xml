@@ -61,11 +61,13 @@
 
     <string name="text_accounts">All Accounts</string>
     <string name="hint_name">Name</string>
-    <string name="hint_email">Email</string>
+    <string name="hint_username">Username</string>
     <string name="hint_password">Password</string>
     <string name="hint_confirm_password">Confirm Password</string>
     <string name="text_login">Login</string>
     <string name="text_register">Register</string>
+    <string name="go_to_register"><u>Register new account</u></string>
+    <string name="go_to_login"><u>Already have an account? Login</u></string>
     <string name="error_message_name">Enter Full Name</string>
     <string name="error_message_email">Enter Valid Email</string>
     <string name="error_message_age">Enter Age</string>
@@ -76,5 +78,6 @@
     <string name="error_email_exists">Email Already Exists</string>
     <string name="error_password_match">Passwords do not match</string>
     <string name="error_valid_email_password">Wrong Email or Password</string>
+    <string name="sign_up_head">Sign Up</string>
 
 </resources>

@@ -14,8 +14,10 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.AdapterView
 import android.widget.ArrayAdapter
+import android.widget.Button
 import android.widget.Spinner
 import android.widget.TextView
+import android.widget.Toast
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import com.github.mikephil.charting.charts.LineChart
@@ -25,8 +27,12 @@ import com.github.mikephil.charting.data.LineDataSet
 import com.github.mikephil.charting.interfaces.datasets.ILineDataSet
 import com.google.android.gms.internal.zzhu.runOnUiThread
 import com.specknet.pdiotapp.R
+import com.specknet.pdiotapp.sql.DBHelper
 import com.specknet.pdiotapp.utils.Constants
+import com.specknet.pdiotapp.utils.CountUpTimer
 import com.specknet.pdiotapp.utils.RESpeckLiveData
+import java.text.SimpleDateFormat
+import java.util.Date
 
 
 /**
@@ -35,6 +41,10 @@ import com.specknet.pdiotapp.utils.RESpeckLiveData
  * create an instance of this fragment.
  */
 class DetectFragment : Fragment() {
+
+    companion object {
+        private const val TAG = "DetectFragment"
+    }
 
     val GENERAL_ACTIVITIES = listOf(
         "Sitting/Standing",
@@ -150,15 +160,159 @@ class DetectFragment : Fragment() {
     lateinit var looperRespeck: Looper
 
     val filterTestRespeck = IntentFilter(Constants.ACTION_RESPECK_LIVE_BROADCAST)
+    private var mIsRespeckRecording = false
+    private var respeckOn = false
+
+    lateinit var startRecordingButton: Button
+    lateinit var cancelRecordingButton: Button
+    lateinit var stopRecordingButton: Button
+
+    lateinit var timer: TextView
+    lateinit var countUpTimer: CountUpTimer
+
+    private lateinit var dbHelper: DBHelper
+
+    private lateinit var username: String
+
+    private var activityRecordList = mutableListOf<String>()
+    private var activityRecordTimeList = mutableListOf<String>()
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
         val view = inflater.inflate(R.layout.fragment_detect, container, false)
+        setupButtons(view)
+        setupClassifierSpinner(view)
+        setupCharts(view)
+        setupViews(view)
 
-        detectedActivity = view.findViewById(R.id.detected_activity_text)
+        countUpTimer = object : CountUpTimer(1000) {
+            override fun onTick(elapsedTime: Long) {
+                val date = Date(elapsedTime)
+                val formatter = SimpleDateFormat("mm:ss")
+                val dateFormatted = formatter.format(date)
+                val timerText = "Time elapsed: $dateFormatted"
+                runOnUiThread {
+                    timer.text = timerText
+                }
+            }
+        }
+        dbHelper = DBHelper(requireContext())
+
+        username = arguments?.getString("username")!!
+
         return view
+    }
+
+    private fun setupViews(view: View) {
+        detectedActivity = view.findViewById(R.id.detected_activity_text)
+        timer = view.findViewById(R.id.time_elapsed_text)
+        timer.visibility = View.INVISIBLE
+    }
+
+    private fun enableView(view: View) {
+        view.isClickable = true
+        view.isEnabled = true
+    }
+
+    private fun disableView(view: View) {
+        view.isClickable = false
+        view.isEnabled = false
+    }
+
+    private fun setupButtons(view: View) {
+        startRecordingButton = view.findViewById(R.id.start_rec_detect_button)
+        cancelRecordingButton = view.findViewById(R.id.cancel_rec_detect_button)
+        stopRecordingButton = view.findViewById(R.id.stop_rec_detect_button)
+
+        disableView(cancelRecordingButton)
+        disableView(stopRecordingButton)
+
+        startRecordingButton.setOnClickListener {
+            if (!respeckOn) {
+                Toast.makeText(
+                    requireContext(),
+                    "Respeck not connected. Please connect to Respeck first.",
+                    Toast.LENGTH_SHORT
+                ).show()
+                return@setOnClickListener
+            }
+
+            Toast.makeText(
+                requireContext(),
+                "Recording started. Please perform the activity.",
+                Toast.LENGTH_SHORT
+            ).show()
+
+            disableView(startRecordingButton)
+            enableView(cancelRecordingButton)
+            enableView(stopRecordingButton)
+
+            disableView(classifierSpinner)
+
+            startRecording()
+        }
+
+        cancelRecordingButton.setOnClickListener {
+            Toast.makeText(
+                requireContext(),
+                "Recording cancelled.",
+                Toast.LENGTH_SHORT
+            ).show()
+
+            enableView(startRecordingButton)
+            disableView(cancelRecordingButton)
+            disableView(stopRecordingButton)
+
+            enableView(classifierSpinner)
+
+            cancelRecording()
+        }
+
+        stopRecordingButton.setOnClickListener {
+            Toast.makeText(
+                requireContext(),
+                "Recording stopped.",
+                Toast.LENGTH_SHORT
+            ).show()
+
+            enableView(startRecordingButton)
+            disableView(cancelRecordingButton)
+            disableView(stopRecordingButton)
+
+            enableView(classifierSpinner)
+
+            stopRecording()
+        }
+    }
+
+    private fun startRecording() {
+        timer.visibility = View.VISIBLE
+        countUpTimer.start()
+        mIsRespeckRecording = true
+    }
+
+    private fun cancelRecording() {
+        countUpTimer.stop()
+        countUpTimer.reset()
+        timer.text = "Time elapsed: 00:00"
+        activityRecordList.clear()
+        activityRecordTimeList.clear()
+        mIsRespeckRecording = false
+    }
+
+    private fun stopRecording() {
+        countUpTimer.stop()
+        countUpTimer.reset()
+        timer.text = "Time elapsed: 00:00"
+
+        Log.d(TAG, "stopRecording")
+        mIsRespeckRecording = false
+
+        for (i in activityRecordList.indices) {
+            dbHelper.addActivity(username, activityRecordList[i], activityRecordTimeList[i])
+        }
     }
 
     override fun onResume() {
@@ -195,9 +349,14 @@ class DetectFragment : Fragment() {
                             val activityText = "Detected activity: $activity"
                             detectedActivity.text = activityText
                         }
+                        if (mIsRespeckRecording) {
+                            activityRecordList.add(activity)
+                            activityRecordTimeList.add(dbHelper.getCurrentTimestamp())
+                        }
                     }
 
                     updateGraph("respeck", accelX, accelY, accelZ)
+                    respeckOn = true
                 }
             }
         }
@@ -217,6 +376,10 @@ class DetectFragment : Fragment() {
     }
 
     override fun onPause() {
+        // stop recording if it's recording
+        if (mIsRespeckRecording) {
+            cancelRecording()
+        }
         super.onPause()
         // unregister the broadcast receiver if it's registered
         if (this::respeckLiveUpdateReceiver.isInitialized) {
@@ -225,14 +388,7 @@ class DetectFragment : Fragment() {
         }
     }
 
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
-
-        setupClassifierSpinner(view)
-        setupCharts(view)
-    }
-
-    fun setupClassifierSpinner(view: View) {
+    private fun setupClassifierSpinner(view: View) {
         val classifiers = resources.getStringArray(R.array.respeckClassifiers)
         classifierSpinner = view.findViewById(R.id.classifierSpinner)
         val adapter =
@@ -271,7 +427,7 @@ class DetectFragment : Fragment() {
 
     }
 
-    fun setupCharts(view: View) {
+    private fun setupCharts(view: View) {
         respeckChart = view.findViewById(R.id.respeck_chart_detect)
 
         // Respeck
@@ -312,7 +468,6 @@ class DetectFragment : Fragment() {
 
     }
 
-
     fun updateGraph(graph: String, x: Float, y: Float, z: Float) {
         // take the first element from the queue
         // and update the graph with it
@@ -330,6 +485,5 @@ class DetectFragment : Fragment() {
             }
         }
     }
-
 
 }
