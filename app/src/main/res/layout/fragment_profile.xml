@@ -74,8 +74,8 @@
 
             <TextView
                 android:id="@+id/detectedActivitiesListText"
-                android:layout_width="250sp"
-                android:layout_height="300sp"
+                android:layout_width="280sp"
+                android:layout_height="200sp"
                 android:layout_centerHorizontal="true"
                 android:background="#fff"
                 android:scrollbars="vertical" />
