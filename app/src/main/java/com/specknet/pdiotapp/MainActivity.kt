@@ -176,7 +176,9 @@ class MainActivity : AppCompatActivity() {
             // start the bluetooth service if it's not already running
             if(!isServiceRunning) {
                 Log.i("service", "Starting BLT service")
-                Toast.makeText(this, "Connecting...", Toast.LENGTH_SHORT).show()
+
+                Toast.makeText(this, "Connecting to " + sharedPreferences.getString(
+                    Constants.RESPECK_MAC_ADDRESS_PREF, "") + "...", Toast.LENGTH_SHORT).show()
                 val simpleIntent = Intent(this, BluetoothSpeckService::class.java)
                 this.startService(simpleIntent)
             }
