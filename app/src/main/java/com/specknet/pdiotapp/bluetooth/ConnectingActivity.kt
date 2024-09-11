@@ -167,7 +167,7 @@ class ConnectingActivity : AppCompatActivity() {
         else {
             Log.i("service", "Service already running, restart")
             this.stopService(Intent(this, BluetoothSpeckService::class.java))
-            Toast.makeText(this, "restarting service with new sensors", Toast.LENGTH_SHORT).show()
+            Toast.makeText(this, "Connecting...", Toast.LENGTH_SHORT).show()
             this.startService(Intent(this, BluetoothSpeckService::class.java))
 
         }

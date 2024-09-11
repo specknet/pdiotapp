@@ -12,6 +12,7 @@ import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
 import android.widget.Button
+import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.core.app.ActivityCompat
 import com.google.android.material.snackbar.Snackbar
@@ -175,6 +176,7 @@ class MainActivity : AppCompatActivity() {
             // start the bluetooth service if it's not already running
             if(!isServiceRunning) {
                 Log.i("service", "Starting BLT service")
+                Toast.makeText(this, "Connecting...", Toast.LENGTH_SHORT).show()
                 val simpleIntent = Intent(this, BluetoothSpeckService::class.java)
                 this.startService(simpleIntent)
             }
@@ -187,6 +189,8 @@ class MainActivity : AppCompatActivity() {
 
     override fun onDestroy() {
         super.onDestroy()
+        val simpleIntent = Intent(this, BluetoothSpeckService::class.java)
+        this.stopService(simpleIntent)
         System.exit(0)
     }
 
