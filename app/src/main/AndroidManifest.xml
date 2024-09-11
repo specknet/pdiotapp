@@ -2,8 +2,12 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.specknet.pdiotapp">
 
-    <uses-permission android:name="android.permission.BLUETOOTH" />
-    <uses-permission android:name="android.permission.BLUETOOTH_ADMIN" />
+    <uses-permission android:name="android.permission.BLUETOOTH"
+        android:maxSdkVersion="30" />
+    <uses-permission android:name="android.permission.BLUETOOTH_ADMIN"
+        android:maxSdkVersion="30" />
+    <uses-permission android:name="android.permission.BLUETOOTH_SCAN" />
+    <uses-permission android:name="android.permission.BLUETOOTH_CONNECT" />
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" /> <!-- To make app available to BLE-capable devices only -->
     <uses-permission android:name="android.permission.CAMERA" />
@@ -30,6 +34,7 @@
             android:exported="true"></service>
 
         <activity
+            android:exported="true"
             android:name=".live.LiveDataActivity"
             android:screenOrientation="portrait">
             <intent-filter>
@@ -50,8 +55,10 @@
         </activity>
         <activity
             android:name=".barcode.BarcodeActivity"
+            android:exported="true"
             android:screenOrientation="portrait" />
         <activity
+            android:exported="true"
             android:name=".bluetooth.ConnectingActivity"
             android:screenOrientation="portrait">
             <intent-filter>
@@ -73,12 +80,15 @@
 
         <activity
             android:name=".onboarding.OnBoardingActivity"
+            android:exported="true"
             android:screenOrientation="portrait" />
         <activity
             android:name=".RecordingActivity"
+            android:exported="true"
             android:screenOrientation="portrait" />
         <activity
             android:name=".MainActivity"
+            android:exported="true"
             android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

@@ -35,6 +35,7 @@ class MainActivity : AppCompatActivity() {
 
     val permissionsForRequest = arrayListOf<String>()
 
+    var blePermissionGranted = false
     var locationPermissionGranted = false
     var cameraPermissionGranted = false
     var readStoragePermissionGranted = false
@@ -97,7 +98,17 @@ class MainActivity : AppCompatActivity() {
     }
 
     fun setupPermissions() {
-        // request permissions
+        // BLE permissions
+        Log.i("Permissions", "BLE permission = " + blePermissionGranted)
+        if (ActivityCompat.checkSelfPermission(applicationContext,
+                Manifest.permission.BLUETOOTH_CONNECT) != PackageManager.PERMISSION_GRANTED) {
+            permissionsForRequest.add(Manifest.permission.BLUETOOTH_SCAN)
+            permissionsForRequest.add(Manifest.permission.BLUETOOTH_CONNECT)
+        }
+        else {
+            blePermissionGranted = true
+        }
+
 
         // location permission
         Log.i("Permissions", "Location permission = " + locationPermissionGranted)
@@ -188,6 +199,8 @@ class MainActivity : AppCompatActivity() {
             if(grantResults.isNotEmpty()) {
                 for (i in grantResults.indices) {
                     when(permissionsForRequest[i]) {
+                        Manifest.permission.BLUETOOTH_SCAN -> blePermissionGranted = true
+                        Manifest.permission.BLUETOOTH_CONNECT -> blePermissionGranted = true
                         Manifest.permission.ACCESS_COARSE_LOCATION -> locationPermissionGranted = true
                         Manifest.permission.ACCESS_FINE_LOCATION -> locationPermissionGranted = true
                         Manifest.permission.CAMERA -> cameraPermissionGranted = true
@@ -201,6 +214,7 @@ class MainActivity : AppCompatActivity() {
 
         // count how many permissions need granting
         var numberOfPermissionsUngranted = 0
+        if (!blePermissionGranted) numberOfPermissionsUngranted++
         if (!locationPermissionGranted) numberOfPermissionsUngranted++
         if (!cameraPermissionGranted) numberOfPermissionsUngranted++
         if (!readStoragePermissionGranted) numberOfPermissionsUngranted++
@@ -217,6 +231,15 @@ class MainActivity : AppCompatActivity() {
         }
         else if(numberOfPermissionsUngranted == 1) {
             var snackbar: Snackbar = Snackbar.make(coordinatorLayout, "", Snackbar.LENGTH_LONG)
+            if (!blePermissionGranted) {
+                snackbar = Snackbar
+                    .make(
+                        coordinatorLayout,
+                        "BLE permission needed for Bluetooth to work.",
+                        Snackbar.LENGTH_LONG
+                    )
+            }
+
             if (!locationPermissionGranted) {
                 snackbar = Snackbar
                     .make(
